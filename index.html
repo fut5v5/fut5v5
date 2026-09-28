@@ -571,8 +571,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 :root[data-theme="light"] .stable td.nm{background:#ffffff}
 :root[data-theme="light"] .stable tr.me td.nm{background:#fbf3dc}
 /* noms cliquables */
-.pl{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(233,199,106,.55);text-underline-offset:3px;text-decoration-thickness:1.5px}
-.pl:hover{text-decoration-color:var(--gold)}
+.pl{cursor:pointer}
 #dPitch{cursor:pointer}
 .pchoice{display:grid;gap:10px}
 .pchoice button{display:flex;align-items:center;gap:12px;border:1px solid var(--tile-line);background:var(--bg);color:var(--ink);border-radius:14px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;text-align:left}
@@ -2354,14 +2353,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       cols.map(c=>'<th data-k="'+c[0]+'" class="'+(c[0]===SG.tsort?"on":"")+'">'+c[1]+'<span class="ar">'+(c[0]===SG.tsort?(SG.tdir<0?"▼":"▲"):"▾")+'</span></th>').join("")+'</tr></thead><tbody>';
     if(SG.tsort==="nom")rows.sort((x,y)=>SG.tdir<0?x.p.name.localeCompare(y.p.name,"fr"):y.p.name.localeCompare(x.p.name,"fr"));
     rows.forEach((r,i)=>{
-      const jB=r.s.jB, jR=r.s.jR, jsy=jR>jB?JSY_R:jB>jR?JSY_W:(r.s.mp?JSY_W:'<span class="nojsy"></span>');
-      h+='<tr data-pid="'+r.p.id+'"'+(r.p.id===me?' class="me"':'')+'><td class="nm"><span class="in"><span class="rk">'+(i+1)+'</span>'+jsy+'<span>'+r.p.name.replace(/</g,"&lt;")+'</span></span></td>'+
+      h+='<tr data-pid="'+r.p.id+'"'+(r.p.id===me?' class="me"':'')+'><td class="nm"><span class="in"><span class="rk">'+(i+1)+'</span><span>'+r.p.name.replace(/</g,"&lt;")+'</span></span></td>'+
         cols.map(c=>fmt(c,c[2](r))).join("")+'</tr>';
     });
     $("#stable").innerHTML=h+'</tbody>';
     $("#stable").querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{ const k=th.dataset.k;
       if(SG.tsort===k)SG.tdir=-SG.tdir; else {SG.tsort=k; SG.tdir=(k==="nom"||k==="mpg")?1:-1;} renderStatsGrid(); }));
-    $("#stNote").textContent=(SG.cat==="notes"?"Notes actuelles des cartes. ":"")+"Touchez un titre de colonne pour trier, un joueur pour ouvrir sa fiche. Le maillot est celui porté le plus souvent sur la période.";
+    $("#stNote").textContent=(SG.cat==="notes"?"Notes actuelles des cartes. ":"")+"Touchez un titre de colonne pour trier, un joueur pour ouvrir sa fiche.";
   }
   $("#sScope [data-scope=season]").textContent="Saison "+seasonLabel(CUR_SEASON);
   document.querySelectorAll("#sSort .chip").forEach(b=>b.addEventListener("click",()=>{SG.sort=b.dataset.sort;renderStatsGrid()}));
