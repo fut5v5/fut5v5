@@ -261,6 +261,12 @@ button{font:inherit;color:inherit}
 .goals .who{flex:1}
 .goals .undo{border:0;background:none;color:#9fb0d6;font-size:.85rem;text-decoration:underline;cursor:pointer;padding:4px}
 .goals .empty{color:#9fb0d6;justify-content:center;border:0}
+/* saisie du score sur la montre connectée */
+.watch-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(233,199,106,.14);border:1px solid var(--gold);color:#fff;border-radius:12px;padding:8px 10px;margin:0 0 8px;font-size:.92rem;font-weight:600}
+.watch-banner[hidden]{display:none}
+.watch-banner button{border:0;background:var(--gold);color:var(--navy);border-radius:9px;padding:8px 10px;font-weight:700;font-size:.85rem;cursor:pointer;white-space:nowrap}
+.live.on-watch .half{cursor:default}
+.live.on-watch .half .plus,.live.on-watch .live-bar,.live.on-watch .goals .undo{display:none}
 
 /* ---------- feuille de choix (buteur, MVP) ---------- */
 .sheet{position:fixed;inset:0;z-index:30;background:rgba(4,9,24,.6);display:flex;align-items:flex-end}
@@ -981,6 +987,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     <span class="clock" id="clock">00:00</span>
     <button type="button" class="end" id="endMatch">Terminer</button>
   </div>
+  <div class="watch-banner" id="watchBanner" hidden><span>⌚ Score saisi sur la montre</span><button type="button" id="watchRelease">Reprendre ici</button></div>
   <div class="halves">
     <button type="button" class="half blanc" data-side="blanc"><svg class="jsy" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 4l-7 4 3 7 3-1v14h12V14l3 1 3-7-7-4c-1 2.4-2.8 3.5-5 3.5S12 6.4 11 4z" fill="#f5f7fc" stroke="#9fb0d6" stroke-width="1.2"/></svg><span class="tn">BLANC</span><span class="big" id="scB">0</span><span class="plus">+ But</span></button>
     <button type="button" class="half rouge" data-side="rouge"><svg class="jsy" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 4l-7 4 3 7 3-1v14h12V14l3 1 3-7-7-4c-1 2.4-2.8 3.5-5 3.5S12 6.4 11 4z" fill="#ffffff" stroke="#ffd2cf" stroke-width="1.2"/></svg><span class="tn">COULEURS</span><span class="big" id="scR">0</span><span class="plus">+ But</span></button>
@@ -1531,7 +1538,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(!absolute){ if(diff===0)t="Aujourd'hui"; else if(diff===1)t="Demain"; }
     return t+" à "+d.getHours()+"h"+pad2(d.getMinutes());
   }
-  const M={present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()};
+  const M={present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""};
   const SAVE_KEY="fut5v5:prochain-match";
   let quiet=false;
   function saveMatch(){
@@ -1581,7 +1588,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         matchUndo.record(); liveUndo.clear();
         const oldId=M.id; clearTimeout(syncTimer);
         if(oldId)api("setMatchStatus",ADMIN.code,oldId,"supprimer").catch(e=>toast("Suppression non enregistrée : "+errMsg(e)));
-        Object.assign(M,{id:null,convokedAt:"",present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()});
+        Object.assign(M,{id:null,convokedAt:"",present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
         closeSheet(); renderMatch(); window.scrollTo(0,0);
         toast("Match supprimé. Touche Annuler pour le remettre.");
       });
@@ -1783,27 +1790,52 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const minuteNow=()=>M.start?Math.floor((Date.now()-M.start)/60000)+1:1;
   function tick(){ const s=M.start?Math.floor((Date.now()-M.start)/1000):0; $("#clock").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"); }
   async function openLive(){
-    if(!M.start)M.start=Date.now();
+    if(!M.start&&M.liveMode!=="montre")M.start=Date.now();
     saveMatch();
     $("#live").hidden=false; document.body.style.overflow="hidden";
     tick(); clearInterval(clockTimer); clockTimer=setInterval(tick,1000); renderLive();
+    pollWatch(); clearInterval(watchTimer); watchTimer=setInterval(pollWatch,8000);
     try{ if(navigator.wakeLock)wake=await navigator.wakeLock.request("screen"); }catch(e){}
   }
-  function closeLive(){ $("#live").hidden=true; document.body.style.overflow=""; clearInterval(clockTimer); try{wake&&wake.release()}catch(e){} wake=null; }
+  function closeLive(){ $("#live").hidden=true; document.body.style.overflow=""; clearInterval(clockTimer); clearInterval(watchTimer); try{wake&&wake.release()}catch(e){} wake=null; }
+
+  /* --- montre connectée : quand la montre saisit le score, le téléphone l'affiche en direct (lecture seule) --- */
+  let watchTimer=null;
+  const onWatch=()=>M.liveMode==="montre";
+  function applyWatchState(m){
+    if(!m||m.id!==M.id)return;
+    M.liveMode=m.liveMode||"";
+    if(onWatch()){ M.goals=(m.goals||[]).map(g=>Object.assign({},g)); if(m.start)M.start=m.start; liveUndo.clear(); }
+    persistLocal(); renderNext();
+    if(!$("#live").hidden){ renderLive(true); tick(); }
+    if(m.statut==="termine"){ closeLive(); toast("Ce match a déjà été terminé."); refreshData().then(redrawCurrent).catch(()=>{}); }
+  }
+  async function pollWatch(){
+    if(!isAdmin()||!M.id||document.visibilityState!=="visible")return;
+    try{ const r=await api("watchState",ADMIN.code,M.id); applyWatchState(r&&r.match); }catch(e){}
+  }
+  $("#watchRelease").addEventListener("click",async()=>{
+    const b=$("#watchRelease"); b.disabled=true;
+    try{ const r=await api("setLiveMode",ADMIN.code,M.id,"telephone"); applyWatchState(r&&r.match); toast("Le score se saisit maintenant sur le téléphone."); }
+    catch(e){ toast("Impossible de reprendre la main : "+errMsg(e)); }
+    b.disabled=false;
+  });
   $("#openLive").addEventListener("click",openLive);
   $("#closeLive").addEventListener("click",closeLive);
   const liveUndo=makeUndo(
     ()=>M.goals.map(g=>Object.assign({},g)),
-    st=>{M.goals=st.map(g=>Object.assign({},g)); renderLive();},
+    st=>{if(onWatch())return; M.goals=st.map(g=>Object.assign({},g)); renderLive();},
     undoButtons("lUndo","lRedo"));
   bindUndo(liveUndo,"lUndo","lRedo");
-  function addGoal(g){ liveUndo.record(); M.goals.push(g); return g; }
+  function addGoal(g){ liveUndo.record(); g.uid="g"+Date.now().toString(36)+Math.random().toString(36).slice(2,7); M.goals.push(g); return g; }
   const scoreOf=side=>M.goals.filter(g=>g.side===side).length;
-  function renderLive(){
-    saveMatch(); renderNext();
+  function renderLive(fromWatch){
+    if(fromWatch)persistLocal(); else saveMatch();
+    renderNext();
+    $("#live").classList.toggle("on-watch",onWatch()); $("#watchBanner").hidden=!onWatch();
     $("#scB").textContent=scoreOf("blanc"); $("#scR").textContent=scoreOf("rouge");
     const ol=$("#goalList"); ol.innerHTML="";
-    if(!M.goals.length){const li=document.createElement("li");li.className="empty";li.textContent="Touchez une équipe pour ajouter un but.";ol.appendChild(li);return}
+    if(!M.goals.length){const li=document.createElement("li");li.className="empty";li.textContent=onWatch()?"Les buts saisis sur la montre s'affichent ici.":"Touchez une équipe pour ajouter un but.";ol.appendChild(li);return}
     [...M.goals].reverse().forEach(g=>{
       const li=document.createElement("li");
       li.innerHTML='<span class="min"></span><span class="dot '+g.side+'"></span><span class="who"></span><button type="button" class="undo">Supprimer</button>';
@@ -1816,6 +1848,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function goalLabel(g){ const n=g.pid&&byId(g.pid)?byId(g.pid).name:null, a=g.ast&&byId(g.ast)?byId(g.ast).name:null;
     return g.own?(n?n+" (contre son camp)":"Contre son camp"):((n||"Buteur non renseigné")+(a?", passe de "+a:"")); }
   document.querySelectorAll(".half").forEach(h=>h.addEventListener("click",()=>{
+    if(onWatch()){ toast("Le score est saisi sur la montre. Touche « Reprendre ici » pour le saisir sur le téléphone."); return; }
     const side=h.dataset.side, min=minuteNow();
     const players=inTeam(side).sort((a,b)=>(slotOf(a.id)?0:1)-(slotOf(b.id)?0:1)||a.name.localeCompare(b.name,"fr"));
     openSheet("But "+TEAMNAME[side]+" ("+min+"')","Qui a marqué ?",body=>{
@@ -1905,7 +1938,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       });
     });
   }
-  $("#endMatch").addEventListener("click",()=>{
+  $("#endMatch").addEventListener("click",async()=>{
+    if(onWatch()){ try{ const r=await api("watchState",ADMIN.code,M.id); applyWatchState(r&&r.match); if(r&&r.match&&r.match.statut==="termine")return; }
+      catch(e){ toast("Buts de la montre non récupérés ("+errMsg(e)+") : le Google Sheet garde ceux de la montre."); } }
     const tmp={goals:M.goals,team:M.team,present:[...M.present]};
     openMvpSheet(tmp,"Fin du match : "+scoreOf("blanc")+" – "+scoreOf("rouge"),id=>{M.mvp=id;finishMatch();},{later:()=>{M.mvp=null;finishMatch();}});
   });
@@ -1937,6 +1972,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       team:Object.assign({},M.team),layout:Object.assign({},M.layout),present:[...M.present]};
     matches.unshift(rec); renderHome();
     const payload={id:rec.id,date:rec.date.toISOString(),present:rec.present,team:rec.team,layout:rec.layout,goals:rec.goals,start:M.start,mvp:rec.mvp};
+    M.liveMode="";
     api("finishMatch",ADMIN.code,payload).then(()=>{ try{localStorage.removeItem(SAVE_KEY)}catch(e){} })
       .catch(e=>toast("Résultat non enregistré dans le Google Sheet : "+errMsg(e)));
     await refreshReport(rec); $("#shareMsg").textContent="";
@@ -2137,7 +2173,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#reportDone").addEventListener("click",()=>{
     matchUndo.clear(); liveUndo.clear();
     $("#report").hidden=true; document.body.style.overflow="";
-    Object.assign(M,{id:null,convokedAt:"",pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()});
+    Object.assign(M,{id:null,convokedAt:"",pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
     try{localStorage.removeItem(SAVE_KEY)}catch(e){}
     renderMatch(); location.hash="";
   });
@@ -2824,7 +2860,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(!isAdmin()||!M.id||(!M.made&&!M.present.size))return;
     if(syncBusy){syncAgain=true;return;}
     syncBusy=true;
-    try{ await api("savePlanned",ADMIN.code,plannedPayload()); M.pending=false; persistLocal(); }
+    try{ const r=await api("savePlanned",ADMIN.code,plannedPayload()); M.pending=false;
+      if(r&&r.liveMode==="montre")applyWatchState({id:M.id,liveMode:"montre",goals:r.goals,start:r.start}); else persistLocal(); }
     catch(e){ M.pending=true; persistLocal();
       if(Date.now()-lastSyncError>60000){lastSyncError=Date.now(); toast("Pas de réseau : c'est gardé sur le téléphone et envoyé dès que possible.");}
       clearTimeout(syncTimer); syncTimer=setTimeout(syncPlanned,15000); }
@@ -2833,7 +2870,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function persistLocal(){
     try{
       if(!M.made&&!M.present.size){localStorage.removeItem(SAVE_KEY);return}
-      localStorage.setItem(SAVE_KEY,JSON.stringify({id:M.id,pending:!!M.pending,present:[...M.present],team:M.team,layout:M.layout,made:M.made,goals:M.goals,start:M.start,date:M.date,convokedAt:M.convokedAt||""}));
+      localStorage.setItem(SAVE_KEY,JSON.stringify({id:M.id,pending:!!M.pending,present:[...M.present],team:M.team,layout:M.layout,made:M.made,goals:M.goals,start:M.start,date:M.date,convokedAt:M.convokedAt||"",liveMode:M.liveMode||""}));
     }catch(e){}
   }
   window.addEventListener("online",()=>{ if(M.pending)syncPlanned(); });
@@ -3028,12 +3065,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(!busy){
       let local=null; try{local=JSON.parse(localStorage.getItem(SAVE_KEY)||"null")}catch(e){}
       const src=(local&&local.pending&&(!data.planned||data.planned.id===local.id))?local:(data.planned?{
-        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date),convokedAt:data.planned.convokedAt||""}:null);
+        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date),convokedAt:data.planned.convokedAt||"",liveMode:data.planned.liveMode||""}:null);
       if(src){
         M.id=src.id; M.present=new Set((src.present||[]).filter(id=>roster.some(p=>p.id===id)));
-        Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending,convokedAt:src.convokedAt||M.convokedAt||""});
+        Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending,convokedAt:src.convokedAt||M.convokedAt||"",liveMode:src.liveMode||""});
       } else {
-        Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,date:defaultDate(),pending:false});
+        Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,date:defaultDate(),pending:false,liveMode:""});
         try{localStorage.removeItem(SAVE_KEY)}catch(e){}
       }
     }
