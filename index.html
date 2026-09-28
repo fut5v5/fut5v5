@@ -543,6 +543,41 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .prop-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 6px}
 .prop-choice button{border:1px solid var(--tile-line);background:var(--bg);color:var(--ink);border-radius:12px;padding:14px 8px;font-weight:700;cursor:pointer}
 
+/* ---------- statistiques : tableau ---------- */
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--tile);border:1px solid var(--tile-line);border-radius:12px;padding:4px;gap:4px}
+.seg button{display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:transparent;color:var(--muted);border-radius:9px;padding:9px;font-weight:700;cursor:pointer;font-size:.95rem}
+.seg button svg{width:18px;height:18px}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#0c1a3d}
+.stwrap{overflow-x:auto;border:1px solid var(--tile-line);border-radius:16px;background:var(--tile);-webkit-overflow-scrolling:touch}
+.stable{border-collapse:separate;border-spacing:0;width:100%;font-size:.9rem;white-space:nowrap}
+.stable th{position:sticky;top:0;background:#16295e;color:#cfd8ee;font-weight:600;font-size:.76rem;line-height:1.15;padding:10px 8px;text-align:center;cursor:pointer;user-select:none;border-bottom:1px solid var(--tile-line);vertical-align:bottom}
+.stable th .ar{display:block;font-size:.7rem;color:#6f7fa8;margin-top:3px}
+.stable th.on{color:#fff}.stable th.on .ar{color:var(--gold)}
+.stable th.nm,.stable td.nm{text-align:left;position:sticky;left:0;z-index:1}
+.stable th.nm{z-index:2}
+.stable td{padding:9px 8px;text-align:center;border-bottom:1px solid var(--tile-line);font-variant-numeric:tabular-nums}
+.stable tr:last-child td{border-bottom:0}
+.stable td.nm{background:#15254f;font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.stable td.nm .in{display:flex;align-items:center;gap:8px}
+.stable td.nm .rk{color:var(--muted);font-size:.78rem;min-width:18px;text-align:right;font-weight:500}
+.stable td.nm svg.jsy,.stable td.nm .nojsy{width:18px;height:18px;margin:0;flex:none;display:block}
+.stable tr{cursor:pointer}
+.stable tr.me td{background:rgba(233,199,106,.12)} .stable tr.me td.nm{background:#2a2f4a;box-shadow:inset 3px 0 0 var(--gold)}
+.stable .rt{display:inline-block;min-width:34px;padding:3px 6px;border-radius:6px;color:#fff;font-weight:800;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.05rem}
+.stable td.z{color:var(--muted)}
+.st-note{color:var(--muted);font-size:.78rem;margin:8px 2px 0}
+:root[data-theme="light"] .stable th{background:#e3e9f6;color:#3b4a70}
+:root[data-theme="light"] .stable th.on{color:#0c1a3d}
+:root[data-theme="light"] .stable td.nm{background:#ffffff}
+:root[data-theme="light"] .stable tr.me td.nm{background:#fbf3dc}
+/* noms cliquables */
+.pl{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(233,199,106,.55);text-underline-offset:3px;text-decoration-thickness:1.5px}
+.pl:hover{text-decoration-color:var(--gold)}
+#dPitch{cursor:pointer}
+.pchoice{display:grid;gap:10px}
+.pchoice button{display:flex;align-items:center;gap:12px;border:1px solid var(--tile-line);background:var(--bg);color:var(--ink);border-radius:14px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;text-align:left}
+.pchoice button svg{width:24px;height:24px;flex:none}
+
 /* ---------- mode clair ---------- */
 :root[data-theme="light"]{
   --bg:#eef2fa; --ink:#0c1a3d; --muted:#5a6a90; --tile:#ffffff; --tile-line:#d6ddee;
@@ -828,6 +863,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     </div>
     <div class="sfilters">
       <input type="search" id="sSearch" placeholder="Chercher un joueur" autocomplete="off" aria-label="Chercher un joueur">
+      <div class="seg" role="group" aria-label="Affichage" id="sView">
+        <button type="button" data-view="table" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Tableau</button>
+        <button type="button" data-view="cards" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Cartes</button>
+      </div>
+      <div class="chips" role="group" aria-label="Catégorie" id="sCat">
+        <button type="button" class="chip" data-cat="general" aria-pressed="true">Général</button>
+        <button type="button" class="chip" data-cat="attaque" aria-pressed="false">Attaque</button>
+        <button type="button" class="chip" data-cat="notes" aria-pressed="false">Notes</button>
+      </div>
       <div class="chips" role="group" aria-label="Trier par" id="sSort">
         <button type="button" class="chip" data-sort="note" aria-pressed="true">Note</button>
         <button type="button" class="chip" data-sort="buts" aria-pressed="false">Buts</button>
@@ -841,6 +885,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         <button type="button" class="chip" data-scope="all" aria-pressed="false">Toutes les saisons</button>
       </div>
     </div>
+    <div class="stwrap" id="stwrap"><table class="stable" id="stable"></table></div>
+    <p class="st-note" id="stNote"></p>
     <div class="cgrid" id="cgrid"></div>
   </section>
 
@@ -2279,7 +2325,44 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const inSeason=y=>m=>seasonStart(m.date)===y;
 
   /* --- grille des cartes --- */
-  const SG={sort:"note",scope:"season",q:""};
+  const SG={sort:"note",scope:"season",q:"",view:"table",cat:"general",tsort:"note",tdir:-1};
+  try{ const v=localStorage.getItem("fut5v5:stats-vue"); if(v==="cards"||v==="table")SG.view=v; }catch(e){}
+  document.querySelectorAll("#sView button").forEach(b=>b.addEventListener("click",()=>{ SG.view=b.dataset.view; try{localStorage.setItem("fut5v5:stats-vue",SG.view)}catch(e){} renderStatsGrid(); }));
+  document.querySelectorAll("#sCat .chip").forEach(b=>b.addEventListener("click",()=>{ SG.cat=b.dataset.cat; SG.tsort=SG.cat==="notes"?"note":SG.cat==="attaque"?"g":"note"; SG.tdir=-1; renderStatsGrid(); }));
+  const TCOLS={
+    general:[["note","Note",r=>overall(r.p),"rt"],["mp","Matchs<br>joués",r=>r.s.mp],["w","Victoires",r=>r.s.w],["wp","Victoires<br>%",r=>r.s.mp?Math.round(r.s.w/r.s.mp*100):-1,"pc"],
+      ["g","Buts",r=>r.s.g],["a","Passes<br>déc.",r=>r.s.a],["mvp","MVP",r=>r.s.mvp],["csc","CSC",r=>r.s.csc],["min","Minutes",r=>r.s.min]],
+    attaque:[["g","Buts",r=>r.s.g],["gpm","Buts par<br>match",r=>r.s.mp?r.s.g/r.s.mp:-1,"d2"],["a","Passes<br>déc.",r=>r.s.a],["apm","Passes par<br>match",r=>r.s.mp?r.s.a/r.s.mp:-1,"d2"],
+      ["ga","Buts +<br>passes",r=>r.s.g+r.s.a],["mpg","Minutes<br>par but",r=>r.s.g?Math.round(r.s.min/r.s.g):-1,"inv"],["mp","Matchs<br>joués",r=>r.s.mp]],
+    notes:[["note","Note",r=>overall(r.p),"rt"],...STATS.map(([k,code])=>[k,code,r=>clamp(r.p.stats[k]),"rt"])]
+  };
+  function renderStatsTable(rows){
+    const cols=TCOLS[SG.cat]; if(!cols.some(c=>c[0]===SG.tsort)){SG.tsort=cols[0][0];SG.tdir=-1;}
+    const col=cols.find(c=>c[0]===SG.tsort);
+    /* colonnes « minutes par but » : plus petit = meilleur, les joueurs sans valeur toujours en bas */
+    const v=r=>col[2](r);
+    rows.sort((x,y)=>{ const a=v(x), b=v(y); if(a<0&&b<0)return x.p.name.localeCompare(y.p.name,"fr"); if(a<0)return 1; if(b<0)return -1;
+      return (SG.tdir<0?(b-a):(a-b))||x.p.name.localeCompare(y.p.name,"fr"); });
+    const me=myId();
+    const fmt=(c,val)=>{ if(val<0)return '<td class="z">–</td>';
+      if(c[3]==="rt")return '<td><span class="rt" style="background:#'+badgeCol(val).slice(1)+'">'+val+'</span></td>';
+      if(c[3]==="pc")return '<td>'+val+' %</td>';
+      if(c[3]==="d2")return '<td>'+val.toLocaleString("fr-FR",{maximumFractionDigits:2})+'</td>';
+      if(c[0]==="min")return '<td>'+val.toLocaleString("fr-FR")+'</td>';
+      return '<td'+(val===0?' class="z"':'')+'>'+val+'</td>'; };
+    let h='<thead><tr><th class="nm" data-k="nom">Joueur'+(SG.tsort==="nom"?'<span class="ar">'+(SG.tdir<0?"▼":"▲")+'</span>':'<span class="ar">&nbsp;</span>')+'</th>'+
+      cols.map(c=>'<th data-k="'+c[0]+'" class="'+(c[0]===SG.tsort?"on":"")+'">'+c[1]+'<span class="ar">'+(c[0]===SG.tsort?(SG.tdir<0?"▼":"▲"):"▾")+'</span></th>').join("")+'</tr></thead><tbody>';
+    if(SG.tsort==="nom")rows.sort((x,y)=>SG.tdir<0?x.p.name.localeCompare(y.p.name,"fr"):y.p.name.localeCompare(x.p.name,"fr"));
+    rows.forEach((r,i)=>{
+      const jB=r.s.jB, jR=r.s.jR, jsy=jR>jB?JSY_R:jB>jR?JSY_W:(r.s.mp?JSY_W:'<span class="nojsy"></span>');
+      h+='<tr data-pid="'+r.p.id+'"'+(r.p.id===me?' class="me"':'')+'><td class="nm"><span class="in"><span class="rk">'+(i+1)+'</span>'+jsy+'<span>'+r.p.name.replace(/</g,"&lt;")+'</span></span></td>'+
+        cols.map(c=>fmt(c,c[2](r))).join("")+'</tr>';
+    });
+    $("#stable").innerHTML=h+'</tbody>';
+    $("#stable").querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{ const k=th.dataset.k;
+      if(SG.tsort===k)SG.tdir=-SG.tdir; else {SG.tsort=k; SG.tdir=(k==="nom"||k==="mpg")?1:-1;} renderStatsGrid(); }));
+    $("#stNote").textContent=(SG.cat==="notes"?"Notes actuelles des cartes. ":"")+"Touchez un titre de colonne pour trier, un joueur pour ouvrir sa fiche. Le maillot est celui porté le plus souvent sur la période.";
+  }
   $("#sScope [data-scope=season]").textContent="Saison "+seasonLabel(CUR_SEASON);
   document.querySelectorAll("#sSort .chip").forEach(b=>b.addEventListener("click",()=>{SG.sort=b.dataset.sort;renderStatsGrid()}));
   document.querySelectorAll("#sScope .chip").forEach(b=>b.addEventListener("click",()=>{SG.scope=b.dataset.scope;renderStatsGrid()}));
@@ -2289,12 +2372,17 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     document.querySelectorAll("#sScope .chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.scope===SG.scope)));
     const pred=SG.scope==="season"?inSeason(CUR_SEASON):null, q=normTxtS(SG.q);
     const rows=roster.filter(p=>!q||normTxtS(p.name).includes(q)).map(p=>({p,s:pstats(p.id,pred)}));
+    const tbl=SG.view==="table";
+    document.querySelectorAll("#sView button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===SG.view)));
+    document.querySelectorAll("#sCat .chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.cat===SG.cat)));
+    $("#sCat").hidden=!tbl; $("#sSort").hidden=tbl; $("#stwrap").hidden=!tbl; $("#stNote").hidden=!tbl; $("#cgrid").hidden=tbl;
+    if(tbl){ if(rows.length)renderStatsTable(rows); else {$("#stable").innerHTML='<tbody><tr><td>Aucun joueur ne correspond.</td></tr></tbody>';} return; }
     const val=r=>SG.sort==="buts"?r.s.g:SG.sort==="passes"?r.s.a:SG.sort==="mvp"?r.s.mvp:SG.sort==="matchs"?r.s.mp:avgStats(r.p);
     rows.sort((x,y)=>SG.sort==="nom"?x.p.name.localeCompare(y.p.name,"fr"):(val(y)-val(x))||avgStats(y.p)-avgStats(x.p));
     const grid=$("#cgrid"); grid.innerHTML="";
     if(!rows.length){grid.innerHTML='<p class="share-msg" style="color:#cfd8ee;grid-column:1/-1">Aucun joueur ne correspond.</p>';return}
     rows.forEach(({p,s})=>{
-      const b=document.createElement("button"); b.type="button"; b.className="cg"+(p.id===myId()?" me":""); b.dataset.go="p-"+p.id;
+      const b=document.createElement("button"); b.type="button"; b.className="cg"+(p.id===myId()?" me":""); b.dataset.pid=p.id;
       b.setAttribute("aria-label",p.name+", note "+overall(p));
       const cv=document.createElement("canvas"); drawCard(cv,p,.42); b.appendChild(cv);
       const m=document.createElement("span"); m.className="m";
@@ -2952,6 +3040,65 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
+
+  /* ================= NOMS DE JOUEURS CLIQUABLES ================= */
+  function editPlayer(pid){
+    location.hash="carte";
+    setTimeout(()=>{ mode="edit"; fillPicker(pid); loadPlayer(pid); cardUndo.clear(); },60);
+  }
+  function openPlayer(pid){
+    const p=byId(pid); if(!p)return;
+    if(!isAdmin()){ location.hash="p-"+pid; return; }
+    openSheet(p.name,"Que veux-tu faire ?",body=>{
+      const w=document.createElement("div"); w.className="pchoice";
+      w.innerHTML='<button type="button" data-a="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="12" width="4" height="9" rx="1" fill="#4d74ff"/><rect x="10" y="7" width="4" height="14" rx="1" fill="#e9c76a"/><rect x="17" y="3" width="4" height="18" rx="1" fill="#1ed760"/></svg>Voir les statistiques</button>'+
+        '<button type="button" data-a="edit"><svg viewBox="0 0 24 24" fill="none" stroke="#e9c76a" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>Modifier la carte</button>';
+      w.querySelector('[data-a="stats"]').addEventListener("click",()=>{ closeSheet(); setTimeout(()=>{location.hash="p-"+pid;},30); });
+      w.querySelector('[data-a="edit"]').addEventListener("click",()=>{ closeSheet(); setTimeout(()=>editPlayer(pid),30); });
+      body.appendChild(w);
+    });
+  }
+  /* rend cliquables les noms de joueurs présents dans un bloc de texte */
+  let nameRx=null, nameRxKey="";
+  function linkNames(root){
+    if(!root||!roster.length)return;
+    const key=roster.map(p=>p.id+":"+p.name).join("|");
+    if(key!==nameRxKey){ nameRxKey=key;
+      const alts=[...roster].sort((a,b)=>b.name.length-a.name.length).map(p=>p.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));
+      nameRx=new RegExp("(^|[^\\p{L}])("+alts.join("|")+")(?![\\p{L}])","gu"); }
+    const byName=new Map(roster.map(p=>[p.name,p.id]));
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest("[data-pid],script,style,svg")?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+    const nodes=[]; while(walker.nextNode())nodes.push(walker.currentNode);
+    nodes.forEach(n=>{
+      const t=n.nodeValue; nameRx.lastIndex=0; if(!nameRx.test(t))return; nameRx.lastIndex=0;
+      const frag=document.createDocumentFragment(); let last=0, m;
+      while((m=nameRx.exec(t))){ const start=m.index+m[1].length;
+        frag.appendChild(document.createTextNode(t.slice(last,start)));
+        const sp=document.createElement("span"); sp.className="pl"; sp.dataset.pid=byName.get(m[2]); sp.textContent=m[2]; frag.appendChild(sp);
+        last=start+m[2].length; }
+      frag.appendChild(document.createTextNode(t.slice(last))); n.replaceWith(frag);
+    });
+  }
+  /* les écrans qui affichent des noms les rendent cliquables après leur rendu */
+  { const _home=renderHome, _hist=renderHistory, _det=renderDetail;
+    renderHome=function(){ _home(); linkNames($("#lastBtn")); };
+    renderHistory=function(){ _hist(); linkNames($("#hList")); };
+    renderDetail=async function(rec){ const pr=_det(rec); ["#dHero","#dTimeline","#dMvp"].forEach(q=>linkNames($(q))); await pr; linkNames($("#dBench")); };
+  }
+  /* compositions du détail d'un match : toucher une carte ouvre le joueur */
+  $("#dPitch").addEventListener("click",e=>{
+    const rec=detailRec; if(!rec)return;
+    const cv=e.currentTarget, x=e.offsetX*cv.width/cv.clientWidth, y=e.offsetY*cv.height/cv.clientHeight;
+    const PW=cv.width, PH=PW*1.9, cw=PW*.2, ch=cw*H/W;
+    const s=SLOTS.find(s=>Math.abs(x-PW*s.x/100)<cw/2&&Math.abs(y-PH*s.y/100)<ch/2);
+    if(s&&rec.layout[s.id])openPlayer(rec.layout[s.id]);
+  });
+  /* priorité aux noms de joueurs, même à l'intérieur d'un bouton (ligne d'historique, dernier match…) */
+  document.addEventListener("click",e=>{
+    const el=e.target.closest("[data-pid]"); if(!el)return;
+    if(el.closest("#sheet"))return;
+    e.preventDefault(); e.stopPropagation(); openPlayer(el.dataset.pid);
+  },true);
 
   document.addEventListener("click",e=>{
     const b=e.target.closest("[data-go]"); if(!b)return;
