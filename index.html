@@ -1273,7 +1273,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const r=$("#r-"+k); if(+r.value!==v)r.value=v;
     });
   });}
-  onImageReady=()=>{render(); scheduleMatch();};
+  onImageReady=()=>{render(); scheduleMatch(); if(typeof redrawSoon==="function")redrawSoon();};
 
   /* ---------- lignes de notes ---------- */
   const list=$("#statsList");
@@ -1390,7 +1390,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     $("#saveBtn").disabled=true;
     api("savePlayer",ADMIN.code,payload,photoParam).then(r=>{
       const p=roster.find(x=>x.id===r.id);
-      if(p){ p.photoId=r.photoId; p.forme=r.forme; if(p.photo&&r.photoId){try{localStorage.setItem("ph:"+r.photoId,p.photo)}catch(e){}} }
+      if(p){ p.photoId=r.photoId; p.forme=r.forme; if(p.photo&&r.photoId){photoPut(r.photoId,p.photo);} }
       if(draft.id===r.id){draft.photoId=r.photoId;draft.forme=r.forme; if(orig&&orig.id===r.id){orig.photoId=r.photoId;orig.forme=r.forme;} render();}
     }).catch(e=>toast("Non enregistré dans le Google Sheet : "+errMsg(e))).finally(()=>{$("#saveBtn").disabled=false;});
     if(mode==="new"){
@@ -1436,8 +1436,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
   const M={present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()};
   const SAVE_KEY="fut5v5:prochain-match";
+  let quiet=false;
   function saveMatch(){
-    if(!isAdmin())return;
+    if(!isAdmin()||quiet)return;
     if((M.made||M.present.size)&&!M.id)M.id="m"+Date.now().toString(36);
     persistLocal(); scheduleSync();
   }
@@ -2635,7 +2636,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(isAdmin()){
       openSheet("Mode organisateur","Connecté en tant que "+ADMIN.name+".",body=>{
         const b=document.createElement("button"); b.type="button"; b.className="danger-fill"; b.textContent="Se déconnecter";
-        b.addEventListener("click",()=>{ADMIN.code="";ADMIN.name="";try{localStorage.removeItem("fut5v5:admin")}catch(e){} closeSheet(); applyRole(); show(location.hash.slice(1)); toast("Mode consultation.");});
+        b.addEventListener("click",()=>{ADMIN.code="";ADMIN.name="";try{localStorage.removeItem("fut5v5:admin");localStorage.removeItem("fut5v5:admin-name")}catch(e){} closeSheet(); applyRole(); show(location.hash.slice(1)); toast("Mode consultation.");});
         body.appendChild(b);
       });
       return;
@@ -2645,7 +2646,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const b=document.createElement("button"); b.type="button"; b.className="danger-fill okfill"; b.textContent="Valider";
       const go=async()=>{ const code=i.value.trim(); if(!code)return; b.disabled=true; b.textContent="Vérification…";
         try{ const r=await api("checkAdmin",code);
-          if(r.ok){ADMIN.code=code;ADMIN.name=r.name;try{localStorage.setItem("fut5v5:admin",code)}catch(e){} closeSheet(); applyRole(); renderHome(); toast("Bonjour "+r.name+", mode organisateur activé.");}
+          if(r.ok){ADMIN.code=code;ADMIN.name=r.name;try{localStorage.setItem("fut5v5:admin",code);localStorage.setItem("fut5v5:admin-name",r.name)}catch(e){} closeSheet(); applyRole(); renderHome(); toast("Bonjour "+r.name+", mode organisateur activé.");}
           else {b.disabled=false;b.textContent="Valider";i.value="";toast("Code incorrect.");}
         }catch(e){b.disabled=false;b.textContent="Valider";toast("Vérification impossible : "+errMsg(e));} };
       b.addEventListener("click",go); i.addEventListener("keydown",e=>{if(e.key==="Enter")go()});
@@ -2698,20 +2699,33 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   window.addEventListener("online",()=>{ if(M.pending)syncPlanned(); });
 
   /* --- photos : cache du téléphone puis serveur --- */
+  const PHOTO_CACHE="fut5v5-photos";
+  async function photoGet(id){
+    try{ if(window.caches){ const r=await (await caches.open(PHOTO_CACHE)).match("ph/"+id); if(r)return await r.text(); } }catch(e){}
+    try{ return localStorage.getItem("ph:"+id); }catch(e){ return null; }
+  }
+  async function photoPut(id,url){
+    if(!id||!url)return;
+    try{ if(window.caches){ await (await caches.open(PHOTO_CACHE)).put("ph/"+id,new Response(url)); try{localStorage.removeItem("ph:"+id)}catch(e){} return; } }catch(e){}
+    try{ localStorage.setItem("ph:"+id,url); }catch(e){}
+  }
+  let photosRun=0;
   async function loadPhotos(){
+    const run=++photosRun;
+    const todo=roster.filter(p=>p.photoId&&!(p.photo&&p._phid===p.photoId));
+    /* 1. copies gardées sur le téléphone : affichage immédiat */
+    const hits=await Promise.all(todo.map(p=>photoGet(p.photoId)));
     const need=[];
-    roster.forEach(p=>{ if(!p.photoId)return; let hit=null; try{hit=localStorage.getItem("ph:"+p.photoId)}catch(e){} if(hit)p.photo=hit; else need.push(p.photoId); });
-    if(need.length<roster.length)refreshView();
-    for(let i=0;i<need.length;i+=6){
-      const part=need.slice(i,i+6);
-      try{
-        const res=await api("getPhotos",part);
-        roster.forEach(p=>{ if(p.photoId&&res[p.photoId]){ p.photo=res[p.photoId]; try{localStorage.setItem("ph:"+p.photoId,res[p.photoId])}catch(e){} } });
-        refreshView();
-        roster.filter(p=>part.includes(p.photoId)&&p.photo&&p.photo.length>200000).forEach(p=>optimizeQueue.push(p));
-        runOptimize();
-      }catch(e){ break; }
-    }
+    todo.forEach((p,i)=>{ if(hits[i]){p.photo=hits[i];p._phid=p.photoId;} else need.push(p); });
+    if(hits.some(Boolean))redrawSoon();
+    /* 2. le reste depuis le serveur, par petits paquets, trois à la fois */
+    const parts=[]; for(let i=0;i<need.length;i+=4)parts.push(need.slice(i,i+4));
+    const worker=async()=>{ while(parts.length&&run===photosRun){ const part=parts.shift();
+      try{ const res=await api("getPhotos",part.map(p=>p.photoId));
+        part.forEach(p=>{ const u=res[p.photoId]; if(u){ p.photo=u; p._phid=p.photoId; photoPut(p.photoId,u); if(u.length>200000)optimizeQueue.push(p); } });
+        redrawSoon(); runOptimize();
+      }catch(e){ parts.length=0; } } };
+    await Promise.all([worker(),worker(),worker()]);
   }
   /* photos trop lourdes (anciens fichiers) : réduites à 480 px et renvoyées une fois, par un organisateur */
   const optimizeQueue=[]; let optimizing=false;
@@ -2726,14 +2740,27 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         const small=hasAlpha(cv)?cv.toDataURL("image/png"):cv.toDataURL("image/jpeg",.82);
         if(small.length>=p.photo.length)continue;
         const r=await api("savePlayer",ADMIN.code,{id:p.id,name:p.name,stats:p.stats,fond:p.fond,zoom:p.zoom,ox:p.ox,oy:p.oy},small);
-        try{localStorage.removeItem("ph:"+p.photoId)}catch(e){}
-        p.photo=small; p.photoId=r.photoId; try{localStorage.setItem("ph:"+r.photoId,small)}catch(e){}
+        
+        p.photo=small; p.photoId=r.photoId; photoPut(r.photoId,small);
       }catch(e){}
     }
     optimizing=false;
   }
   let rvTimer=null;
-  function refreshView(){ clearTimeout(rvTimer); rvTimer=setTimeout(()=>{ renderHome(); const r=location.hash.slice(1); if(r&&r!=="carte")show(r); else if(r==="carte")render(); },120); }
+  /* redessine l'écran affiché, sans le rouvrir ni remonter en haut de page */
+  function redrawCurrent(){
+    if(!started)return;
+    const r=location.hash.slice(1);
+    renderHome();
+    if(r==="stats")renderStatsGrid();
+    else if(r.startsWith("p-")){ if(byId(r.slice(2)))renderPlayer(r.slice(2)); }
+    else if(r==="historique")renderHistory();
+    else if(r==="match-detail"||r.startsWith("m-")){ const rec=r==="match-detail"?matches[0]:matches.find(m=>m.id===r.slice(2)); if(rec)renderDetail(rec); }
+    else if(r==="carte")render();
+    else if(r==="match")scheduleMatch();
+  }
+  function redrawSoon(){ clearTimeout(rvTimer); rvTimer=setTimeout(redrawCurrent,150); }
+  const refreshView=redrawSoon;
 
   /* ================= « C'EST MOI » ================= */
   const ME_KEY="fut5v5:me", SEEN_KEY="fut5v5:me-vu";
@@ -2833,7 +2860,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         row.querySelector("small").textContent="Envoyée le "+new Date(x.date).toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
         const act=async ok=>{ row.querySelectorAll("button").forEach(b=>b.disabled=true);
           try{ const r=await api("reviewProposal",ADMIN.code,x.id,ok);
-            if(ok){ const p=byId(r.playerId); if(p){ p.photoId=r.photoId; p.zoom=1; p.ox=0; p.oy=0; if(x.photo){ p.photo=x.photo; try{localStorage.setItem("ph:"+r.photoId,x.photo)}catch(e){} } } }
+            if(ok){ const p=byId(r.playerId); if(p){ p.photoId=r.photoId; p.zoom=1; p.ox=0; p.oy=0; if(x.photo){ p.photo=x.photo; photoPut(r.photoId,x.photo); } } }
             PENDING_IDS=PENDING_IDS.filter(i=>i!==x.playerId);
             row.remove(); PENDING=Math.max(0,PENDING-1); renderPropBar(); refreshView();
             toast(ok?"Photo validée. Ajuste le cadrage si besoin dans Créer une carte FUT.":"Photo refusée.");
@@ -2847,33 +2874,64 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   });
 
   /* --- chargement initial --- */
-  async function boot(){
-    try{
-      let data;
-      try{ data=await api("getData"); try{localStorage.setItem("fut5v5:data",JSON.stringify(data))}catch(e){} }
-      catch(err){ const c=(()=>{try{return JSON.parse(localStorage.getItem("fut5v5:data")||"null")}catch(e){return null}})(); if(!c)throw err; data=c; setTimeout(()=>toast("Hors connexion : dernières données enregistrées sur ce téléphone."),800); }
-      roster.splice(0,roster.length,...data.players.map(p=>Object.assign(p,{photo:null})));
-      matches.splice(0,matches.length,...data.matches.map(m=>Object.assign(m,{date:new Date(m.date)})));
-      PENDING=data.pending||0; PENDING_IDS=data.pendingPlayers||[];
+  let started=false, lastLoad=0;
+  const toLocalInput=d=>{const x=new Date(d);return x.getFullYear()+"-"+pad2(x.getMonth()+1)+"-"+pad2(x.getDate())+"T"+pad2(x.getHours())+":"+pad2(x.getMinutes())};
+  function applyData(data){
+    const old=new Map(roster.map(p=>[p.id,p]));
+    roster.splice(0,roster.length,...data.players.map(p=>{ const o=old.get(p.id);
+      return Object.assign(p,(o&&o.photo&&o._phid===p.photoId)?{photo:o.photo,_phid:o._phid}:{photo:null}); }));
+    matches.splice(0,matches.length,...data.matches.map(m=>Object.assign(m,{date:new Date(m.date)})));
+    PENDING=data.pending||0; PENDING_IDS=data.pendingPlayers||[];
+    /* le match prévu n'est pas remplacé pendant qu'on l'organise ou qu'on saisit le score */
+    const busy=started&&(location.hash==="#match"||!$("#live").hidden||M.pending||syncBusy);
+    if(!busy){
       let local=null; try{local=JSON.parse(localStorage.getItem(SAVE_KEY)||"null")}catch(e){}
       const src=(local&&local.pending&&(!data.planned||data.planned.id===local.id))?local:(data.planned?{
-        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,
-        date:(d=>{const x=new Date(d);return x.getFullYear()+"-"+pad2(x.getMonth()+1)+"-"+pad2(x.getDate())+"T"+pad2(x.getHours())+":"+pad2(x.getMinutes())})(data.planned.date)}:null);
+        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date)}:null);
       if(src){
         M.id=src.id; M.present=new Set((src.present||[]).filter(id=>roster.some(p=>p.id===id)));
         Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending});
-      } else { try{localStorage.removeItem(SAVE_KEY)}catch(e){} }
-      if(ADMIN.code){ try{ const r=await api("checkAdmin",ADMIN.code); if(r.ok)ADMIN.name=r.name; else {ADMIN.code="";try{localStorage.removeItem("fut5v5:admin")}catch(e){}} }catch(e){} }
-      applyRole();
-      $("#splash").hidden=true;
-      syncForm(); renderHome(); renderMatch();
-      show(location.hash.slice(1));
-      if(M.pending)syncPlanned();
-      loadPhotos();
-    }catch(e){
-      $("#splashMsg").textContent="Chargement impossible : "+errMsg(e)+". Vérifie ta connexion et recharge la page.";
+      } else {
+        Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,date:defaultDate(),pending:false});
+        try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+      }
     }
   }
+  function startUI(){
+    applyRole(); $("#splash").hidden=true;
+    quiet=true; syncForm(); renderHome(); renderMatch(); quiet=false;
+    started=true; show(location.hash.slice(1));
+  }
+  async function refreshData(){
+    const data=await api("getData"); lastLoad=Date.now();
+    try{localStorage.setItem("fut5v5:data",JSON.stringify(data))}catch(e){}
+    quiet=true; applyData(data); if(started&&location.hash!=="#match")renderMatch(); quiet=false;
+    return data;
+  }
+  async function boot(){
+    try{ ADMIN.name=ADMIN.code?(localStorage.getItem("fut5v5:admin-name")||""):""; }catch(e){}
+    let cached=null; try{cached=JSON.parse(localStorage.getItem("fut5v5:data")||"null")}catch(e){}
+    if(cached&&cached.players){ applyData(cached); startUI(); loadPhotos(); }
+    try{
+      await refreshData();
+      if(!started)startUI(); else redrawCurrent();
+      if(M.pending)syncPlanned();
+    }catch(e){
+      if(!started){ $("#splashMsg").textContent="Chargement impossible : "+errMsg(e)+". Vérifie ta connexion et recharge la page."; return; }
+      toast("Hors connexion : dernières données enregistrées sur ce téléphone.");
+    }
+    loadPhotos();
+    if(ADMIN.code){ api("checkAdmin",ADMIN.code).then(r=>{
+      if(r.ok){ ADMIN.name=r.name; try{localStorage.setItem("fut5v5:admin-name",r.name)}catch(e){} }
+      else { ADMIN.code=""; ADMIN.name=""; try{localStorage.removeItem("fut5v5:admin");localStorage.removeItem("fut5v5:admin-name")}catch(e){} }
+      applyRole(); redrawCurrent();
+    }).catch(()=>{}); }
+  }
+  /* au retour dans l'application (après plus d'une minute), on recharge les données en silence */
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState!=="visible"||!started||Date.now()-lastLoad<60000)return;
+    refreshData().then(()=>{ redrawCurrent(); loadPhotos(); }).catch(()=>{});
+  });
 
   /* --- installation : Android (invite du navigateur) et iPhone (explication) --- */
   let installEvt=null;
