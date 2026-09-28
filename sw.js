@@ -1,7 +1,7 @@
 /* FUT 5V5 : service worker (installation, ouverture hors connexion, mises à jour) */
-const VERSION = 'fut5v5-2026-09-28-11';
+const VERSION = 'fut5v5-2026-09-28-12';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
+  './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/badge-96.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -38,7 +38,7 @@ self.addEventListener('push', e => {
   const m = d.data || d.notification || d;
   const title = m.title || 'FUT 5V5';
   e.waitUntil(self.registration.showNotification(title, {
-    body: m.body || '', icon: 'icons/icon-192.png', badge: 'icons/icon-192.png',
+    body: m.body || '', icon: 'icons/icon-192.png', badge: 'icons/badge-96.png',
     tag: m.tag || undefined, renotify: !!m.tag, data: { url: m.url || '#' }
   }));
 });
