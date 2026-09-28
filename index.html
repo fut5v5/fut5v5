@@ -577,6 +577,28 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .pchoice button{display:flex;align-items:center;gap:12px;border:1px solid var(--tile-line);background:var(--bg);color:var(--ink);border-radius:14px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;text-align:left}
 .pchoice button svg{width:24px;height:24px;flex:none}
 
+/* ---------- réglages et notifications ---------- */
+.gearbtn svg{width:20px;height:20px}
+.hrow2{display:flex;gap:6px}
+.gearbtn{padding:8px 10px!important}
+.notify-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:1.5px solid var(--gold);background:transparent;color:var(--ink);border-radius:14px;padding:13px;font-weight:700;font-size:1rem;cursor:pointer;margin:6px 0 4px}
+.notify-btn.on{background:var(--gold);color:#0c1a3d}
+.notify-btn:disabled{opacity:.5;cursor:default}
+.rg-status{color:var(--muted);font-size:.9rem;margin:0 0 6px}
+.rg-group{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.05rem;color:var(--gold-deep);margin:16px 0 4px}
+.rg-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--tile-line)}
+.rg-row:last-child{border-bottom:0}
+.rg-row b{display:block;font-size:.95rem}
+.rg-row small{display:block;color:var(--muted);font-size:.8rem;margin-top:2px;line-height:1.3}
+.sw{position:relative;display:inline-block;width:48px;height:28px;flex:none}
+.sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1}
+.sw i{position:absolute;inset:0;border-radius:999px;background:var(--tile-line);transition:background .2s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw input:checked+i{background:#1ed760}
+.sw input:checked+i::after{transform:translateX(20px)}
+.sw input:disabled+i{opacity:.4}
+.sw input:focus-visible+i{outline:2px solid var(--gold);outline-offset:2px}
+
 /* ---------- mode clair ---------- */
 :root[data-theme="light"]{
   --bg:#eef2fa; --ink:#0c1a3d; --muted:#5a6a90; --tile:#ffffff; --tile-line:#d6ddee;
@@ -606,12 +628,19 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <button type="button" class="themebtn" id="adminBtn" aria-label="Mode organisateur">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2" fill="#e9c76a"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7" fill="none" stroke="#e9c76a" stroke-width="2.2"/></svg>
         <span id="adminLabel">Organisateur</span></button>
+      <div class="hrow2">
       <button type="button" class="themebtn" id="themeBtn" aria-label="Passer en mode clair">
         <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="#e9c76a"/></svg>
         <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="#f5b400"/><g stroke="#f5b400" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg>
         <span id="themeLabel">Mode clair</span></button>
+      <button type="button" class="themebtn gearbtn" data-go="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
       </div>
     </header>
+    <div class="installbar pushbar" id="pushBar" hidden>
+      <p>🔔 Active les notifications pour recevoir ta convocation, le compte rendu et tes stats.</p>
+      <div class="ib-actions"><button type="button" class="ib-go" id="pushGo">Activer</button><button type="button" class="ib-no" id="pushNo">Plus tard</button></div>
+    </div>
     <div class="installbar" id="installBar" hidden>
       <p id="installText">Installe FUT 5V5 sur ton téléphone pour l'ouvrir comme une application.</p>
       <div class="ib-actions"><button type="button" class="ib-go" id="installGo">Installer</button><button type="button" class="ib-no" id="installNo" aria-label="Masquer">Plus tard</button></div>
@@ -801,6 +830,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>
         Envoyer la compo sur WhatsApp</button>
       <p class="share-msg" id="compoMsg"></p>
+      <button type="button" class="notify-btn admin-only" id="notifyPlayers"><span aria-hidden="true">🔔</span><span id="notifyLabel">Prévenir les joueurs</span></button>
+      <p class="share-msg" id="notifyMsg"></p>
       <p class="btitle"><span class="dot rouge"></span>Remplaçants COULEURS</p>
       <div class="bench" data-drop="bench" data-side="rouge" id="benchR"></div>
       <div class="pitch" id="pitch"></div>
@@ -851,6 +882,25 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       Renvoyer le compte rendu</button>
     <p class="share-msg" id="dShareMsg"></p>
     <button type="button" class="danger-btn admin-only" id="dDelete">Supprimer ce match</button>
+  </section>
+
+  <!-- ===== réglages ===== -->
+  <section id="reglages" hidden>
+    <div class="bar">
+      <button type="button" class="back" data-go="home" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <h2>Réglages</h2>
+    </div>
+    <div class="pcardbox">
+      <h3>Notifications</h3>
+      <p class="rg-status" id="pushStatus"></p>
+      <button type="button" class="notify-btn" id="pushToggle"></button>
+      <div id="pushPrefs"></div>
+    </div>
+    <div class="pcardbox">
+      <h3>Affichage</h3>
+      <div class="rg-row"><span>Mode sombre</span><label class="sw"><input type="checkbox" id="rgDark"><i></i></label></div>
+    </div>
   </section>
 
   <!-- ===== statistiques : toutes les cartes ===== -->
@@ -1017,6 +1067,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     det.hidden=!detRec;
     const statsSec=document.getElementById("stats"), playerSec=document.getElementById("player");
     statsSec.hidden=route!=="stats"; playerSec.hidden=!route.startsWith("p-");
+    const rgSec=document.getElementById("reglages"); rgSec.hidden=route!=="reglages";
+    if(route==="reglages"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); $("#rgDark").checked=document.documentElement.dataset.theme!=="light"; renderReglages(); return; }
     if(route==="stats"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderStatsGrid(); return; }
     if(route.startsWith("p-")){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!renderPlayer(route.slice(2))){playerSec.hidden=true;home.hidden=false;} return; }
     if(route==="historique"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderHistory(); return; }
@@ -1529,7 +1581,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         matchUndo.record(); liveUndo.clear();
         const oldId=M.id; clearTimeout(syncTimer);
         if(oldId)api("setMatchStatus",ADMIN.code,oldId,"supprimer").catch(e=>toast("Suppression non enregistrée : "+errMsg(e)));
-        Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()});
+        Object.assign(M,{id:null,convokedAt:"",present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()});
         closeSheet(); renderMatch(); window.scrollTo(0,0);
         toast("Match supprimé. Touche Annuler pour le remettre.");
       });
@@ -1662,6 +1714,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
   function renderMatch(){
     $("#matchDate").value=M.date;
+    if(typeof renderNotifyBtn==="function")renderNotifyBtn();
     $("#deleteMatch").hidden=!(M.made||M.present.size);
     renderPresence();
     $("#teamsZone").hidden=!M.made; $("#liveBar").hidden=!M.made;
@@ -2084,7 +2137,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#reportDone").addEventListener("click",()=>{
     matchUndo.clear(); liveUndo.clear();
     $("#report").hidden=true; document.body.style.overflow="";
-    Object.assign(M,{id:null,pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()});
+    Object.assign(M,{id:null,convokedAt:"",pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate()});
     try{localStorage.removeItem(SAVE_KEY)}catch(e){}
     renderMatch(); location.hash="";
   });
@@ -2113,6 +2166,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
   /* ================= ACCUEIL : dernier match ================= */
   function renderHome(){
+    if(typeof renderPushBar==="function")renderPushBar();
     renderPropBar();
     renderMe(); renderNext();
     const m=matches[0]; $("#lastBtn").hidden=!m; if(!m)return;
@@ -2722,7 +2776,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(isAdmin()){
       openSheet("Mode organisateur","Connecté en tant que "+ADMIN.name+".",body=>{
         const b=document.createElement("button"); b.type="button"; b.className="danger-fill"; b.textContent="Se déconnecter";
-        b.addEventListener("click",()=>{ADMIN.code="";ADMIN.name="";try{localStorage.removeItem("fut5v5:admin");localStorage.removeItem("fut5v5:admin-name")}catch(e){} closeSheet(); applyRole(); show(location.hash.slice(1)); toast("Mode consultation.");});
+        b.addEventListener("click",()=>{ADMIN.code="";ADMIN.name="";try{localStorage.removeItem("fut5v5:admin");localStorage.removeItem("fut5v5:admin-name")}catch(e){} closeSheet(); applyRole(); show(location.hash.slice(1)); toast("Mode consultation."); syncPush();});
         body.appendChild(b);
       });
       return;
@@ -2732,7 +2786,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const b=document.createElement("button"); b.type="button"; b.className="danger-fill okfill"; b.textContent="Valider";
       const go=async()=>{ const code=i.value.trim(); if(!code)return; b.disabled=true; b.textContent="Vérification…";
         try{ const r=await api("checkAdmin",code);
-          if(r.ok){ADMIN.code=code;ADMIN.name=r.name;try{localStorage.setItem("fut5v5:admin",code);localStorage.setItem("fut5v5:admin-name",r.name)}catch(e){} closeSheet(); applyRole(); renderHome(); toast("Bonjour "+r.name+", mode organisateur activé.");}
+          if(r.ok){ADMIN.code=code;ADMIN.name=r.name;try{localStorage.setItem("fut5v5:admin",code);localStorage.setItem("fut5v5:admin-name",r.name)}catch(e){} closeSheet(); applyRole(); renderHome(); toast("Bonjour "+r.name+", mode organisateur activé."); syncPush();}
           else {b.disabled=false;b.textContent="Valider";i.value="";toast("Code incorrect.");}
         }catch(e){b.disabled=false;b.textContent="Valider";toast("Vérification impossible : "+errMsg(e));} };
       b.addEventListener("click",go); i.addEventListener("keydown",e=>{if(e.key==="Enter")go()});
@@ -2779,7 +2833,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function persistLocal(){
     try{
       if(!M.made&&!M.present.size){localStorage.removeItem(SAVE_KEY);return}
-      localStorage.setItem(SAVE_KEY,JSON.stringify({id:M.id,pending:!!M.pending,present:[...M.present],team:M.team,layout:M.layout,made:M.made,goals:M.goals,start:M.start,date:M.date}));
+      localStorage.setItem(SAVE_KEY,JSON.stringify({id:M.id,pending:!!M.pending,present:[...M.present],team:M.team,layout:M.layout,made:M.made,goals:M.goals,start:M.start,date:M.date,convokedAt:M.convokedAt||""}));
     }catch(e){}
   }
   window.addEventListener("online",()=>{ if(M.pending)syncPlanned(); });
@@ -2889,10 +2943,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{localStorage.setItem(ME_KEY,p.id)}catch(e){}
     saveSeen(p); renderPlayer(p.id); renderHome();
     toast("C'est noté : ta carte apparaît maintenant sur l'accueil.");
+    api("hello",p.id).catch(()=>{}); syncPush();
   });
   $("#pNotMe").addEventListener("click",()=>{
     try{localStorage.removeItem(ME_KEY);localStorage.removeItem(SEEN_KEY)}catch(e){}
-    renderPlayer(PV.id); renderHome(); toast("Carte retirée de l'accueil.");
+    renderPlayer(PV.id); renderHome(); toast("Carte retirée de l'accueil."); syncPush();
   });
 
   /* ================= PHOTOS PROPOSÉES PAR LES JOUEURS ================= */
@@ -2973,10 +3028,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(!busy){
       let local=null; try{local=JSON.parse(localStorage.getItem(SAVE_KEY)||"null")}catch(e){}
       const src=(local&&local.pending&&(!data.planned||data.planned.id===local.id))?local:(data.planned?{
-        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date)}:null);
+        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date),convokedAt:data.planned.convokedAt||""}:null);
       if(src){
         M.id=src.id; M.present=new Set((src.present||[]).filter(id=>roster.some(p=>p.id===id)));
-        Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending});
+        Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending,convokedAt:src.convokedAt||M.convokedAt||""});
       } else {
         Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,date:defaultDate(),pending:false});
         try{localStorage.removeItem(SAVE_KEY)}catch(e){}
@@ -3006,7 +3061,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       if(!started){ $("#splashMsg").textContent="Chargement impossible : "+errMsg(e)+". Vérifie ta connexion et recharge la page."; return; }
       toast("Hors connexion : dernières données enregistrées sur ce téléphone.");
     }
-    loadPhotos();
+    loadPhotos(); refreshPushToken();
     if(ADMIN.code){ api("checkAdmin",ADMIN.code).then(r=>{
       if(r.ok){ ADMIN.name=r.name; try{localStorage.setItem("fut5v5:admin-name",r.name)}catch(e){} }
       else { ADMIN.code=""; ADMIN.name=""; try{localStorage.removeItem("fut5v5:admin");localStorage.removeItem("fut5v5:admin-name")}catch(e){} }
@@ -3017,6 +3072,124 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState!=="visible"||!started||Date.now()-lastLoad<60000)return;
     refreshData().then(()=>{ redrawCurrent(); loadPhotos(); }).catch(()=>{});
+  });
+
+  /* ================= NOTIFICATIONS PUSH ================= */
+  const NOTIF_LIST=[
+    ["convoc","Convocation","Quand tu es sur la feuille de match.",true,false],
+    ["rappel_veille","Rappel la veille","La veille du match à 18h.",true,false],
+    ["rappel_2h","Rappel 2 heures avant","Juste avant le coup d'envoi.",true,false],
+    ["equipe","Changement d'équipe","Si tu changes de maillot après la convocation.",true,false],
+    ["annule","Match annulé","Si le match prévu est supprimé.",true,false],
+    ["compte_rendu","Compte rendu","Le score et le MVP de chaque match.",true,false],
+    ["mon_match","Mon match","Tes buts, passes et le résultat, rien que pour toi.",true,false],
+    ["mvp","Élu MVP","Quand tu es l'homme du match.",true,false],
+    ["notes","Mes notes","Quand un organisateur modifie ta carte.",true,false],
+    ["photo_reponse","Ma photo","Réponse à la photo que tu as proposée.",true,false],
+    ["paliers","Paliers","10e but de la saison, 50e match, note qui franchit un cap.",false,false],
+    ["live","Score en direct","Chaque but quand tu n'es pas sur le terrain.",false,false],
+    ["a_photo","Photo proposée","Un joueur propose une photo à valider.",true,true],
+    ["a_cestmoi","Nouveau joueur identifié","Un joueur touche « C'est moi ».",true,true],
+    ["a_convoc","Joueurs pas prévenus","La veille à 18h, si personne n'a été convoqué.",true,true],
+    ["a_mvp","MVP à désigner","Le lendemain midi d'un match sans MVP.",true,true]];
+  const PUSH_CFG=window.FUT5V5_CONFIG||{};
+  const FB=PUSH_CFG.firebase||{}, VAPID=PUSH_CFG.vapidKey||"";
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const pushConfigured=()=>!!(FB.apiKey&&FB.projectId&&FB.messagingSenderId&&FB.appId&&VAPID);
+  const pushSupported=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+  const pushToken=()=>{try{return localStorage.getItem("fut5v5:push-token")||""}catch(e){return ""}};
+  function pushPrefs(){ let p={}; try{p=JSON.parse(localStorage.getItem("fut5v5:push-prefs")||"{}")}catch(e){}
+    NOTIF_LIST.forEach(([k,,,def])=>{ if(typeof p[k]!=="boolean")p[k]=def; }); return p; }
+  let fbReady=null;
+  function loadFirebase(){
+    if(fbReady)return fbReady;
+    const add=src=>new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("Firebase ne se charge pas : vérifie la connexion"));document.head.appendChild(s);});
+    fbReady=add("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js").then(()=>add("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"))
+      .then(()=>{ if(!firebase.apps.length)firebase.initializeApp(FB); return firebase.messaging(); });
+    fbReady.catch(()=>{fbReady=null});
+    return fbReady;
+  }
+  async function getPushToken(){
+    const messaging=await loadFirebase(), reg=await navigator.serviceWorker.ready;
+    return messaging.getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});
+  }
+  async function syncPush(){
+    const t=pushToken(); if(!t)return;
+    try{ await api("registerPush",t,{playerId:myId()||"",adminCode:ADMIN.code||"",prefs:pushPrefs(),device:(isIOS?"iPhone":/android/i.test(navigator.userAgent)?"Android":"Ordinateur")}); }catch(e){}
+  }
+  async function enablePush(){
+    if(!pushConfigured()){ toast("Les notifications ne sont pas encore configurées par l'organisateur."); return false; }
+    if(!pushSupported()){ toast(isIOS?"Installe d'abord l'application sur l'écran d'accueil (Safari > Partager), puis active les notifications depuis l'application.":"Ce navigateur ne gère pas les notifications."); return false; }
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){ toast("Notifications refusées. Tu peux les autoriser dans les réglages du téléphone, rubrique notifications de l'application."); return false; }
+    try{ const t=await getPushToken(); if(!t)throw new Error("aucun jeton reçu");
+      try{localStorage.setItem("fut5v5:push-token",t);localStorage.setItem("fut5v5:push-date",String(Date.now()))}catch(e){}
+      await api("registerPush",t,{playerId:myId()||"",adminCode:ADMIN.code||"",prefs:pushPrefs(),device:(isIOS?"iPhone":/android/i.test(navigator.userAgent)?"Android":"Ordinateur")});
+      toast("🔔 Notifications activées. Le vestiaire peut te joindre."); return true;
+    }catch(e){ toast("Activation impossible : "+errMsg(e)); return false; }
+  }
+  async function disablePush(){
+    const t=pushToken();
+    try{ if(t)await api("unregisterPush",t); }catch(e){}
+    try{ const m=await loadFirebase(); await m.deleteToken(); }catch(e){}
+    try{localStorage.removeItem("fut5v5:push-token")}catch(e){}
+    toast("Notifications désactivées.");
+  }
+  function renderReglages(){
+    const on=!!pushToken()&&("Notification" in window)&&Notification.permission==="granted";
+    const st=$("#pushStatus"), bt=$("#pushToggle");
+    if(!pushConfigured()){ st.textContent="Les notifications ne sont pas encore configurées pour cette application."; bt.hidden=true; }
+    else if(isIOS&&!standalone()){ st.textContent="Sur iPhone, installe d'abord l'application sur l'écran d'accueil (Safari > Partager > Sur l'écran d'accueil), puis reviens ici depuis l'application."; bt.hidden=true; }
+    else if(!pushSupported()){ st.textContent="Ce navigateur ne gère pas les notifications."; bt.hidden=true; }
+    else if("Notification" in window&&Notification.permission==="denied"){ st.textContent="Les notifications sont bloquées pour cette application : autorise-les dans les réglages du téléphone, puis reviens ici."; bt.hidden=true; }
+    else { bt.hidden=false; st.textContent=on?(myId()?"Activées sur ce téléphone, pour "+byId(myId()).name+".":"Activées sur ce téléphone. Touche « C'est moi » sur ta fiche pour recevoir aussi tes notifications personnelles."):"Désactivées sur ce téléphone.";
+      bt.textContent=on?"Désactiver les notifications":"🔔 Activer les notifications"; bt.classList.toggle("on",!on); }
+    const prefs=pushPrefs(), box=$("#pushPrefs"); box.innerHTML="";
+    if(!on)return;
+    const group=(title,admin)=>{ const h=document.createElement("p"); h.className="rg-group"; h.textContent=title; box.appendChild(h);
+      NOTIF_LIST.filter(x=>x[4]===admin).forEach(([k,label,desc])=>{
+        const row=document.createElement("div"); row.className="rg-row";
+        row.innerHTML='<span><b></b><small></small></span><label class="sw"><input type="checkbox"><i></i></label>';
+        row.querySelector("b").textContent=label; row.querySelector("small").textContent=desc;
+        const cb=row.querySelector("input"); cb.checked=!!prefs[k]; cb.setAttribute("aria-label",label);
+        cb.addEventListener("change",()=>{ const p=pushPrefs(); p[k]=cb.checked; try{localStorage.setItem("fut5v5:push-prefs",JSON.stringify(p))}catch(e){} syncPush(); });
+        box.appendChild(row); }); };
+    group("Pour moi",false); if(isAdmin())group("Organisateur",true);
+  }
+  $("#pushToggle").addEventListener("click",async()=>{ const b=$("#pushToggle"); b.disabled=true;
+    if(pushToken()&&Notification.permission==="granted")await disablePush(); else await enablePush();
+    b.disabled=false; renderReglages(); renderPushBar(); });
+  $("#rgDark").addEventListener("change",e=>{ const wantDark=e.target.checked, isLight=document.documentElement.dataset.theme==="light"; if(wantDark===isLight)$("#themeBtn").click(); });
+  function renderPushBar(){
+    let no=false; try{no=localStorage.getItem("fut5v5:push-no")==="1"}catch(e){}
+    $("#pushBar").hidden=!(pushConfigured()&&pushSupported()&&(!isIOS||standalone())&&"Notification" in window&&Notification.permission==="default"&&!pushToken()&&!no);
+  }
+  $("#pushGo").addEventListener("click",async()=>{ await enablePush(); renderPushBar(); });
+  $("#pushNo").addEventListener("click",()=>{ try{localStorage.setItem("fut5v5:push-no","1")}catch(e){} renderPushBar(); });
+  /* jeton renouvelé en silence une fois par semaine */
+  async function refreshPushToken(){
+    if(!pushConfigured()||!pushSupported()||!pushToken()||Notification.permission!=="granted")return;
+    let last=0; try{last=+localStorage.getItem("fut5v5:push-date")||0}catch(e){}
+    if(Date.now()-last<7*86400000)return;
+    try{ const t=await getPushToken(); if(t){ try{localStorage.setItem("fut5v5:push-token",t);localStorage.setItem("fut5v5:push-date",String(Date.now()))}catch(e){} syncPush(); } }catch(e){}
+  }
+  /* organisateur : convoquer les joueurs */
+  function renderNotifyBtn(){
+    const b=$("#notifyPlayers"); if(!b)return;
+    b.hidden=!M.made;
+    $("#notifyLabel").textContent=M.convokedAt?"Prévenir à nouveau les joueurs":"Prévenir les joueurs";
+    $("#notifyMsg").textContent=M.convokedAt?"Joueurs prévenus le "+new Date(M.convokedAt).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})+" à "+(d=>d.getHours()+"h"+String(d.getMinutes()).padStart(2,"0"))(new Date(M.convokedAt))+".":"";
+  }
+  $("#notifyPlayers").addEventListener("click",async()=>{
+    const b=$("#notifyPlayers"); b.disabled=true; $("#notifyLabel").textContent="Envoi…";
+    try{
+      clearTimeout(syncTimer); await api("savePlanned",ADMIN.code,plannedPayload());
+      const r=await api("sendConvocations",ADMIN.code,M.id);
+      M.convokedAt=r.date; persistLocal();
+      toast(!r.configured?"Convocation enregistrée. Les notifications ne sont pas encore configurées (Firebase).":
+        r.sent+" joueur"+(r.sent>1?"s":"")+" prévenu"+(r.sent>1?"s":"")+" sur "+r.total+"."+(r.sent<r.total?" Les autres n'ont pas activé les notifications : pense au WhatsApp.":""));
+    }catch(e){ toast("Envoi impossible : "+errMsg(e)); }
+    b.disabled=false; renderNotifyBtn();
   });
 
   /* --- installation : Android (invite du navigateur) et iPhone (explication) --- */
