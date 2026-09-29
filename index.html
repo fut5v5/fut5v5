@@ -1808,7 +1808,24 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(onWatch()){ M.goals=(m.goals||[]).map(g=>Object.assign({},g)); if(m.start)M.start=m.start; liveUndo.clear(); }
     persistLocal(); renderNext();
     if(!$("#live").hidden){ renderLive(true); tick(); }
-    if(m.statut==="termine"){ closeLive(); toast("Ce match a déjà été terminé."); refreshData().then(redrawCurrent).catch(()=>{}); }
+    if(m.statut==="termine")finishedOnWatch(m.id);
+  }
+  /* match terminé sur la montre : on propose le MVP puis le compte rendu, comme une fin de match sur le téléphone */
+  let finishedShown="";
+  function finishedOnWatch(id){
+    const wasLive=!$("#live").hidden;
+    closeLive(); M.liveMode="";
+    if(finishedShown===id)return; finishedShown=id;
+    refreshData().then(()=>{
+      redrawCurrent();
+      const rec=matches.find(x=>x.id===id);
+      if(!rec||!isAdmin()||!wasLive){ if(rec)toast("Match terminé sur la montre : BLANC "+sc(rec,"blanc")+" – "+sc(rec,"rouge")+" COULEURS."); return; }
+      const show=()=>{ renderHome(); refreshReport(rec).then(()=>{ uploadReport(rec); $("#shareMsg").textContent=""; $("#report").hidden=false; document.body.style.overflow="hidden"; }); };
+      if(rec.mvp){ show(); return; }
+      openMvpSheet(rec,"Match terminé sur la montre : "+sc(rec,"blanc")+" – "+sc(rec,"rouge"),pid=>{
+        rec.mvp=pid; api("setMvp",ADMIN.code,rec.id,pid).catch(e=>toast("MVP non enregistré : "+errMsg(e))); show();
+      },{later:show});
+    }).catch(()=>toast("Match terminé sur la montre."));
   }
   async function pollWatch(){
     if(!isAdmin()||!M.id||document.visibilityState!=="visible")return;
