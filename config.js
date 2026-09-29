@@ -3,14 +3,14 @@
    2. firebase et vapidKey : pour les notifications (voir le guide « Notifications »).
       Laisser vide tant que Firebase n'est pas configuré : l'application marche sans notifications. */
 window.FUT5V5_CONFIG = {
-  apiUrl: "https://script.google.com/macros/s/AKfycbxCISnwKmq6TCxWMgahOiH7EbxT7KoR9yvMjfNIswbZyvGeSunlb_ltTlm9_TVYlB3Eyw/exec",
+  apiUrl: "https://script.google.com/macros/s/AKfycbwTgGsvy94iJuZejy8WHVWpA32IFZSKicAktu2t2atLNOSophiRrP-ZMdfBq1XVUZbcQw/exec",
   firebase: {
-    apiKey: "AIzaSyAWPctpuNQDLOgryZ5Zrdsqf0YdJRfw91o",
-    authDomain: "fut5v5-fd45a.firebaseapp.com",
-    projectId: "fut5v5-fd45a",
-    storageBucket: "fut5v5-fd45a.firebasestorage.app",
-    messagingSenderId: "206760353100",
-    appId: "1:206760353100:web:0c17d6abe5428624c083e9"
+  apiKey: "AIzaSyBwg52lb5lFvWPBXzpxuBF0qYUu_7DkKWg",
+  authDomain: "fut5v5-87481.firebaseapp.com",
+  projectId: "fut5v5-87481",
+  storageBucket: "fut5v5-87481.firebasestorage.app",
+  messagingSenderId: "923194103505",
+  appId: "1:923194103505:web:58c39231698d415adc17f0"
   },
-  vapidKey: "BNXfT2SI6p0nVUQ2wPFMfOX6jgdOgdFQ6peqBfRps0bMQ1eCdjTJFwpmjheQ8iNBpz9vd9AX5iU74zo7_2dTCtU"
+  vapidKey: "BGgw4QNjde-gLO_ood12vNWdQvlg0p06gaCy3XZ-V53B6XGXgYD0ZbAk9o8kL4vSlzdJzODKyI-97B-SaAgaCPM"
 };
