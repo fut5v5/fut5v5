@@ -623,6 +623,35 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .me-stats .ic{width:15px;height:15px}
 .me-link{color:var(--gold-deep);font-weight:700;font-size:.88rem;margin-top:2px}
 .me-news{border-bottom:1px solid var(--tile-line);padding:0 0 12px;margin:0 0 12px}
+/* ---------- bloc « Élu MVP » (après la révélation, sur l'accueil du MVP) : même univers que l'animation, ton MPG ---------- */
+.fete{position:relative;overflow:hidden;border-radius:20px;margin:0 0 14px;padding:12px 12px 10px;color:#fff;
+  background:linear-gradient(135deg,rgba(233,199,106,.18) 0 18%,transparent 18% 100%),radial-gradient(90% 70% at 20% 30%,#22367a 0%,#0c1a3d 60%,#060d24 100%);
+  border:1px solid rgba(233,199,106,.7);box-shadow:0 12px 30px rgba(6,13,36,.45)}
+.fete::after{content:"";position:absolute;left:-40%;top:-60%;width:60%;height:220%;transform:rotate(25deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);pointer-events:none}
+.fete-lab{display:flex;justify-content:space-between;align-items:center;gap:8px;font:800 .74rem 'Barlow',sans-serif;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.fete-lab span:last-child{color:#9fb0d6;letter-spacing:.04em;text-transform:none;font-weight:600}
+.fete-row{position:relative;display:flex;gap:12px;align-items:center;margin-top:8px}
+.fete-cw{position:relative;flex:none}
+.fete-cw canvas{width:96px;height:auto;display:block;transform:rotate(-5deg);filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(233,199,106,.45))}
+.fete-note{position:absolute;right:-10px;top:-6px;width:42px;height:46px;display:grid;place-items:center;color:#0c1a3d;font:800 italic 1.1rem 'Barlow Condensed',sans-serif;
+  background:linear-gradient(160deg,#fff1b8,#e9c76a 60%,#c99a2e);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);transform:rotate(8deg)}
+.fete-txt{min-width:0}
+.fete h3{margin:0 0 6px;font:800 italic 1.7rem/.95 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.005em;text-transform:uppercase;color:#fff}
+.fete h3 em{font-style:inherit;color:var(--gold)}
+.fete q{display:block;font:italic 500 .84rem/1.35 'Barlow',sans-serif;color:#c9d4f2;quotes:none}
+.fete q small{display:block;font-style:normal;font-weight:700;font-size:.7rem;color:#8193bf;margin-top:3px}
+.fete-tiles{position:relative;display:flex;gap:6px;margin-top:10px}
+.fete-t{flex:1;min-width:0;text-align:center;border-radius:12px;padding:6px 4px 5px;background:rgba(8,18,48,.7);border:1px solid rgba(233,199,106,.45)}
+.fete-t b{display:block;font:800 italic 1.5rem/1 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;color:#fff}
+.fete-t small{display:block;margin-top:2px;font:700 .6rem 'Barlow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.fete-t.win b{color:#7ff0b5} .fete-t.loss b{color:#ff9b93}
+.fete-acts{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;align-items:stretch}
+.fete-b{display:flex;align-items:center;justify-content:center;gap:6px;min-height:56px;box-sizing:border-box;border:1.5px solid transparent;border-radius:12px;padding:8px;
+  font:800 1.02rem/1.05 'Barlow Condensed',sans-serif;letter-spacing:.03em;text-transform:uppercase;text-align:center;cursor:pointer;text-decoration:none}
+.fete-b.replay{border-color:var(--gold);background:var(--gold);color:#0c1a3d}
+.fete-b.brag{border-color:#25d366;background:rgba(37,211,102,.12);color:#b8f5cf}
+.fete-ok{position:relative;grid-column:1/-1;border:0;background:none;color:#9fb0d6;font:600 .82rem 'Barlow',sans-serif;padding:4px;cursor:pointer}
+.fete-b:focus-visible,.fete-ok:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .me-news h3{margin:0 0 6px;font-size:1rem}
 .me-news ul{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:4px}
 .me-news li{display:flex;align-items:center;gap:8px;font-size:.92rem}
@@ -761,6 +790,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     </div>
 
     <div class="mecard" id="meCard" hidden>
+      <div class="fete" id="meFete" hidden></div>
       <div class="me-news" id="meNews" hidden></div>
       <button type="button" class="me-main" id="meOpen">
         <canvas id="meCv" role="img" aria-label="Ma carte"></canvas>
@@ -3374,10 +3404,62 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     let seen=null; try{seen=JSON.parse(localStorage.getItem(SEEN_KEY)||"null")}catch(e){}
     if(!seen||seen.id!==p.id){ saveSeen(p); return null; }
     const changes=STATS.map(([k,code])=>({code,a:clamp(seen.stats[k]),b:clamp(p.stats[k])})).filter(x=>x.a!==x.b);
-    const newMvp=matches.filter(m=>m.mvp===p.id&&!(seen.mvp||[]).includes(m.id)&&mvpRevealed(m.id));
+    const newMvp=[];   /* le MVP a désormais son propre bloc festif (renderFete) */
     if(!changes.length&&!newMvp.length)return null;
     const ovA=Math.round(STATS.reduce((t,[k])=>t+clamp(seen.stats[k]),0)/STATS.length), ovB=overall(p);
     return {changes,newMvp,ovA,ovB};
+  }
+  /* ================= BLOC « ÉLU MVP » FESTIF ================= */
+  const FETE_KEY="fut5v5:mvp-fete-vus";
+  const feteSeen=()=>{ try{return JSON.parse(localStorage.getItem(FETE_KEY)||"[]")}catch(e){return []} };
+  const feteHash=t=>{ let h=0; for(const c of String(t))h=(h*31+c.charCodeAt(0))>>>0; return h; };
+  const pickF=(arr,seed)=>arr[seed%arr.length];
+  function feteText(rec,pid){
+    const side=rec.team[pid]==="rouge"?"rouge":"blanc", my=sc(rec,side), op=sc(rec,side==="rouge"?"blanc":"rouge");
+    const g=rec.goals.filter(x=>x.pid===pid&&!x.own).length, a=rec.goals.filter(x=>x.ast===pid).length, o=rec.goals.filter(x=>x.pid===pid&&x.own).length;
+    const res=my>op?"win":my<op?"loss":"draw", seed=feteHash(rec.id+pid);
+    let H,Q;
+    if(res==="loss"&&g+a<2){ H=["Seul contre tous, <em>tu n'as rien lâché</em> 🦁","Le score ment, <em>pas toi</em> 🦁"]; Q=["Seul contre tous. Respect.","Le score ne dit pas tout. Toi, si."]; }
+    else if(g>=3){ H=["Coup du chapeau : <em>réclame le ballon</em> 🎩","<em>Triplé</em>, rien que ça 🔥"]; Q=["Le ballon du match est déjà dans ton sac.","Trois buts, zéro pitié. Les filets demandent un arrêt de travail."]; }
+    else if(g===2){ H=["Tu as porté l'équipe <em>sur ton dos</em> 💪","Doublé et <em>tapis rouge</em> 🔥"]; Q=["Même le gardien adverse a applaudi.","On a vérifié : il n'y avait pas deux joueurs avec ton maillot."]; }
+    else if(g===1&&a>=1){ H=["Buteur <em>et</em> passeur, <em>le couteau suisse</em> 🔪","Tu marques, tu fais marquer : <em>la totale</em> ✨"]; Q=["Il ne manquait plus que tu fasses l'arbitre.","Un vrai joueur de console, en vrai."]; }
+    else if(g===1){ H=["Le but qui <em>change tout</em> ⚽","Un but, <em>une signature</em> ✍️"]; Q=["Un seul but, mais le plus beau. C'est toi qui le dis, et on te croit.","Efficacité maximale, sueur minimale."]; }
+    else if(a>=2){ H=["Tu as distribué <em>les caviars</em> 🎯","Le chef d'orchestre, <em>c'est toi</em> 🎼"]; Q=["Les attaquants te doivent tous un verre.","Des caviars servis sur plateau d'argent."]; }
+    else if(a===1){ H=["La passe <em>qui fait la différence</em> 🎯","L'art de <em>faire briller les autres</em> ✨"]; Q=["Pas besoin de marquer quand on voit le jeu comme ça.","Une passe, un regard, un but. Classe."]; }
+    else { H=["Le patron <em>de l'ombre</em> 🕶️","Pas de stats, <em>que du cœur</em> 🫀"]; Q=["Pas de stats, mais un match à 200 %. Le vrai sait.","Le genre de match qu'on ne voit que dans les yeux du coach."]; }
+    const sig=pickF(["La rédac, encore sous le choc","La rédac, conquise","La rédac, en PLS","La rédac, qui n'en revient toujours pas"],seed>>3);
+    let note=6+g+a*0.5+(res==="win"?0.5:res==="draw"?0.25:0)-o; note=Math.max(5,Math.min(10,Math.round(note*2)/2));
+    return {h:pickF(H,seed),q:pickF(Q,seed>>1),sig,note:String(note).replace(".",","),g,a,o,my,op,res};
+  }
+  function renderFete(id){
+    const box=$("#meFete"); if(!box)return;
+    const seen=feteSeen(), limit=Date.now()-21*86400000;
+    const rec=matches.find(m=>m.mvp===id&&mvpRevealed(m.id)&&!seen.includes(m.id)&&m.date.getTime()>limit);
+    if(!rec){ box.hidden=true; box.innerHTML=""; return; }
+    const p=byId(id), t=feteText(rec,id);
+    const d=rec.date.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"short"});
+    box.innerHTML='<div class="fete-lab"><span>🏆 MVP du match</span><span></span></div>'+
+      '<div class="fete-row"><div class="fete-cw"><canvas aria-label="Ta carte MVP"></canvas><div class="fete-note"></div></div>'+
+      '<div class="fete-txt"><h3>'+t.h+'</h3><q><span></span><small></small></q></div></div>'+
+      '<div class="fete-tiles"><div class="fete-t"><b>'+t.g+'</b><small>'+(t.g>1?"buts":"but")+'</small></div>'+
+      '<div class="fete-t"><b>'+t.a+'</b><small>'+(t.a>1?"caviars":"caviar")+'</small></div>'+
+      (t.o?'<div class="fete-t loss"><b>'+t.o+'</b><small>csc</small></div>':'')+
+      '<div class="fete-t '+(t.res==="win"?"win":t.res==="loss"?"loss":"")+'"><b>'+t.my+'–'+t.op+'</b><small>'+(t.res==="win"?"victoire":t.res==="loss"?"défaite":"nul")+'</small></div></div>'+
+      '<div class="fete-acts"><button type="button" class="fete-b replay">▶ Revivre mon sacre</button><a class="fete-b brag" target="_blank" rel="noopener">📲 Chambrer le groupe</a>'+
+      '<button type="button" class="fete-ok">OK, je reste humble 😇</button></div>';
+    box.querySelector(".fete-lab span:last-child").textContent=d;
+    box.querySelector(".fete-note").textContent=t.note;
+    box.querySelector("q span").textContent="« "+t.q+" »";
+    box.querySelector("q small").textContent="— "+t.sig;
+    drawCard(box.querySelector("canvas"),Object.assign({},p,{fond:"forme",mvp:true}),.5);
+    const bits=[t.g?t.g+" but"+(t.g>1?"s":""):"",t.a?t.a+" caviar"+(t.a>1?"s":""):""].filter(Boolean).join(", ")||"zéro stat mais 100 % de classe";
+    const brag=pickF(["🏆 Qui c'est le MVP de "+d+" ? C'est bibi 😎 "+bits+". Merci, merci, pas d'autographes.",
+      "⭐ MVP de "+d+" : "+p.name+". "+bits+". Je signe les maillots à la buvette.",
+      "🎤 Petit rappel : le MVP de "+d+", c'est moi. "+bits+". Allez, bisous les remplaçants."],feteHash(rec.id)>>2);
+    box.querySelector(".brag").href="https://wa.me/?text="+encodeURIComponent(brag+"\n👉 "+location.href.split("#")[0]);
+    box.querySelector(".replay").addEventListener("click",()=>{ lastReveal={id:"",t:0}; location.hash="m-"+rec.id; });
+    box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=feteSeen(); a.push(rec.id); try{localStorage.setItem(FETE_KEY,JSON.stringify(a.slice(-100)))}catch(e){} box.hidden=true; });
+    box.hidden=false;
   }
   function renderMe(){
     const id=myId(), box=$("#meCard");
@@ -3385,6 +3467,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     box.hidden=!id; if(!id)return;
     const p=byId(id), s=pstats(id,inSeason(CUR_SEASON));
     drawCard($("#meCv"),p,.34); $("#meName").textContent=p.name;
+    renderFete(id);
     /* compteur MVP : seulement les MVP déjà révélés sur ce téléphone (pas de spoil avant l'animation) */
     const mvpShown=s.mvp-matches.filter(m=>m.mvp===id&&inSeason(CUR_SEASON)(m)&&!mvpRevealed(m.id)).length;
     $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+mvpShown+'</b></span>';
