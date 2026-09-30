@@ -1432,6 +1432,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     c.fillStyle="#ffffff"; c.textAlign="center"; c.font="800 33px "+FONT;
     c.fillText(String(val),cx,top+h*.585);
   }
+  /* nombre de titres de MVP déjà révélés sur ce téléphone (pas de spoil) ; rec : match en cours de révélation, compté en plus */
+  function mvpTotal(pid,rec){
+    try{ let n=matches.filter(m=>m.mvp===pid&&mvpRevealed(m.id)).length; if(rec&&rec.mvp===pid&&!mvpRevealed(rec.id))n++; return n; }catch(e){ return 0; }
+  }
   function drawCard(canvas,p,s){
     const T=themeOf(p);
     canvas.width=Math.round(W*s); canvas.height=Math.round(H*s);
@@ -1465,8 +1469,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     c.font="800 84px "+FONT; c.fillText(String(overall(p)),74,116);
     /* colonne de gauche : note, flèche de forme juste dessous, étoile MVP (compte rendu), cœur cardio */
     if(p.forme)formArrow(c,74,146,p.forme);
-    if(p.mvp)star(c,74,182,14,T);
-    heart(c,74,p.mvp?202:172,70,clamp(p.stats.car),T);
+    /* étoile MVP (dès le 1er titre) + « ×N » détouré à partir du 2e */
+    const nMvp=p.mvpN!=null?p.mvpN:(p.id?mvpTotal(p.id):0), st=p.mvp||nMvp>0;
+    if(st)star(c,74,182,14,T);
+    if(st&&nMvp>1){ c.save(); c.textAlign="left"; c.textBaseline="alphabetic"; c.lineJoin="round"; c.lineWidth=7;
+      c.strokeStyle=p.fond==="forme"?"#000":"#fff6d8"; c.fillStyle=T.ink;
+      c.font="800 34px "+FONT; const xw=c.measureText("×").width; c.strokeText("×",89,193); c.fillText("×",89,193);
+      c.font="800 33px "+FONT; c.strokeText(String(nMvp),91+xw,194); c.fillText(String(nMvp),91+xw,194); c.restore(); }
+    heart(c,74,st?202:172,70,clamp(p.stats.car),T);
 
     const name=(p.name||"").trim()||"Joueur";
     let size=39; c.textAlign="center"; c.font="700 "+size+"px "+FONT;
@@ -3345,7 +3355,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     requestAnimationFrame(()=>ov.classList.add("on"));
 
     /* carte : face du MVP (fond « forme ») dessinée dès que possible */
-    const cv=ov.querySelector(".mx-front"), draw=()=>drawCard(cv,Object.assign({},p,{fond:"forme",mvp:true}),.8); draw();
+    const cv=ov.querySelector(".mx-front"), draw=()=>drawCard(cv,Object.assign({},p,{fond:"forme",mvp:true,mvpN:mvpTotal(p.id,rec)}),.8); draw();
     Promise.race([getImg(p.photo).promise,new Promise(r=>setTimeout(r,1500))]).then(()=>{ if(ov.isConnected)draw(); }).catch(()=>{});
 
     /* son */
