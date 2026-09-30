@@ -476,6 +476,114 @@ input[type="datetime-local"],input[type="search"],input[type="text"]{color-schem
 .dmvp .chg{margin-top:8px;border:1px solid var(--tile-line);background:var(--bg);color:var(--ink);border-radius:10px;padding:6px 10px;font-size:.82rem;font-weight:600;cursor:pointer}
 .dmvp.empty{flex-direction:column;align-items:stretch;gap:8px}
 .dmvp.empty p{margin:0;color:var(--muted)}
+/* la visionneuse d'image (partage de secours) passe devant l'écran du compte rendu */
+#imgViewer{z-index:26}
+/* ---------- révélation du MVP v2 : walkout façon FUT (stade, comète, panneaux, carte qui tourbillonne, final pyrotechnique) ---------- */
+.mx{position:fixed;inset:0;z-index:60;overflow:hidden;background:#02050d;color:#fff;font-family:'Barlow Condensed','Arial Narrow',sans-serif;
+  opacity:0;transition:opacity .3s ease;user-select:none;-webkit-user-select:none}
+.mx.on{opacity:1} .mx.out{opacity:0;transition:opacity .3s ease-in}
+.mx-bg{position:absolute;inset:0;background:radial-gradient(90% 55% at 50% 38%,#1b2c63 0%,#0b1636 45%,#02050d 100%);opacity:.15;transition:opacity .5s ease}
+.mx.p-lights .mx-bg{opacity:1}
+.mx-stands{position:absolute;left:-10%;right:-10%;top:16%;height:34%;background:
+  repeating-linear-gradient(90deg,rgba(120,150,230,.07) 0 2px,transparent 2px 9px),linear-gradient(180deg,rgba(40,60,120,.35),rgba(10,20,50,0));
+  -webkit-mask:radial-gradient(70% 100% at 50% 100%,#000 40%,transparent 75%);mask:radial-gradient(70% 100% at 50% 100%,#000 40%,transparent 75%)}
+.mx-lights{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 7%);height:10%}
+.mx-lights i{position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;opacity:0;box-shadow:0 0 10px 4px rgba(255,255,255,.85),0 0 40px 16px rgba(190,215,255,.35);transition:opacity .12s ease}
+.mx.p-lights .mx-lights i{opacity:1}
+.mx-floor{position:absolute;left:-15%;right:-15%;bottom:9%;height:15%;border-radius:50%;border:2px solid rgba(233,199,106,.0);
+  background:radial-gradient(50% 50% at 50% 50%,rgba(233,199,106,.0),transparent 70%);transition:all .6s ease}
+.mx.p-lights .mx-floor{border-color:rgba(233,199,106,.55);box-shadow:0 0 30px rgba(233,199,106,.35),inset 0 0 40px rgba(233,199,106,.25);
+  background:radial-gradient(50% 50% at 50% 50%,rgba(233,199,106,.18),transparent 70%)}
+.mx-word{position:absolute;left:50%;bottom:13%;transform:translateX(-50%) scale(.6);white-space:nowrap;font-weight:900;font-style:italic;
+  font-size:min(38vw,230px);line-height:.85;letter-spacing:-.01em;padding:0 .16em 0 .06em;  /* marge à droite : l'italique du P déborde, sinon son arrondi n'est pas rempli */color:transparent;-webkit-text-stroke:2px rgba(233,199,106,.9);
+  background:linear-gradient(180deg,#fff3c4 0%,#e9c76a 45%,#9c7318 100%);-webkit-background-clip:text;background-clip:text;opacity:0;
+  transition:opacity .35s ease,transform .6s cubic-bezier(.2,.9,.3,1.2)}
+.mx.p-reveal .mx-word{opacity:.95;transform:translateX(-50%) scale(1)}
+.mx-door{position:absolute;left:50%;top:22%;width:4px;height:52%;transform:translateX(-50%);border-radius:40px;opacity:0;
+  background:radial-gradient(50% 50% at 50% 50%,#fffdf2 0%,#fff1b8 45%,rgba(233,199,106,.0) 100%);box-shadow:0 0 60px 30px rgba(255,236,170,.45);transition:width .5s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.mx.p-door .mx-door{opacity:1;width:min(60vw,300px)}
+.mx.p-card .mx-door{opacity:.4;box-shadow:0 0 90px 10px rgba(255,236,170,.18)}
+.mx.p-reveal .mx-door{opacity:0}
+.mx-panel{position:absolute;top:27%;width:min(25vw,130px);height:min(44vh,330px);perspective:600px;z-index:2}
+.mx-panel.mx-l{left:2vw} .mx-panel.mx-r{right:2vw}
+.mx-slab{position:absolute;inset:0;border-radius:6px;background:linear-gradient(160deg,#fbe9a6 0%,#eccc62 40%,#d3a93a 100%);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.35),inset 0 -30px 40px rgba(150,100,10,.35),0 20px 40px rgba(0,0,0,.6),0 0 30px rgba(233,199,106,.35);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#3b2a05;text-align:center;
+  transition:transform .55s cubic-bezier(.2,.9,.25,1)}
+.mx-panel.mx-l .mx-slab{transform:translateX(-150%) rotateY(30deg)} .mx-panel.mx-r .mx-slab{transform:translateX(150%) rotateY(-30deg)}
+.mx.p-panels .mx-panel.mx-l .mx-slab{transform:rotateY(22deg)} .mx.p-panels .mx-panel.mx-r .mx-slab{transform:rotateY(-22deg)}
+.mx-clue{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;opacity:0;transform:scale(.6);
+  transition:opacity .25s,transform .35s cubic-bezier(.2,.9,.3,1.3)}
+.mx-clue.on{opacity:1;transform:scale(1)}
+.mx-clue svg{width:70%;height:auto;max-height:45%}
+.mx-clue b{font-weight:900;font-size:min(7vw,36px);line-height:.95;letter-spacing:.02em}
+.mx-clue small{font-weight:800;font-size:min(3.6vw,17px);letter-spacing:.08em;text-transform:uppercase}
+.mx-clue.big b{font-size:min(14vw,70px);font-style:italic}
+.mx-flame{position:absolute;left:5%;right:5%;bottom:100%;height:0;opacity:0;transition:height .35s ease,opacity .2s;
+  background:radial-gradient(40% 60% at 50% 100%,#fff6c8 0%,#ffc23d 30%,#ff6a13 60%,rgba(255,60,0,0) 75%);filter:blur(1px);
+  -webkit-mask:repeating-linear-gradient(90deg,#000 0 18%,rgba(0,0,0,.5) 18% 22%);mask:repeating-linear-gradient(90deg,#000 0 18%,rgba(0,0,0,.5) 18% 22%);
+  animation:mxFlick .12s steps(2) infinite alternate;transform-origin:50% 100%}
+/* v3 : les flammes sont dessinées en particules (voir flame() dans le script) */
+.mx-flame{display:none!important}
+@keyframes mxFlick{from{transform:scaleY(1) skewX(-2deg)}to{transform:scaleY(1.12) skewX(3deg)}}
+.mx.p-reveal .mx-flame{height:min(20vh,140px);opacity:1}
+.mx-stage{position:absolute;left:50%;top:25%;transform:translateX(-50%);z-index:3;opacity:0;transition:opacity .35s}
+.mx.p-card .mx-stage{opacity:1}
+.mx-float{perspective:1100px;transform-style:preserve-3d;animation:mxFloat 1.6s ease-in-out infinite alternate}
+@keyframes mxFloat{from{transform:translateY(-4px)}to{transform:translateY(6px)}}
+.mx-card{position:relative;width:min(44vw,215px);aspect-ratio:380/534;transform-style:preserve-3d;transform:rotateY(180deg) scale(.9)}
+.mx.p-whirl .mx-card{animation:mxWhirl 1.1s cubic-bezier(.2,.65,.25,1) forwards}
+@keyframes mxWhirl{0%{transform:rotateY(180deg) scale(.9)}35%{transform:rotateY(620deg) rotateZ(-6deg) scale(.7) translateY(-3vh)}
+  100%{transform:rotateY(1080deg) rotateZ(0) scale(1.06)}}
+.mx.p-reveal .mx-card{animation:mxLand .5s ease-out forwards}
+@keyframes mxLand{from{transform:rotateY(1080deg) scale(1.06)}to{transform:rotateY(1080deg) scale(1)}}
+.mx-face{position:absolute;inset:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* dos de la carte : doré avec le logo FUT 5V5 (comme la démo 1) */
+.mx-back{transform:rotateY(180deg);border-radius:18px;background:linear-gradient(145deg,#f7df95,#c99a2e 55%,#8c6414);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.35) inset,0 0 40px rgba(233,199,106,.45);color:#0c1a3d;font-weight:900;font-size:min(13vw,3.2rem);line-height:.9;letter-spacing:.02em}
+.mx-back small{font-size:.72em;color:#fff;text-shadow:0 1px 2px rgba(80,50,0,.5)}
+.mx-name{position:absolute;left:0;right:0;top:calc(25% + min(44vw,215px)*1.405 + 10px);text-align:center;z-index:4;opacity:0;transform:translateY(12px) scale(.9);
+  transition:opacity .35s .15s,transform .45s .15s cubic-bezier(.2,.9,.3,1.3)}
+.mx.p-reveal .mx-name{opacity:1;transform:none}
+.mx-name b{display:block;font-weight:900;font-size:min(10vw,48px);line-height:1;letter-spacing:.04em;text-transform:uppercase;
+  background:linear-gradient(90deg,#fff 0%,#f7df95 40%,#fff 60%,#e9c76a 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:mxShine 1.6s linear infinite;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+.mx-name span{font:700 .95rem 'Barlow',sans-serif;color:#dfe6ff;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+@keyframes mxShine{to{background-position:-200% 0}}
+.mx-smoke{position:absolute;bottom:4%;width:70vw;height:30vh;border-radius:50%;z-index:4;pointer-events:none;opacity:0;transform:scale(.3);
+  background:radial-gradient(closest-side,rgba(255,226,120,.95),rgba(236,196,80,.7) 45%,rgba(236,196,80,0) 100%);filter:blur(8px);
+  transition:opacity .4s ease,transform 1.2s cubic-bezier(.15,.8,.3,1)}
+.mx-smoke.mx-l{left:-30vw} .mx-smoke.mx-r{right:-30vw}
+.mx.p-reveal .mx-smoke{opacity:.85;transform:scale(1)}
+.mx.p-fade .mx-smoke{opacity:.4;transition:opacity 1.2s ease}
+.mx-flash{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 42%,#fffef6 0%,rgba(255,240,190,.8) 30%,rgba(255,220,120,0) 70%)}
+.mx-flash.go{animation:mxFlash .7s ease-out}
+@keyframes mxFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.mx-fx{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+.mx-fx.mx-fxb{z-index:1}  /* (pas « .back » : classe déjà utilisée par les boutons retour de l'appli) */
+.mx-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:8;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;
+  border-radius:999px;padding:8px 14px;font:700 .95rem 'Barlow',sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.mx-btn:focus-visible{outline:2px solid #e9c76a;outline-offset:2px}
+.mx-skip{right:14px} .mx-sound{left:14px;min-width:44px}
+.mx-tap{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:8;font:600 .85rem 'Barlow',sans-serif;color:#c9d4f2;opacity:.8}
+
+.mx-stats{position:absolute;left:50%;top:calc(25% + min(44vw,215px)*1.405 + 76px);transform:translate(-50%,14px);z-index:4;display:flex;gap:6px;opacity:0;
+  transition:opacity .4s .9s,transform .5s .9s cubic-bezier(.2,.9,.3,1.2);width:max-content;max-width:calc(100vw - 24px)}
+.mx.p-reveal .mx-stats{opacity:1;transform:translate(-50%,0)}
+.mx-st{min-width:58px;padding:6px 8px 5px;border-radius:12px;background:rgba(8,18,48,.72);border:1px solid rgba(233,199,106,.55);text-align:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.mx-st b{display:block;font-weight:900;font-size:min(6.4vw,28px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mx-st small{display:block;margin-top:2px;font:700 .64rem 'Barlow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e9c76a;white-space:nowrap}
+.mx-st.win b{color:#7ff0b5} .mx-st.loss b{color:#ff9b93}
+@media (prefers-reduced-motion:reduce){.mx-flame,.mx-float{animation:none}}
+/* ---------- organisateurs : joueurs identifiés ---------- */
+.idrow{display:flex;align-items:center;gap:10px;width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--tile-line);background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit}
+.idrow b{flex:1;font-weight:700}
+.idrow small{display:block;color:var(--muted);font-size:.8rem;font-weight:500}
+.idbadge{flex:none;border-radius:999px;padding:3px 9px;font-size:.78rem;font-weight:700}
+.wamsg{width:100%;min-height:9.5em;border:1px solid var(--tile-line);border-radius:12px;padding:10px;background:var(--bg);color:var(--ink);font:500 .95rem/1.4 'Barlow',sans-serif;resize:vertical;margin:0 0 10px}
+.wa-go{text-decoration:none}
+.idbadge.ok{background:rgba(76,208,138,.15);color:#1f9d5b} .idbadge.no{background:var(--bg);color:var(--muted);border:1px solid var(--tile-line)}
 
 /* ---------- application Google : chargement, rôles ---------- */
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:linear-gradient(180deg,#0c1a3d,#16295e);color:#f5f7fc;text-align:center;padding:24px}
@@ -903,6 +1011,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <button type="button" class="notify-btn" id="pushToggle"></button>
       <div id="pushPrefs"></div>
     </div>
+    <div class="pcardbox admin-only" id="idBox">
+      <h3>Joueurs identifiés <small id="idCount"></small></h3>
+      <p class="rg-status">Qui a touché « C'est moi » sur sa carte, et qui reçoit les notifications (🔔).</p>
+      <button type="button" class="notify-btn" id="idLoad">👤 Voir la liste</button>
+      <button type="button" class="wa" id="idWa" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>Relancer sur WhatsApp</button>
+      <div id="idList"></div>
+    </div>
     <div class="pcardbox">
       <h3>Affichage</h3>
       <div class="rg-row"><span>Mode sombre</span><label class="sw"><input type="checkbox" id="rgDark"><i></i></label></div>
@@ -1079,7 +1194,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(route==="stats"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderStatsGrid(); return; }
     if(route.startsWith("p-")){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!renderPlayer(route.slice(2))){playerSec.hidden=true;home.hidden=false;} return; }
     if(route==="historique"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderHistory(); return; }
-    if(detRec){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderDetail(detRec); return; }
+    if(detRec){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderDetail(detRec); playMvpReveal(detRec); return; }
     if(route==="carte"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); render(); return; }
     if(route==="match"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderMatch(); return; }
     const plan=PLANS[route];
@@ -1823,7 +1938,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const show=()=>{ renderHome(); refreshReport(rec).then(()=>{ uploadReport(rec); $("#shareMsg").textContent=""; $("#report").hidden=false; document.body.style.overflow="hidden"; }); };
       if(rec.mvp){ show(); return; }
       openMvpSheet(rec,"Match terminé sur la montre : "+sc(rec,"blanc")+" – "+sc(rec,"rouge"),pid=>{
-        rec.mvp=pid; api("setMvp",ADMIN.code,rec.id,pid).catch(e=>toast("MVP non enregistré : "+errMsg(e))); show();
+        rec.mvp=pid; markMvpRevealed(rec.id); api("setMvp",ADMIN.code,rec.id,pid).catch(e=>toast("MVP non enregistré : "+errMsg(e))); show();
       },{later:show});
     }).catch(()=>toast("Match terminé sur la montre."));
   }
@@ -1972,13 +2087,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     }catch(e){}
   }
   async function refreshReport(rec){
-    reportBlob=await buildReport(rec);
+    reportBlob=await buildReport(Object.assign({},rec,{mvp:null}));   /* le MVP se découvre dans l'appli (animation), pas sur l'image */
     if(reportUrl)URL.revokeObjectURL(reportUrl); reportUrl=URL.createObjectURL(reportBlob);
     $("#reportImg").src=reportUrl; $("#reportMvp").hidden=!!rec.mvp;
   }
   $("#reportMvp").addEventListener("click",()=>{
     const rec=matches[0]; if(!rec)return;
-    openMvpSheet(rec,"MVP du match",id=>{rec.mvp=id; renderHome(); refreshReport(rec).then(()=>uploadReport(rec)); $("#shareMsg").textContent="";
+    openMvpSheet(rec,"MVP du match",id=>{rec.mvp=id; markMvpRevealed(rec.id); renderHome(); refreshReport(rec).then(()=>uploadReport(rec)); $("#shareMsg").textContent="";
       api("setMvp",ADMIN.code,rec.id,id).catch(e=>toast("MVP non enregistré : "+errMsg(e)));});
   });
   let reportBlob=null, reportUrl=null;
@@ -1987,6 +2102,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     clearTimeout(syncTimer);
     const rec={id:M.id||("m"+Date.now().toString(36)),date:parseDate(M.date),goals:M.goals.map(g=>Object.assign({},g)),mvp:M.mvp,
       team:Object.assign({},M.team),layout:Object.assign({},M.layout),present:[...M.present]};
+    if(rec.mvp)markMvpRevealed(rec.id);   /* l'organisateur qui choisit le MVP le connaît déjà */
     matches.unshift(rec); renderHome();
     const payload={id:rec.id,date:rec.date.toISOString(),present:rec.present,team:rec.team,layout:rec.layout,goals:rec.goals,start:M.start,mvp:rec.mvp};
     M.liveMode="";
@@ -2128,7 +2244,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#shareWa").addEventListener("click",async()=>{
     if(!reportBlob)return;
     const rec=matches[0], sb=rec.goals.filter(g=>g.side==="blanc").length, sr=rec.goals.filter(g=>g.side==="rouge").length;
-    const text="FUT 5V5 : BLANC "+sb+" – "+sr+" COULEURS"+(rec.mvp&&byId(rec.mvp)?". MVP : "+byId(rec.mvp).name:"");
+    const text="FUT 5V5 : BLANC "+sb+" – "+sr+" COULEURS. Le MVP ? À découvrir dans l'appli 👀";
     shareImage(reportBlob,"compte-rendu-fut5v5.png",text,$("#shareMsg"));
   });
   async function buildCompoImage(){
@@ -2189,7 +2305,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   });
   $("#reportDone").addEventListener("click",()=>{
     matchUndo.clear(); liveUndo.clear();
-    $("#report").hidden=true; document.body.style.overflow="";
+    /* « Retour à l'accueil » ferme tout : compte rendu ET visionneuse d'image restée ouverte derrière */
+    $("#report").hidden=true; $("#imgViewer").hidden=true; document.body.style.overflow="";
     Object.assign(M,{id:null,convokedAt:"",pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
     try{localStorage.removeItem(SAVE_KEY)}catch(e){}
     renderMatch(); location.hash="";
@@ -2230,7 +2347,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     $("#lastB").className=sb>sr?"win":""; $("#lastR").className=sr>sb?"win":"";
     const fill=(sel,lines)=>{const u=$(sel); u.innerHTML=""; (lines.length?lines:["Aucun but"]).forEach(t=>{const li=document.createElement("li");li.textContent=t;u.appendChild(li)})};
     fill("#lastScB",scorerLines(m,"blanc")); fill("#lastScR",scorerLines(m,"rouge"));
-    const mv=m.mvp&&byId(m.mvp); $("#lastMvp").textContent=mv?mv.name:"à désigner";
+    const mv=m.mvp&&byId(m.mvp); $("#lastMvp").textContent=mv?(mvpRevealed(m.id)?mv.name:"à découvrir 👀"):"à désigner";
     $("#lastBtn").setAttribute("aria-label","Voir le dernier match : BLANC "+sb+", COULEURS "+sr);
   }
 
@@ -2288,7 +2405,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const b=document.createElement("button"); b.type="button"; b.className="hrow"; b.dataset.go="m-"+m.id;
       const mv=m.mvp&&byId(m.mvp);
       b.innerHTML='<div class="hrow-top"><b>'+dShort(m.date)+'</b><span>'+m.present.length+' joueurs</span></div>'+scoreHTML(m)+
-        '<div class="hrow-foot"><span>'+topScorer(m)+'</span><span>'+(mv?'<span class="star">★</span> '+mv.name:'')+'</span></div>';
+        '<div class="hrow-foot"><span>'+topScorer(m)+'</span><span>'+(mv?'<span class="star">★</span> '+(mvpRevealed(m.id)?mv.name:'à découvrir'):'')+'</span></div>';
       b.setAttribute("aria-label",dShort(m.date)+" : BLANC "+sc(m,"blanc")+", COULEURS "+sc(m,"rouge"));
       list.appendChild(b);
     });
@@ -2338,7 +2455,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* MVP */
     const mv=rec.mvp&&byId(rec.mvp); $("#dMvpBox").hidden=false;
     const saveMvp=id=>api("setMvp",ADMIN.code,rec.id,id||"").catch(e=>toast("MVP non enregistré : "+errMsg(e)));
-    const setMvp=()=>openMvpSheet(rec,"MVP du match",id=>{rec.mvp=id; saveMvp(id); renderHome(); renderDetail(rec);},rec.mvp?{none:()=>{rec.mvp=null; saveMvp(null); renderHome(); renderDetail(rec);}}:{});
+    const setMvp=()=>openMvpSheet(rec,"MVP du match",id=>{rec.mvp=id; markMvpRevealed(rec.id); saveMvp(id); renderHome(); renderDetail(rec);},rec.mvp?{none:()=>{rec.mvp=null; saveMvp(null); renderHome(); renderDetail(rec);}}:{});
     if(!mv){
       const box=$("#dMvp"); box.innerHTML=""; box.className="dmvp empty";
       const t=document.createElement("p"); t.textContent="Le MVP de ce match n'a pas encore été désigné.";
@@ -2956,6 +3073,298 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function redrawSoon(){ clearTimeout(rvTimer); rvTimer=setTimeout(redrawCurrent,150); }
   const refreshView=redrawSoon;
 
+  /* ================= APPAREIL (pour l'onglet Identifications) ================= */
+  function deviceId(){
+    let d=""; try{d=localStorage.getItem("fut5v5:device")||""}catch(e){}
+    if(!d){ d="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,8); try{localStorage.setItem("fut5v5:device",d)}catch(e){} }
+    return d;
+  }
+  const deviceType=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)?"iPhone":/android/i.test(navigator.userAgent)?"Android":"Ordinateur";
+
+  /* ================= ORGANISATEURS : QUI A FAIT « C'EST MOI » ================= */
+  async function loadIdentified(){
+    const b=$("#idLoad"), box=$("#idList"); b.disabled=true; b.textContent="Chargement…";
+    try{
+      const list=await api("listIdentified",ADMIN.code);
+      const n=list.filter(x=>x.identified).length;
+      $("#idCount").textContent=n+" / "+list.length;
+      box.innerHTML="";
+      list.forEach(x=>{
+        const r=document.createElement("button"); r.type="button"; r.className="idrow"; r.dataset.go="p-"+x.id;
+        const bits=[]; if(x.devices)bits.push(x.devices+" appareil"+(x.devices>1?"s":"")+(x.types.length?" ("+[...new Set(x.types)].join(", ")+")":""));
+        if(x.last)bits.push("le "+new Date(x.last).toLocaleDateString("fr-FR",{day:"numeric",month:"short"}));
+        r.innerHTML='<b></b><span class="idbadge"></span>';
+        const nm=r.querySelector("b"); nm.textContent=x.name+(x.push?" 🔔":"");
+        if(bits.length){ const sm=document.createElement("small"); sm.textContent=bits.join(" · "); nm.appendChild(sm); }
+        const bd=r.querySelector(".idbadge"); bd.classList.add(x.identified?"ok":"no"); bd.textContent=x.identified?"✓ C'est moi":"pas encore";
+        box.appendChild(r);
+      });
+      b.textContent="↻ Actualiser la liste";
+      idLast=list; $("#idWa").hidden=!list.length;
+    }catch(e){ toast("Liste indisponible : "+errMsg(e)); b.textContent="👤 Voir la liste"; }
+    b.disabled=false;
+  }
+  $("#idLoad").addEventListener("click",loadIdentified);
+
+  /* relance WhatsApp façon MPG : cite les joueurs qui n'ont pas encore touché « C'est moi » */
+  let idLast=[], waVariant=0;
+  const appLink=()=>location.href.split("#")[0];
+  function waMessage(){
+    const late=idLast.filter(x=>!x.identified).map(x=>x.name);
+    if(!late.length) return "✅ Effectif au complet ! Les "+idLast.length+" cartes FUT 5V5 ont trouvé leur propriétaire. Le vestiaire est plein, place au jeu ⚽";
+    const list=late.length===1?late[0]:late.slice(0,-1).join(", ")+" et "+late[late.length-1];
+    const n=late.length, pl=n>1;
+    const V=[
+      "📋 Appel du vestiaire ! "+(pl?n+" joueurs n'ont":list+" n'a")+" toujours pas réclamé "+(pl?"leur":"sa")+" carte FUT 5V5"+(pl?" : "+list:"")+".\nOuvrez l'appli, trouvez votre carte et touchez « C'est moi ». Sans ça : pas de notifs perso, pas de carte sur votre accueil… et le coach note tout 👀",
+      "🚨 Mercato des cartes : "+list+", "+(pl?"vos cartes attendent":"ta carte attend")+" toujours "+(pl?"leur":"son")+" propriétaire.\nUn clic sur « C'est moi » dans l'appli et le contrat est signé. Les autres ont déjà paraphé ✍️",
+      "⏰ Dernier appel avant la fermeture du mercato ! "+list+" : touchez « C'est moi » sur votre carte dans l'appli FUT 5V5.\nSinon on considère que c'est le banc de touche qui vous tente 🪑"];
+    return V[waVariant%V.length]+"\n👉 "+appLink();
+  }
+  $("#idWa").addEventListener("click",()=>{
+    openSheet("Message WhatsApp","Relis ou modifie le message, puis envoie-le au groupe.",body=>{
+      const ta=document.createElement("textarea"); ta.className="wamsg"; ta.id="waText"; ta.value=waMessage(); body.appendChild(ta);
+      const go=document.createElement("a"); go.className="wa wa-go"; go.target="_blank"; go.rel="noopener";
+      go.innerHTML=$("#idWa").querySelector("svg").outerHTML+"Envoyer sur WhatsApp";
+      const upd=()=>{ go.href="https://wa.me/?text="+encodeURIComponent(ta.value); }; upd(); ta.addEventListener("input",upd);
+      body.appendChild(go);
+      const row=document.createElement("div"); row.style.cssText="display:flex;gap:8px";
+      const cp=document.createElement("button"); cp.type="button"; cp.className="sheet-cancel"; cp.textContent="Copier le texte";
+      cp.addEventListener("click",()=>{ const done=()=>toast("Message copié."); try{ navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select();toast("Sélectionné : copie-le avec ton téléphone.");}); }catch(e){ ta.select(); } });
+      const nx=document.createElement("button"); nx.type="button"; nx.className="sheet-cancel"; nx.textContent="🎲 Autre version";
+      nx.addEventListener("click",()=>{ waVariant++; ta.value=waMessage(); upd(); });
+      row.appendChild(cp); row.appendChild(nx); body.appendChild(row);
+    });
+  });
+
+  /* ================= RÉVÉLATION DU MVP ================= */
+  const MVP_SEEN_KEY="fut5v5:mvp-vus";
+  const mvpSeen=()=>{ try{return JSON.parse(localStorage.getItem(MVP_SEEN_KEY)||"[]")}catch(e){return []} };
+  const mvpRevealed=id=>mvpSeen().includes(id);
+  function markMvpRevealed(id){ const a=mvpSeen(); if(a.includes(id))return; a.push(id); try{localStorage.setItem(MVP_SEEN_KEY,JSON.stringify(a.slice(-300)))}catch(e){} }
+  /* ---------- sons de la révélation : synthétisés en direct (Web Audio), aucun fichier ---------- */
+  const MVP_SOUND_KEY="fut5v5:mvp-son";
+  const soundOn=()=>{ try{return localStorage.getItem(MVP_SOUND_KEY)!=="0"}catch(e){return true} };
+  function mvpAudio(){
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null;
+    const ctx=new AC(), sr=ctx.sampleRate, out=ctx.createGain(), comp=ctx.createDynamicsCompressor();
+    comp.threshold.value=-18; comp.ratio.value=4; const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-2; lim.ratio.value=20; lim.attack.value=0.002; lim.release.value=0.15;
+    out.gain.value=soundOn()?0.66:0; comp.connect(out); out.connect(lim); lim.connect(ctx.destination);
+    /* acoustique de stade : réverbération longue générée */
+    const ir=ctx.createBuffer(2,Math.floor(sr*3.2),sr);
+    for(let ch=0;ch<2;ch++){ const d=ir.getChannelData(ch); let lp=0; for(let i=0;i<d.length;i++){ const t=i/sr; lp+=(Math.random()*2-1-lp)*0.35; d[i]=lp*Math.pow(1-t/3.2,2.2)*(t<0.02?t/0.02:1); } }
+    const rev=ctx.createConvolver(); rev.buffer=ir; const wet=ctx.createGain(); wet.gain.value=0.55; rev.connect(wet); wet.connect(comp);
+    const bus=ctx.createGain(); bus.connect(comp); bus.connect(rev);          /* tout passe par le « stade » */
+    const nb=ctx.createBuffer(1,sr*2,sr), nd=nb.getChannelData(0); for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+    const T=t=>ctx.currentTime+0.05+t;
+    const ramp=(p,pts)=>{ p.setValueAtTime(pts[0][1],T(pts[0][0])); for(let i=1;i<pts.length;i++)p.linearRampToValueAtTime(pts[i][1],T(pts[i][0])); };
+    const src=(t0,t1)=>{ const s=ctx.createBufferSource(); s.buffer=nb; s.loop=true; s.loopStart=Math.random(); s.start(T(t0)); s.stop(T(t1)); return s; };
+    const filt=(type,f,q)=>{ const f_=ctx.createBiquadFilter(); f_.type=type; f_.frequency.value=f; f_.Q.value=q||0.7; return f_; };
+    /* coup grave (timbale / taiko) */
+    const hit=(t,p,f0)=>{ const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(f0||85,T(t)); o.frequency.exponentialRampToValueAtTime((f0||85)*0.5,T(t+0.5));
+      g.gain.setValueAtTime(0.0001,T(t)); g.gain.exponentialRampToValueAtTime(0.55*p,T(t+0.01)); g.gain.exponentialRampToValueAtTime(0.0001,T(t+0.9)); o.connect(g); g.connect(bus); o.start(T(t)); o.stop(T(t+1));
+      const n=src(t,t+0.4), nf=filt("lowpass",600), ng=ctx.createGain(); ng.gain.setValueAtTime(0.0001,T(t)); ng.gain.exponentialRampToValueAtTime(0.22*p,T(t+0.005)); ng.gain.exponentialRampToValueAtTime(0.0001,T(t+0.3));
+      n.connect(nf); nf.connect(ng); ng.connect(bus); };
+    /* foule : bandes de voix (formants) modulées lentement */
+    const crowd=(pts,t0,t1)=>{ const g=ctx.createGain(); ramp(g.gain,pts); g.connect(bus);
+      [[380,1.1],[720,1.3],[1150,1.6],[2400,2.2]].forEach(([f,q],i)=>{ const n=src(t0,t1), bp=filt("bandpass",f,q), am=ctx.createGain(); am.gain.value=0.6;
+        const lfo=ctx.createOscillator(), lg=ctx.createGain(); lfo.frequency.value=0.35+Math.random()*1.2+i*0.3; lg.gain.value=0.4; lfo.connect(lg); lg.connect(am.gain); lfo.start(T(t0)); lfo.stop(T(t1));
+        const pan=ctx.createStereoPanner?ctx.createStereoPanner():null; n.connect(bp); bp.connect(am); if(pan){ pan.pan.value=(i%2?1:-1)*0.35; am.connect(pan); pan.connect(g);} else am.connect(g); }); };
+    /* applaudissements + clameur, calculés une fois dans un tampon stéréo */
+    const applause=(dur)=>{ const b=ctx.createBuffer(2,Math.floor(sr*dur),sr), L=b.getChannelData(0), R=b.getChannelData(1);
+      for(let k=0;k<1400;k++){ const t=Math.random()*dur, env=t<0.4?t/0.4:t>dur-1.8?Math.max(0,(dur-t)/1.8):1, a=(0.25+Math.random()*0.75)*env*0.35;
+        const st=Math.floor(t*sr), len=Math.floor(sr*(0.006+Math.random()*0.014)), pan=Math.random(), bright=0.2+Math.random()*0.5; let y=0, prev=0;
+        for(let i=0;i<len&&st+i<L.length;i++){ const x=(Math.random()*2-1)*Math.exp(-i/(len*0.35)); y=x-prev*bright; prev=x; L[st+i]+=y*a*(1-pan*0.7); R[st+i]+=y*a*(0.3+pan*0.7); } }
+      return b; };
+    /* sifflets de supporters */
+    const whistle=(t,f)=>{ const o=ctx.createOscillator(), g=ctx.createGain(), v=ctx.createOscillator(), vg=ctx.createGain(); o.type="sine"; o.frequency.setValueAtTime(f*0.8,T(t)); o.frequency.linearRampToValueAtTime(f,T(t+0.12)); o.frequency.setValueAtTime(f,T(t+0.5)); o.frequency.linearRampToValueAtTime(f*0.7,T(t+0.75));
+      v.frequency.value=28; vg.gain.value=f*0.012; v.connect(vg); vg.connect(o.frequency); g.gain.setValueAtTime(0.0001,T(t)); g.gain.exponentialRampToValueAtTime(0.035,T(t+0.08)); g.gain.setValueAtTime(0.035,T(t+0.55)); g.gain.exponentialRampToValueAtTime(0.0001,T(t+0.8));
+      o.connect(g); g.connect(bus); o.start(T(t)); v.start(T(t)); o.stop(T(t+0.85)); v.stop(T(t+0.85)); };
+    return { ctx,
+      mute(m){ out.gain.setTargetAtTime(m?0:0.66,ctx.currentTime,0.03); },
+      play(){
+        /* 1. le stade gronde, l'attente monte… puis silence juste avant la révélation */
+        crowd([[0,0.0001],[1.2,0.04],[3.6,0.07],[4.75,0.1],[5.05,0.025],[5.2,0.025],[5.35,0.6],[6.4,0.42],[8.6,0.32],[10.6,0.26],[12.2,0.0001]],0,12.3);
+        /* 2. nappe de cordes graves (tension) */
+        const pad=ctx.createGain(); ramp(pad.gain,[[0,0.0001],[1.0,0.015],[4.9,0.055],[5.12,0.0001]]); const plp=filt("lowpass",260,0.9); ramp(plp.frequency,[[0,260],[5,1400]]); plp.connect(pad); pad.connect(bus);
+        [55,55.3,82.4,110.2,130.8,164.8].forEach((f,i)=>{ const o=ctx.createOscillator(); o.type="sawtooth"; o.frequency.value=f; const v=ctx.createOscillator(), vg=ctx.createGain(); v.frequency.value=4.5+i*0.2; vg.gain.value=f*0.004; v.connect(vg); vg.connect(o.frequency);
+          o.connect(plp); o.start(T(0)); v.start(T(0)); o.stop(T(5.2)); v.stop(T(5.2)); });
+        /* 3. comète : chute qui siffle et gronde, aspiration juste avant, puis impact cinéma (sub + claquement + éclat métallique) */
+        { const n=src(0.45,1.3), bp=filt("bandpass",4200,1.6), g=ctx.createGain(); ramp(bp.frequency,[[0.45,4200],[1.28,380]]); ramp(g.gain,[[0.45,0.0001],[1.0,0.3],[1.24,0.42],[1.3,0.0001]]); n.connect(bp); bp.connect(g); g.connect(bus); }
+        { const n=src(0.45,1.3), lp=filt("lowpass",220,0.8), g=ctx.createGain(); ramp(g.gain,[[0.45,0.0001],[1.25,0.35],[1.3,0.0001]]); n.connect(lp); lp.connect(g); g.connect(bus); }
+        { const o=ctx.createOscillator(), g=ctx.createGain(); o.type="triangle"; o.frequency.setValueAtTime(900,T(0.5)); o.frequency.exponentialRampToValueAtTime(140,T(1.29));  /* sifflement de chute (effet Doppler) */
+          ramp(g.gain,[[0.5,0.0001],[1.0,0.035],[1.27,0.06],[1.3,0.0001]]); o.connect(g); g.connect(bus); o.start(T(0.5)); o.stop(T(1.32)); }
+        for(let i=0;i<10;i++){ const t=0.7+i*0.055; const n=src(t,t+0.05), hp=filt("highpass",5000), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(t)); g.gain.exponentialRampToValueAtTime(0.05,T(t+0.004)); g.gain.exponentialRampToValueAtTime(0.0001,T(t+0.04)); n.connect(hp); hp.connect(g); g.connect(bus); }  /* crépitements de la traînée */
+        { const n=src(1.02,1.3), hp=filt("highpass",1800), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(1.02)); g.gain.exponentialRampToValueAtTime(0.2,T(1.285)); g.gain.linearRampToValueAtTime(0.0001,T(1.3)); n.connect(hp); hp.connect(g); g.connect(bus); }  /* aspiration */
+        /* impact */
+        { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(90,T(1.3)); o.frequency.exponentialRampToValueAtTime(26,T(2.6)); g.gain.setValueAtTime(0.0001,T(1.3)); g.gain.exponentialRampToValueAtTime(0.95,T(1.31)); g.gain.exponentialRampToValueAtTime(0.0001,T(2.7)); o.connect(g); g.connect(comp); o.start(T(1.3)); o.stop(T(2.8)); }
+        { const n=src(1.3,1.6), bp=filt("bandpass",190,1.2), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(1.3)); g.gain.exponentialRampToValueAtTime(0.7,T(1.302)); g.gain.exponentialRampToValueAtTime(0.0001,T(1.5)); n.connect(bp); bp.connect(g); g.connect(bus); }
+        { const n=src(1.3,1.36), hp=filt("highpass",2500), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(1.3)); g.gain.exponentialRampToValueAtTime(0.5,T(1.301)); g.gain.exponentialRampToValueAtTime(0.0001,T(1.34)); n.connect(hp); hp.connect(g); g.connect(bus); }
+        { const n=src(1.3,3.2), hp=filt("highpass",6000), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(1.3)); g.gain.exponentialRampToValueAtTime(0.1,T(1.32)); g.gain.exponentialRampToValueAtTime(0.0001,T(3)); n.connect(hp); hp.connect(g); g.connect(bus); }
+        /* explosion : souffle saturé, grondement qui roule dans le stade, débris qui retombent */
+        { const n=src(1.3,2.6), lp=filt("lowpass",2600,0.7), sh=ctx.createWaveShaper(), g=ctx.createGain();
+          const cv=new Float32Array(1024); for(let k=0;k<1024;k++){ const x=k/511.5-1; cv[k]=Math.tanh(x*3.5); } sh.curve=cv;
+          ramp(lp.frequency,[[1.3,2600],[2.4,300]]); g.gain.setValueAtTime(0.0001,T(1.3)); g.gain.exponentialRampToValueAtTime(0.55,T(1.305)); g.gain.exponentialRampToValueAtTime(0.0001,T(2.5));
+          n.connect(lp); lp.connect(sh); sh.connect(g); g.connect(bus); }
+        { const n=src(1.32,3.4), lp=filt("lowpass",160,0.9), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(1.32)); g.gain.exponentialRampToValueAtTime(0.5,T(1.4)); g.gain.exponentialRampToValueAtTime(0.0001,T(3.3));
+          const l=ctx.createOscillator(), lg=ctx.createGain(); l.frequency.value=7; lg.gain.value=0.25; l.connect(lg); lg.connect(g.gain); l.start(T(1.32)); l.stop(T(3.4)); n.connect(lp); lp.connect(g); g.connect(comp); }
+        { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(55,T(1.3)); o.frequency.exponentialRampToValueAtTime(30,T(2.2)); g.gain.setValueAtTime(0.0001,T(1.3)); g.gain.exponentialRampToValueAtTime(0.6,T(1.33)); g.gain.exponentialRampToValueAtTime(0.0001,T(2.4)); o.connect(g); g.connect(comp); o.start(T(1.3)); o.stop(T(2.5)); }
+        for(let k=0;k<22;k++){ const t=1.38+Math.random()*0.9, a=0.03+Math.random()*0.07*(1-(t-1.38)/0.9); const n=src(t,t+0.06), bp=filt("bandpass",1500+Math.random()*4000,1.5), g=ctx.createGain();
+          g.gain.setValueAtTime(0.0001,T(t)); g.gain.exponentialRampToValueAtTime(a,T(t+0.003)); g.gain.exponentialRampToValueAtTime(0.0001,T(t+0.05)); n.connect(bp); bp.connect(g); g.connect(bus); }
+        /* la foule réagit : « ooooh » */
+        crowd([[1.3,0.0001],[1.6,0.09],[2.4,0.04],[3,0.0001]],1.3,3.1);
+        /* 4. les indices : coups de timbales, puis battements qui s'accélèrent */
+        hit(2.2,0.8,95); hit(2.85,0.9,90); hit(3.5,1,85);
+        [3.95,4.3,4.58,4.8,4.97,5.08].forEach((t,i)=>hit(t,0.35+i*0.1,62));
+        /* 5. montée « cymbale à l'envers » + tourbillon qui passe d'une oreille à l'autre */
+        { const n=src(3.3,5.2), hp=filt("highpass",2500), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(3.3)); g.gain.exponentialRampToValueAtTime(0.16,T(5.15)); g.gain.linearRampToValueAtTime(0.0001,T(5.19)); n.connect(hp); hp.connect(g); g.connect(bus); }
+        { const n=src(4.1,5.2), bp=filt("bandpass",600,2), g=ctx.createGain(); ramp(bp.frequency,[[4.1,500],[5.15,3800]]); ramp(g.gain,[[4.1,0.0001],[5.0,0.3],[5.18,0.0001]]);
+          const pan=ctx.createStereoPanner?ctx.createStereoPanner():null; n.connect(bp); bp.connect(g);
+          if(pan){ const l=ctx.createOscillator(), lg=ctx.createGain(); l.frequency.setValueAtTime(2,T(4.1)); l.frequency.linearRampToValueAtTime(9,T(5.1)); lg.gain.value=0.9; l.connect(lg); lg.connect(pan.pan); l.start(T(4.1)); l.stop(T(5.2)); g.connect(pan); pan.connect(bus); } else g.connect(bus); }
+        /* 6. RÉVÉLATION : explosion, cymbale, cuivres graves, le stade explose */
+        { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(75,T(5.2)); o.frequency.exponentialRampToValueAtTime(24,T(6.8)); g.gain.setValueAtTime(0.0001,T(5.2)); g.gain.exponentialRampToValueAtTime(1,T(5.22)); g.gain.exponentialRampToValueAtTime(0.0001,T(7)); o.connect(g); g.connect(comp); o.start(T(5.2)); o.stop(T(7.1)); }
+        { const n=src(5.2,6.6), lp=filt("lowpass",2200), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(5.2)); g.gain.exponentialRampToValueAtTime(0.6,T(5.21)); g.gain.exponentialRampToValueAtTime(0.0001,T(6.4)); n.connect(lp); lp.connect(g); g.connect(bus); }
+        { const n=src(5.2,8.5), hp=filt("highpass",4200), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(5.2)); g.gain.exponentialRampToValueAtTime(0.22,T(5.22)); g.gain.exponentialRampToValueAtTime(0.0001,T(8.3)); n.connect(hp); hp.connect(g); g.connect(bus); }
+        { const bg=ctx.createGain(), bl=filt("lowpass",500,0.8); ramp(bl.frequency,[[5.2,500],[5.6,2600],[8.6,900]]); bg.gain.setValueAtTime(0.0001,T(5.2)); bg.gain.exponentialRampToValueAtTime(0.11,T(5.3)); bg.gain.setValueAtTime(0.11,T(6.4)); bg.gain.exponentialRampToValueAtTime(0.0001,T(9));
+          bl.connect(bg); bg.connect(bus); [65.4,98,130.8,164.8,196].forEach(f=>{ [1,1.005,0.995].forEach(d=>{ const o=ctx.createOscillator(); o.type="sawtooth"; o.frequency.value=f*d; o.connect(bl); o.start(T(5.2)); o.stop(T(9.1)); }); }); }
+        /* applaudissements, sifflets, pétards au loin */
+        { const s=ctx.createBufferSource(); s.buffer=applause(6.8); const g=ctx.createGain(); g.gain.value=0.9; s.connect(g); g.connect(bus); s.start(T(5.3)); }
+        [[5.9,2400],[6.6,2150],[7.4,2600]].forEach(([t,f])=>whistle(t,f));
+        for(let i=0;i<7;i++){ const t=5.8+Math.random()*2.6; hit(t,0.22,55+Math.random()*20);
+          const n=src(t+0.05,t+0.6), hp=filt("highpass",3000), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(t+0.05)); g.gain.exponentialRampToValueAtTime(0.08,T(t+0.07)); g.gain.exponentialRampToValueAtTime(0.0001,T(t+0.55)); n.connect(hp); hp.connect(g); g.connect(bus); }
+      },
+      stop(){ try{ out.gain.setTargetAtTime(0,ctx.currentTime,0.12); setTimeout(()=>ctx.close().catch(()=>{}),800); }catch(e){} }
+    };
+  }
+
+  /* ---------- effets de particules (comète, fontaine turquoise, étincelles, feux d'artifice, confettis) ---------- */
+  function mvpFx(canvas){
+    const c=canvas.getContext("2d"), dpr=Math.min(2,window.devicePixelRatio||1); let W=0,H=0;
+    const size=()=>{ W=canvas.clientWidth; H=canvas.clientHeight; canvas.width=W*dpr; canvas.height=H*dpr; c.setTransform(dpr,0,0,dpr,0,0); }; size();
+    const P=[]; const add=o=>{ if(P.length<1800)P.push(o); };
+    /* flammes : petits halos pré-dessinés (blanc → jaune → orange → rouge → fumée), bien plus légers qu'un dégradé par particule */
+    const SPR=[[255,250,225],[255,214,95],[255,140,35],[215,60,12],[70,50,45]].map(([r,g,b])=>{ const o=document.createElement("canvas"); o.width=o.height=64; const x=o.getContext("2d");
+      const gr=x.createRadialGradient(32,32,0,32,32,32); gr.addColorStop(0,"rgba("+r+","+g+","+b+",1)"); gr.addColorStop(.45,"rgba("+r+","+g+","+b+",.45)"); gr.addColorStop(1,"rgba("+r+","+g+","+b+",0)"); x.fillStyle=gr; x.fillRect(0,0,64,64); return o; });
+    const spark=(x,y,vx,vy,life,r,col,g)=>add({x,y,vx,vy,life,max:life,r,col,g:g||0,glow:true});
+    return { P, size, get W(){return W}, get H(){return H},
+      /* un jet de feu qui part de (x,y) vers le haut ; power 0..1 */
+      flame(x,y,wid,power){ const n=Math.round(3+power*7); for(let i=0;i<n;i++) add({x:x+(Math.random()-.5)*wid,y,vx:(Math.random()-.5)*30,vy:-(150+Math.random()*190)*(0.55+power*0.7),
+        life:0.45+Math.random()*0.45,max:0.9,r:(9+Math.random()*12)*(0.7+power*0.6),g:-40,fire:true,ph:Math.random()*6.283}); if(Math.random()<power*0.6) add({x:x+(Math.random()-.5)*wid,y:y-10,vx:(Math.random()-.5)*50,vy:-220-Math.random()*200,life:1.1,max:1.1,r:1.3,col:"#ffcf6b",g:40,glow:true}); },
+      spark, confetti(x,y){ add({x,y,vx:(Math.random()-.5)*60,vy:40+Math.random()*80,life:3,max:3,r:3+Math.random()*3,col:["#e9c76a","#fff3c4","#f5f7fc","#d4a22f"][Math.floor(Math.random()*4)],g:60,rot:Math.random()*6,vr:(Math.random()-.5)*10,conf:true}); },
+      burst(x,y,col,n){ for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, v=60+Math.random()*170; spark(x,y,Math.cos(a)*v,Math.sin(a)*v,0.9+Math.random()*0.6,1.6+Math.random()*1.6,col,90); } },
+      step(dt){
+        c.clearRect(0,0,W,H);
+        for(let i=P.length-1;i>=0;i--){ const p=P[i]; p.life-=dt; if(p.life<=0){P.splice(i,1);continue;}
+          p.vy+=p.g*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; const k=p.life/p.max;
+          if(p.fire){ const age=1-p.life/p.max; p.x+=Math.sin(p.ph+age*14)*0.9; p.vy*=0.985; const sp=SPR[Math.min(4,Math.floor(age*5))], rr=p.r*(0.7+age*0.9);
+            c.globalCompositeOperation=age>0.8?"source-over":"lighter"; c.globalAlpha=(age>0.8?0.25:0.85)*(1-age*0.7); c.drawImage(sp,p.x-rr,p.y-rr,rr*2,rr*2); continue; }
+          if(p.conf){ p.rot+=p.vr*dt; c.globalCompositeOperation="source-over"; c.globalAlpha=Math.min(1,k*2); c.fillStyle=p.col;
+            c.save(); c.translate(p.x,p.y); c.rotate(p.rot); c.fillRect(-p.r,-p.r*0.5,p.r*2,p.r); c.restore(); continue; }
+          c.globalCompositeOperation="lighter"; c.globalAlpha=Math.min(1,k*1.5); c.fillStyle=p.col;
+          c.beginPath(); c.arc(p.x,p.y,p.r*(0.6+k*0.6),0,6.283); c.fill();
+          c.globalAlpha=Math.min(1,k*1.5)*0.25; c.beginPath(); c.arc(p.x,p.y,p.r*3,0,6.283); c.fill(); }
+        c.globalAlpha=1; c.globalCompositeOperation="source-over";
+      }
+    };
+  }
+
+  let lastReveal={id:"",t:0};
+  async function playMvpReveal(rec){
+    const p=rec&&rec.mvp&&byId(rec.mvp); if(!p)return;
+    /* retour sur le même match juste après (ex. depuis une fiche joueur) : pas de nouvelle animation */
+    if(lastReveal.id===rec.id&&Date.now()-lastReveal.t<120000)return;
+    lastReveal={id:rec.id,t:Date.now()};
+    if(document.querySelector(".mx"))return;
+    const side=rec.team[p.id]==="rouge"?"rouge":"blanc";
+    const g=rec.goals.filter(x=>x.pid===p.id&&!x.own).length, a=rec.goals.filter(x=>x.ast===p.id).length;
+    const note=overall(p);
+    const perfBig=g?String(g):a?String(a):"★", perfLab=g?(g>1?"buts":"but"):a?(a>1?"passes déc.":"passe déc."):"l'homme de l'ombre";
+    const ov=document.createElement("div"); ov.className="mx"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label","Révélation du MVP");
+    const panel=cls=>'<div class="mx-panel mx-'+cls+'"><div class="mx-slab">'+
+      '<div class="mx-clue c1">'+(side==="rouge"?JSY_R:JSY_W)+'<small>'+(side==="rouge"?"COULEURS":"BLANC")+'</small></div>'+
+      '<div class="mx-clue c2 big"><b>'+perfBig+'</b><small>'+perfLab+'</small></div>'+
+      '<div class="mx-clue c3 big"><b>'+note+'</b><small>note</small></div>'+
+      '<div class="mx-clue c4 big"><b>'+note+'</b><small>★ MVP</small></div>'+
+      '</div><div class="mx-flame"></div></div>';
+    ov.innerHTML='<div class="mx-bg"><div class="mx-stands"></div><div class="mx-lights"></div><div class="mx-floor"></div></div>'+
+      '<canvas class="mx-fx mx-fxb"></canvas><div class="mx-word">MVP</div><div class="mx-door"></div>'+panel("l")+panel("r")+
+      '<div class="mx-stage"><div class="mx-float"><div class="mx-card"><div class="mx-face mx-back">FUT<small>5V5</small></div><canvas class="mx-face mx-front"></canvas></div></div></div>'+
+      '<div class="mx-name"><b></b><span>Élu homme du match</span></div><div class="mx-stats"></div><div class="mx-smoke mx-l"></div><div class="mx-smoke mx-r"></div>'+
+      '<canvas class="mx-fx mx-fxf"></canvas><div class="mx-flash"></div>'+
+      '<button type="button" class="mx-btn mx-sound" aria-label="Son"></button><button type="button" class="mx-btn mx-skip">Passer ⏭</button>';
+    ov.querySelector(".mx-name b").textContent=p.name;
+    /* statistiques du MVP sur ce match, affichées à la fin */
+    { const my=side==="rouge"?sc(rec,"rouge"):sc(rec,"blanc"), op=side==="rouge"?sc(rec,"blanc"):sc(rec,"rouge"), o=rec.goals.filter(x=>x.pid===p.id&&x.own).length;
+      const tiles=[[String(g),g>1?"buts":"but",""],[String(a),a>1?"passes déc.":"passe déc.",""],[my+"–"+op,my>op?"victoire":my<op?"défaite":"nul",my>op?"win":my<op?"loss":""],[String(note),"note",""]];
+      if(o)tiles.splice(2,0,[String(o),"csc",""]);
+      const box=ov.querySelector(".mx-stats"); tiles.forEach(([v,l,c])=>{ const d=document.createElement("div"); d.className="mx-st"+(c?" "+c:""); d.innerHTML="<b></b><small></small>"; d.querySelector("b").textContent=v; d.querySelector("small").textContent=l; box.appendChild(d); }); }
+    const lights=ov.querySelector(".mx-lights"); for(let i=0;i<9;i++){ const e=document.createElement("i"); const u=i/8;
+      e.style.left=(6+u*88)+"%"; e.style.top=(Math.pow(u-.5,2)*120)+"%"; e.style.transitionDelay=(i%3)*0.12+"s"; lights.appendChild(e); }
+    document.body.appendChild(ov); document.body.style.overflow="hidden";
+    requestAnimationFrame(()=>ov.classList.add("on"));
+
+    /* carte : face du MVP (fond « forme ») dessinée dès que possible */
+    const cv=ov.querySelector(".mx-front"), draw=()=>drawCard(cv,Object.assign({},p,{fond:"forme",mvp:true}),.8); draw();
+    Promise.race([getImg(p.photo).promise,new Promise(r=>setTimeout(r,1500))]).then(()=>{ if(ov.isConnected)draw(); }).catch(()=>{});
+
+    /* son */
+    let audio=null; try{ audio=mvpAudio(); }catch(e){}
+    const sb=ov.querySelector(".mx-sound");
+    const paintSound=()=>{ sb.textContent=soundOn()?"🔊":"🔇"; };
+    paintSound();
+    sb.addEventListener("click",()=>{ const on=!soundOn(); try{localStorage.setItem(MVP_SOUND_KEY,on?"1":"0")}catch(e){} paintSound();
+      if(audio){ if(audio.ctx.state==="suspended")audio.ctx.resume().catch(()=>{}); audio.mute(!on); } });
+    /* le navigateur n'autorise le son qu'après un toucher : ouvert depuis l'historique, c'est bon ;
+       ouvert depuis une notification, le son part si on touche l'écran dans la première seconde */
+    const tStart=performance.now();
+    if(audio){ try{ await audio.ctx.resume(); }catch(e){}
+      if(audio.ctx.state==="running")audio.play();
+      else ov.addEventListener("pointerdown",()=>{ if(performance.now()-tStart<1200)audio.ctx.resume().then(()=>audio.play()).catch(()=>{}); },{once:true}); }
+
+    /* particules */
+    const fxB=mvpFx(ov.querySelector(".mx-fxb")), fxF=mvpFx(ov.querySelector(".mx-fxf"));
+    const onResize=()=>{ fxB.size(); fxF.size(); }; window.addEventListener("resize",onResize);
+    const card=ov.querySelector(".mx-card"), slabs=[...ov.querySelectorAll(".mx-slab")];
+    const cardBox=()=>{ const r=card.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}; };
+    const TEAL=["#6ff5dc","#3fe0c5","#b9fff0"], GOLD=["#fff3c4","#ffd35c","#e9c76a","#ffae2b"];
+    const pick=a=>a[Math.floor(Math.random()*a.length)];
+    const t0=performance.now(); let last=t0, raf=0, done=false, flashed=false;
+    const phase=(cls,at)=>setTimeout(()=>{ if(!done)ov.classList.add(cls); },at*1000);
+    const clue=(n,at)=>setTimeout(()=>{ if(done)return; ov.querySelectorAll(".mx-clue").forEach(e=>e.classList.toggle("on",e.classList.contains("c"+n))); },at*1000);
+    phase("p-lights",0.2); phase("p-door",1.35); phase("p-panels",1.6); phase("p-card",1.85);
+    clue(1,2.2); clue(2,2.85); clue(3,3.5); phase("p-whirl",4.1); phase("p-reveal",5.2); clue(4,5.2); phase("p-fade",10.6);
+    const loop=now=>{
+      if(done)return; const t=(now-t0)/1000, dt=Math.min(0.05,(now-last)/1000); last=now; const W=fxF.W, H=fxF.H, cb=cardBox();
+      /* comète qui descend du ciel jusqu'à la carte */
+      if(t>0.55&&t<1.3){ const k=(t-0.55)/0.75, e=k*k*(3-2*k), x=W/2+Math.sin(k*5)*6, y=-40+(cb.y+40)*e;
+        for(let i=0;i<6;i++) fxF.spark(x+(Math.random()-.5)*10,y-Math.random()*14,(Math.random()-.5)*40,-20-Math.random()*60,0.6+Math.random()*0.5,1.4+Math.random()*1.8,pick(TEAL),40);
+        fxF.spark(x,y,0,0,0.12,7,"#ffffff"); }
+      if(t>=1.3&&!flashed){ flashed=true; ov.querySelector(".mx-flash").classList.add("go"); fxF.burst(W/2,cb.y,"#b9fff0",70);
+        setTimeout(()=>{ const f=ov.querySelector(".mx-flash"); f.classList.remove("go"); },750); }
+      /* fontaine turquoise autour de la carte */
+      if(t>1.3&&t<4.6){ const n=t<4.1?7:3; for(let i=0;i<n;i++) fxB.spark(cb.x+(Math.random()-.5)*cb.w*1.1,cb.y+cb.h*0.45,(Math.random()-.5)*50,-140-Math.random()*220,1+Math.random()*0.9,1+Math.random()*1.6,pick(TEAL),140); }
+      /* tourbillon : traînée d'étincelles */
+      if(t>4.1&&t<5.2){ for(let i=0;i<5;i++){ const a=Math.random()*6.283; fxF.spark(cb.x+Math.cos(a)*cb.w*0.55,cb.y+Math.sin(a)*cb.h*0.5,-Math.sin(a)*120,Math.cos(a)*120,0.5,1.5,pick(TEAL),0); } }
+      /* flammes réalistes au sommet des panneaux : grosse gerbe à l'explosion, puis feu entretenu qui faiblit */
+      if(t>5.2&&t<11.4){ const pw=t<6.1?1:t<9?0.6:Math.max(0.12,0.6-(t-9)/4); slabs.forEach(sl=>{ const r=sl.getBoundingClientRect(); fxB.flame(r.left+r.width/2,r.top+4,r.width*0.7,pw); }); }
+      /* révélation : éclair, ailes d'étincelles dorées, feux d'artifice, confettis */
+      if(t>=5.2&&!ov.dataset.boom){ ov.dataset.boom="1"; const f=ov.querySelector(".mx-flash"); f.classList.add("go"); fxF.burst(cb.x,cb.y,"#fff3c4",120);
+        for(let i=0;i<80;i++) fxF.confetti(Math.random()*W,-10-Math.random()*80); }
+      if(t>5.2&&t<11.2){ const k=t<7.5?1:Math.max(0.15,1-(t-7.5)/3.2); for(let s=-1;s<=1;s+=2) for(let i=0;i<Math.round(4*k);i++){ const a=-Math.PI/2+s*(0.35+Math.random()*0.75), v=180+Math.random()*260;
+          fxB.spark(cb.x+s*cb.w*0.2,cb.y-cb.h*0.1,Math.cos(a)*v,Math.sin(a)*v,0.7+Math.random()*0.5,1.2+Math.random()*1.3,pick(GOLD),160); }
+        if(Math.random()<0.07*k) fxF.burst(W*(0.15+Math.random()*0.7),H*(0.08+Math.random()*0.22),pick(["#fff3c4","#ffffff","#ffd35c","#9fe8ff"]),55);
+        if(Math.random()<0.5*k) fxF.confetti(Math.random()*W,-10); }
+      fxB.step(dt); fxF.step(dt);
+      raf=requestAnimationFrame(loop);
+    };
+    raf=requestAnimationFrame(loop);
+
+    const close=()=>{ if(done)return; done=true; clearTimeout(timer); cancelAnimationFrame(raf); window.removeEventListener("resize",onResize);
+      if(audio)audio.stop(); markMvpRevealed(rec.id); ov.classList.add("out");
+      setTimeout(()=>{ ov.remove(); if($("#report").hidden&&$("#live").hidden)document.body.style.overflow=""; renderHome(); if(!$("#historique").hidden)renderHistory(); },320); };
+    const timer=setTimeout(close,12000);
+    ov.querySelector(".mx-skip").addEventListener("click",close);
+  }
+
   /* ================= « C'EST MOI » ================= */
   const ME_KEY="fut5v5:me", SEEN_KEY="fut5v5:me-vu";
   const myId=()=>{ let id=null; try{id=localStorage.getItem(ME_KEY)}catch(e){} return id&&byId(id)?id:null; };
@@ -2965,7 +3374,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     let seen=null; try{seen=JSON.parse(localStorage.getItem(SEEN_KEY)||"null")}catch(e){}
     if(!seen||seen.id!==p.id){ saveSeen(p); return null; }
     const changes=STATS.map(([k,code])=>({code,a:clamp(seen.stats[k]),b:clamp(p.stats[k])})).filter(x=>x.a!==x.b);
-    const newMvp=matches.filter(m=>m.mvp===p.id&&!(seen.mvp||[]).includes(m.id));
+    const newMvp=matches.filter(m=>m.mvp===p.id&&!(seen.mvp||[]).includes(m.id)&&mvpRevealed(m.id));
     if(!changes.length&&!newMvp.length)return null;
     const ovA=Math.round(STATS.reduce((t,[k])=>t+clamp(seen.stats[k]),0)/STATS.length), ovB=overall(p);
     return {changes,newMvp,ovA,ovB};
@@ -2976,7 +3385,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     box.hidden=!id; if(!id)return;
     const p=byId(id), s=pstats(id,inSeason(CUR_SEASON));
     drawCard($("#meCv"),p,.34); $("#meName").textContent=p.name;
-    $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+s.mvp+'</b></span>';
+    /* compteur MVP : seulement les MVP déjà révélés sur ce téléphone (pas de spoil avant l'animation) */
+    const mvpShown=s.mvp-matches.filter(m=>m.mvp===id&&inSeason(CUR_SEASON)(m)&&!mvpRevealed(m.id)).length;
+    $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+mvpShown+'</b></span>';
     const n=newsFor(p), nb=$("#meNews");
     if(!n){nb.hidden=true;return;}
     const esc=t=>String(t).replace(/</g,"&lt;");
@@ -2997,9 +3408,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{localStorage.setItem(ME_KEY,p.id)}catch(e){}
     saveSeen(p); renderPlayer(p.id); renderHome();
     toast("C'est noté : ta carte apparaît maintenant sur l'accueil.");
-    api("hello",p.id).catch(()=>{}); syncPush();
+    api("hello",p.id,deviceId(),deviceType()).catch(()=>{}); syncPush();
+    try{localStorage.setItem("fut5v5:id-v2","1")}catch(e){}
   });
   $("#pNotMe").addEventListener("click",()=>{
+    const was=myId(); if(was)api("bye",was,deviceId()).catch(()=>{});
     try{localStorage.removeItem(ME_KEY);localStorage.removeItem(SEEN_KEY)}catch(e){}
     renderPlayer(PV.id); renderHome(); toast("Carte retirée de l'accueil."); syncPush();
   });
@@ -3116,6 +3529,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       toast("Hors connexion : dernières données enregistrées sur ce téléphone.");
     }
     loadPhotos(); refreshPushToken();
+    /* téléphones identifiés avant cette version : on complète l'onglet Identifications, sans notifier les organisateurs */
+    try{ if(myId()&&!localStorage.getItem("fut5v5:id-v2"))api("hello",myId(),deviceId(),deviceType(),true).then(()=>{try{localStorage.setItem("fut5v5:id-v2","1")}catch(e){}}).catch(()=>{}); }catch(e){}
     if(ADMIN.code){ api("checkAdmin",ADMIN.code).then(r=>{
       if(r.ok){ ADMIN.name=r.name; try{localStorage.setItem("fut5v5:admin-name",r.name)}catch(e){} }
       else { ADMIN.code=""; ADMIN.name=""; try{localStorage.removeItem("fut5v5:admin");localStorage.removeItem("fut5v5:admin-name")}catch(e){} }
@@ -3135,9 +3550,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     ["rappel_2h","Rappel 2 heures avant","Juste avant le coup d'envoi.",true,false],
     ["equipe","Changement d'équipe","Si tu changes de maillot après la convocation.",true,false],
     ["annule","Match annulé","Si le match prévu est supprimé.",true,false],
-    ["compte_rendu","Compte rendu","Le score et le MVP de chaque match.",true,false],
+    ["compte_rendu","Compte rendu","Le score de chaque match (le MVP reste secret 🤫).",true,false],
     ["mon_match","Mon match","Tes buts, passes et le résultat, rien que pour toi.",true,false],
-    ["mvp","Élu MVP","Quand tu es l'homme du match.",true,false],
+    ["mvp","Révélation du MVP","Quand le MVP d'un match est désigné : à découvrir dans l'appli.",true,false],
     ["notes","Mes notes","Quand un organisateur modifie ta carte.",true,false],
     ["photo_reponse","Ma photo","Réponse à la photo que tu as proposée.",true,false],
     ["paliers","Paliers","10e but de la saison, 50e match, note qui franchit un cap.",false,false],
