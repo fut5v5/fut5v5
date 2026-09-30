@@ -3413,13 +3413,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const FETE_KEY="fut5v5:mvp-fete-vus";
   const feteSeen=()=>{ try{return JSON.parse(localStorage.getItem(FETE_KEY)||"[]")}catch(e){return []} };
   const feteHash=t=>{ let h=0; for(const c of String(t))h=(h*31+c.charCodeAt(0))>>>0; return h; };
-  const pickF=(arr,seed)=>arr[seed%arr.length];
+  const pickF=(arr,seed)=>arr[Math.abs(Math.floor(seed))%arr.length];
   function feteText(rec,pid){
     const side=rec.team[pid]==="rouge"?"rouge":"blanc", my=sc(rec,side), op=sc(rec,side==="rouge"?"blanc":"rouge");
     const g=rec.goals.filter(x=>x.pid===pid&&!x.own).length, a=rec.goals.filter(x=>x.ast===pid).length, o=rec.goals.filter(x=>x.pid===pid&&x.own).length;
     const res=my>op?"win":my<op?"loss":"draw", seed=feteHash(rec.id+pid);
     let H,Q;
     if(res==="loss"&&g+a<2){ H=["Seul contre tous, <em>tu n'as rien lâché</em> 🦁","Le score ment, <em>pas toi</em> 🦁"]; Q=["Seul contre tous. Respect.","Le score ne dit pas tout. Toi, si."]; }
+    else if(g>=4){ H=[g+" buts : <em>c'est un carnage</em> 🔥","<em>"+g+" pions</em>, rien que ça 🔥"]; Q=["Le gardien adverse a demandé une cellule psychologique.","À ce rythme-là, on va devoir agrandir les filets."]; }
     else if(g>=3){ H=["Coup du chapeau : <em>réclame le ballon</em> 🎩","<em>Triplé</em>, rien que ça 🔥"]; Q=["Le ballon du match est déjà dans ton sac.","Trois buts, zéro pitié. Les filets demandent un arrêt de travail."]; }
     else if(g===2){ H=["Tu as porté l'équipe <em>sur ton dos</em> 💪","Doublé et <em>tapis rouge</em> 🔥"]; Q=["Même le gardien adverse a applaudi.","On a vérifié : il n'y avait pas deux joueurs avec ton maillot."]; }
     else if(g===1&&a>=1){ H=["Buteur <em>et</em> passeur, <em>le couteau suisse</em> 🔪","Tu marques, tu fais marquer : <em>la totale</em> ✨"]; Q=["Il ne manquait plus que tu fasses l'arbitre.","Un vrai joueur de console, en vrai."]; }
@@ -3427,9 +3428,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     else if(a>=2){ H=["Tu as distribué <em>les caviars</em> 🎯","Le chef d'orchestre, <em>c'est toi</em> 🎼"]; Q=["Les attaquants te doivent tous un verre.","Des caviars servis sur plateau d'argent."]; }
     else if(a===1){ H=["La passe <em>qui fait la différence</em> 🎯","L'art de <em>faire briller les autres</em> ✨"]; Q=["Pas besoin de marquer quand on voit le jeu comme ça.","Une passe, un regard, un but. Classe."]; }
     else { H=["Le patron <em>de l'ombre</em> 🕶️","Pas de stats, <em>que du cœur</em> 🫀"]; Q=["Pas de stats, mais un match à 200 %. Le vrai sait.","Le genre de match qu'on ne voit que dans les yeux du coach."]; }
-    const sig=pickF(["La rédac, encore sous le choc","La rédac, conquise","La rédac, en PLS","La rédac, qui n'en revient toujours pas"],seed>>3);
+    const sig=pickF(["La rédac, encore sous le choc","La rédac, conquise","La rédac, en PLS","La rédac, qui n'en revient toujours pas"],seed>>>3);
     let note=6+g+a*0.5+(res==="win"?0.5:res==="draw"?0.25:0)-o; note=Math.max(5,Math.min(10,Math.round(note*2)/2));
-    return {h:pickF(H,seed),q:pickF(Q,seed>>1),sig,note:String(note).replace(".",","),g,a,o,my,op,res};
+    return {h:pickF(H,seed),q:pickF(Q,seed>>>1),sig,note:String(note).replace(".",","),g,a,o,my,op,res};
   }
   function renderFete(id){
     const box=$("#meFete"); if(!box)return;
@@ -3455,7 +3456,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const bits=[t.g?t.g+" but"+(t.g>1?"s":""):"",t.a?t.a+" caviar"+(t.a>1?"s":""):""].filter(Boolean).join(", ")||"zéro stat mais 100 % de classe";
     const brag=pickF(["🏆 Qui c'est le MVP de "+d+" ? C'est bibi 😎 "+bits+". Merci, merci, pas d'autographes.",
       "⭐ MVP de "+d+" : "+p.name+". "+bits+". Je signe les maillots à la buvette.",
-      "🎤 Petit rappel : le MVP de "+d+", c'est moi. "+bits+". Allez, bisous les remplaçants."],feteHash(rec.id)>>2);
+      "🎤 Petit rappel : le MVP de "+d+", c'est moi. "+bits+". Allez, bisous les remplaçants."],feteHash(rec.id)>>>2);
     box.querySelector(".brag").href="https://wa.me/?text="+encodeURIComponent(brag+"\n👉 "+location.href.split("#")[0]);
     box.querySelector(".replay").addEventListener("click",()=>{ lastReveal={id:"",t:0}; location.hash="m-"+rec.id; });
     box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=feteSeen(); a.push(rec.id); try{localStorage.setItem(FETE_KEY,JSON.stringify(a.slice(-100)))}catch(e){} box.hidden=true; });
