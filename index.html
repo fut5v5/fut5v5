@@ -650,8 +650,20 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   font:800 1.02rem/1.05 'Barlow Condensed',sans-serif;letter-spacing:.03em;text-transform:uppercase;text-align:center;cursor:pointer;text-decoration:none}
 .fete-b.replay{border-color:var(--gold);background:var(--gold);color:#0c1a3d}
 .fete-b.brag{border-color:#25d366;background:rgba(37,211,102,.12);color:#b8f5cf}
+.brag-img{display:block;width:100%;max-width:340px;margin:0 auto 10px;border-radius:14px;aspect-ratio:1080/1350;background:#0c1a3d;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.brag-msg{min-height:6.5em}
+.brag-go{width:100%;margin:0 0 8px;border:0;cursor:pointer}
+.brag-go:disabled{opacity:.6;cursor:progress}
+.brag-note{margin:0 0 8px;font-size:.85rem;color:var(--muted,#8193bf)}
+.brag-note:empty{display:none}
 .fete-ok{position:relative;grid-column:1/-1;border:0;background:none;color:#9fb0d6;font:600 .82rem 'Barlow',sans-serif;padding:4px;cursor:pointer}
-.fete-b:focus-visible,.fete-ok:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.fete.fete-mini{padding:0;border-color:rgba(233,199,106,.55);box-shadow:none}
+.fete-again{position:relative;display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:#fff;cursor:pointer;padding:10px 12px;text-align:left;font:600 .88rem/1.25 'Barlow',sans-serif}
+.fete-again .ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--gold);color:#0c1a3d;font-size:1.05rem}
+.fete-again b{display:block;font:800 italic 1.05rem/1.05 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.01em;color:var(--gold)}
+.fete-again small{display:block;color:#9fb0d6;font-size:.76rem;margin-top:2px}
+.fete-again .go-ar{margin-left:auto;color:var(--gold);font-size:1.2rem}
+.fete-b:focus-visible,.fete-ok:focus-visible,.fete-again:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .me-news h3{margin:0 0 6px;font-size:1rem}
 .me-news ul{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:4px}
 .me-news li{display:flex;align-items:center;gap:8px;font-size:.92rem}
@@ -3414,7 +3426,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const feteSeen=()=>{ try{return JSON.parse(localStorage.getItem(FETE_KEY)||"[]")}catch(e){return []} };
   const feteHash=t=>{ let h=0; for(const c of String(t))h=(h*31+c.charCodeAt(0))>>>0; return h; };
   const pickF=(arr,seed)=>arr[Math.abs(Math.floor(seed))%arr.length];
-  function feteText(rec,pid){
+  function feteText(rec,pid){ /* renvoie aussi my/op/o pour l'image */
     const side=rec.team[pid]==="rouge"?"rouge":"blanc", my=sc(rec,side), op=sc(rec,side==="rouge"?"blanc":"rouge");
     const g=rec.goals.filter(x=>x.pid===pid&&!x.own).length, a=rec.goals.filter(x=>x.ast===pid).length, o=rec.goals.filter(x=>x.pid===pid&&x.own).length;
     const res=my>op?"win":my<op?"loss":"draw", seed=feteHash(rec.id+pid);
@@ -3432,11 +3444,106 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     let note=6+g+a*0.5+(res==="win"?0.5:res==="draw"?0.25:0)-o; note=Math.max(5,Math.min(10,Math.round(note*2)/2));
     return {h:pickF(H,seed),q:pickF(Q,seed>>>1),sig,note:String(note).replace(".",","),g,a,o,my,op,res};
   }
+  /* ---- « Chambrer le groupe » : image du sacre + message façon MPG (🎲 pour en changer) ---- */
+  let bragVariant=0;
+  function bragText(rec,p,t,d){
+    const bits=[t.g?t.g+" but"+(t.g>1?"s":""):"",t.a?t.a+" caviar"+(t.a>1?"s":""):""].filter(Boolean).join(", ");
+    const B=bits||"zéro stat, 100 % de classe";
+    const V=[
+      "🎤 Petit rappel : le MVP de "+d+", c'est moi. "+B+". Allez, bisous les remplaçants.",
+      "🏆 Qui c'est le MVP de "+d+" ? C'est bibi 😎 "+B+". Merci, merci, pas d'autographes.",
+      "📰 La rédac a tranché : "+t.note+"/10 et le titre de MVP. Vous pouvez applaudir, je vous entends pas d'ici 👂",
+      "🐐 Le GOAT a encore frappé : "+B+". Les réclamations se font auprès de la VAR.",
+      "🍿 Allez revoir mon sacre dans l'appli. Oui, j'ai regardé l'animation 14 fois. Et alors ?",
+      "🧤 Aux gardiens de "+d+" : désolé. Enfin… pas trop 😏 "+B+".",
+      "⭐ "+t.note+"/10 selon la rédac. Je vous laisse comparer avec vos notes, courage 😇",
+      t.res==="loss"?"🦁 Perdre et être MVP quand même, c'est un art. Demandez à la rédac.":"✍️ "+B+" et le brassard de MVP. Mon agent attend vos offres pour le mercato."];
+    return V[bragVariant%V.length]+"\n👉 "+location.href.split("#")[0];
+  }
+  function wrapRuns(c,runs,maxW){ /* runs : [{t,gold}] -> lignes de mots colorés */
+    const words=[]; runs.forEach(r=>r.t.split(/\s+/).filter(Boolean).forEach(w=>words.push({t:w,gold:r.gold})));
+    const lines=[]; let cur=[], w=0; const sp=c.measureText(" ").width;
+    words.forEach(x=>{ const ww=c.measureText(x.t).width, glue=cur.length&&/^[,.;:!?…]+$/.test(x.t); if(!glue&&cur.length&&w+sp+ww>maxW){ lines.push(cur); cur=[]; w=0; } if(cur.length&&!glue)w+=sp; x.x=w; cur.push(x); w+=ww; });
+    if(cur.length)lines.push(cur); return lines; }
+  function wrapText(c,txt,maxW){ const out=[]; let line=""; txt.split(/\s+/).forEach(w=>{ const t=line?line+" "+w:w; if(line&&c.measureText(t).width>maxW){out.push(line);line=w;} else line=t; }); if(line)out.push(line); return out; }
+  async function buildMvpImage(rec,pid,t,d){
+    if(document.fonts){try{await document.fonts.ready}catch(e){}}
+    const p=byId(pid); await getImg(p.photo).promise;
+    const Wd=1080, Hd=1350, cv=document.createElement("canvas"); cv.width=Wd; cv.height=Hd; const c=cv.getContext("2d");
+    const BC="'Barlow Condensed','Arial Narrow',sans-serif", BA="'Barlow',system-ui,sans-serif", GOLD="#e9c76a";
+    let g=c.createRadialGradient(Wd*.2,Hd*.3,0,Wd*.2,Hd*.3,Wd*1.15); g.addColorStop(0,"#22367a"); g.addColorStop(.55,"#0c1a3d"); g.addColorStop(1,"#060d24"); c.fillStyle=g; c.fillRect(0,0,Wd,Hd);
+    c.fillStyle="rgba(233,199,106,.16)"; c.beginPath(); c.moveTo(0,0); c.lineTo(Wd*.42,0); c.lineTo(0,Wd*.42); c.closePath(); c.fill();
+    c.fillStyle="rgba(255,255,255,.04)"; c.beginPath(); c.moveTo(Wd*.55,0); c.lineTo(Wd*.72,0); c.lineTo(Wd*.2,Hd); c.lineTo(Wd*.03,Hd); c.closePath(); c.fill();
+    c.save(); c.font="italic 900 430px "+BC; c.fillStyle="rgba(233,199,106,.06)"; c.textAlign="right"; c.fillText("MVP",Wd+20,Hd-150); c.restore();
+    c.strokeStyle="rgba(233,199,106,.7)"; c.lineWidth=3; c.beginPath(); c.roundRect?c.roundRect(22,22,Wd-44,Hd-44,40):c.rect(22,22,Wd-44,Hd-44); c.stroke();
+    /* en-tête */
+    c.textBaseline="alphabetic"; c.font="800 34px "+BA; c.fillStyle=GOLD; try{c.letterSpacing="5px"}catch(e){} c.fillText("🏆 MVP DU MATCH",70,110); try{c.letterSpacing="0px"}catch(e){}
+    c.font="600 32px "+BA; c.fillStyle="#9fb0d6"; c.textAlign="right"; c.fillText(d,Wd-70,110); c.textAlign="left";
+    /* carte inclinée + note */
+    const cc=document.createElement("canvas"); drawCard(cc,Object.assign({},p,{fond:"forme",mvp:true}),1.05);
+    const cw=cc.width, ch=cc.height; c.save(); c.translate(290,470); c.rotate(-5*Math.PI/180);
+    c.shadowColor="rgba(233,199,106,.55)"; c.shadowBlur=70; c.drawImage(cc,-cw/2,-ch/2); c.shadowColor="rgba(0,0,0,.5)"; c.shadowBlur=40; c.shadowOffsetY=20; c.drawImage(cc,-cw/2,-ch/2); c.restore();
+    c.save(); c.translate(470,215); c.rotate(8*Math.PI/180); const hw=62, hh=70; c.beginPath(); c.moveTo(0,-hh); c.lineTo(hw,-hh/2); c.lineTo(hw,hh/2); c.lineTo(0,hh); c.lineTo(-hw,hh/2); c.lineTo(-hw,-hh/2); c.closePath();
+    g=c.createLinearGradient(-hw,-hh,hw,hh); g.addColorStop(0,"#fff1b8"); g.addColorStop(.6,GOLD); g.addColorStop(1,"#c99a2e"); c.fillStyle=g; c.shadowColor="rgba(0,0,0,.45)"; c.shadowBlur=20; c.fill(); c.shadowBlur=0;
+    c.fillStyle="#0c1a3d"; c.font="italic 800 60px "+BC; c.textAlign="center"; c.fillText(t.note,0,21); c.restore(); c.textAlign="left";
+    /* titre (mots dorés = <em>) */
+    const runs=[]; t.h.split(/(<em>.*?<\/em>)/).forEach(part=>{ if(!part)return; const gold=/^<em>/.test(part); runs.push({t:part.replace(/<\/?em>/g,"").toUpperCase(),gold}); });
+    const X=560, MW=Wd-70-X; let fs=92, lines;
+    do{ c.font="italic 800 "+fs+"px "+BC; lines=wrapRuns(c,runs,MW); fs-=6; }while(lines.length>5&&fs>50);
+    fs+=6; const lh=fs*.98; let y=200+fs*.8;
+    lines.forEach(l=>{ l.forEach(w=>{ c.fillStyle=w.gold?GOLD:"#fff"; c.fillText(w.t,X+w.x,y); }); y+=lh; });
+    /* citation de la rédac */
+    y=Math.max(y+30,790); c.font="italic 500 40px "+BA; c.fillStyle="#c9d4f2";
+    wrapText(c,"« "+t.q+" »",Wd-140).forEach(l=>{ c.fillText(l,70,y); y+=54; });
+    c.font="700 30px "+BA; c.fillStyle="#8193bf"; c.fillText("— "+t.sig,70,y+4); y+=70;
+    /* statistiques */
+    const tiles=[[String(t.g),t.g>1?"BUTS":"BUT",""],[String(t.a),t.a>1?"CAVIARS":"CAVIAR",""]];
+    if(t.o)tiles.push([String(t.o),"CSC","loss"]);
+    tiles.push([t.my+"–"+t.op,t.res==="win"?"VICTOIRE":t.res==="loss"?"DÉFAITE":"NUL",t.res==="win"?"win":t.res==="loss"?"loss":""]);
+    const ty=Math.max(y,1000), th=170, gap=22, tw=(Wd-140-gap*(tiles.length-1))/tiles.length;
+    tiles.forEach(([v,l,k],i)=>{ const tx=70+i*(tw+gap); c.beginPath(); c.roundRect?c.roundRect(tx,ty,tw,th,28):c.rect(tx,ty,tw,th); c.fillStyle="rgba(8,18,48,.72)"; c.fill(); c.strokeStyle="rgba(233,199,106,.5)"; c.lineWidth=2.5; c.stroke();
+      c.textAlign="center"; c.font="italic 800 88px "+BC; c.fillStyle=k==="win"?"#7ff0b5":k==="loss"?"#ff9b93":"#fff"; c.fillText(v,tx+tw/2,ty+100);
+      c.font="700 26px "+BA; c.fillStyle=GOLD; try{c.letterSpacing="3px"}catch(e){} c.fillText(l,tx+tw/2,ty+145); try{c.letterSpacing="0px"}catch(e){} c.textAlign="left"; });
+    /* pied */
+    c.font="italic 900 58px "+BC; c.fillStyle="#fff"; c.fillText("FUT",70,Hd-66); const fw=c.measureText("FUT ").width; c.fillStyle="#6f8cff"; c.fillText("5V5",70+fw,Hd-66);
+    c.font="600 30px "+BA; c.fillStyle="#9fb0d6"; c.textAlign="right"; c.fillText(location.host?location.host+location.pathname.replace(/index\.html$/,""):"FUT 5V5",Wd-70,Hd-76); c.textAlign="left";
+    return new Promise(res=>cv.toBlob(res,"image/png"));
+  }
+  function openBrag(rec,pid,t,d){
+    const p=byId(pid); let blob=null;
+    openSheet("Chambrer le groupe","L'image de ton sacre + un petit mot. Modifie-le si tu veux, ou 🎲 pour une autre version.",body=>{
+      const im=document.createElement("img"); im.className="brag-img"; im.alt="Image de ton sacre"; body.appendChild(im);
+      const ta=document.createElement("textarea"); ta.className="wamsg brag-msg"; ta.value=bragText(rec,p,t,d); body.appendChild(ta);
+      const go=document.createElement("button"); go.type="button"; go.className="wa wa-go brag-go"; go.textContent="📲 Partager l'image + le texte"; go.disabled=true; body.appendChild(go);
+      const msg=document.createElement("p"); msg.className="brag-note"; body.appendChild(msg);
+      const row=document.createElement("div"); row.style.cssText="display:flex;gap:8px";
+      const cp=document.createElement("button"); cp.type="button"; cp.className="sheet-cancel"; cp.textContent="Copier le texte";
+      cp.addEventListener("click",()=>{ const done=()=>toast("Message copié."); try{ navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select();toast("Sélectionné : copie-le avec ton téléphone.");}); }catch(e){ ta.select(); } });
+      const nx=document.createElement("button"); nx.type="button"; nx.className="sheet-cancel brag-next"; nx.textContent="🎲 Autre version";
+      nx.addEventListener("click",()=>{ bragVariant++; ta.value=bragText(rec,p,t,d); });
+      row.appendChild(cp); row.appendChild(nx); body.appendChild(row);
+      buildMvpImage(rec,pid,t,d).then(b=>{ blob=b; if(!b)return; im.src=URL.createObjectURL(b); go.disabled=false; }).catch(()=>{ msg.textContent="Image indisponible : le texte peut quand même partir."; go.disabled=false; });
+      go.addEventListener("click",async()=>{
+        if(!blob){ window.open("https://wa.me/?text="+encodeURIComponent(ta.value),"_blank"); return; }
+        try{ navigator.clipboard&&navigator.clipboard.writeText(ta.value).then(()=>toast("Texte copié : si WhatsApp ne l'affiche pas, colle-le sous l'image."),()=>{}); }catch(e){}
+        closeSheet(); shareImage(blob,"mvp-fut5v5.png",ta.value,msg);
+      });
+    });
+  }
   function renderFete(id){
     const box=$("#meFete"); if(!box)return;
     const seen=feteSeen(), limit=Date.now()-21*86400000;
     const rec=matches.find(m=>m.mvp===id&&mvpRevealed(m.id)&&!seen.includes(m.id)&&m.date.getTime()>limit);
-    if(!rec){ box.hidden=true; box.innerHTML=""; return; }
+    box.classList.remove("fete-mini");
+    if(!rec){
+      /* bloc masqué (« je reste humble ») : le MVP peut le rappeler tant que son sacre est récent */
+      const old=matches.find(m=>m.mvp===id&&mvpRevealed(m.id)&&seen.includes(m.id)&&m.date.getTime()>limit);
+      if(!old){ box.hidden=true; box.innerHTML=""; return; }
+      box.classList.add("fete-mini");
+      box.innerHTML='<button type="button" class="fete-again"><span class="ic">🏆</span><span><b>Allez, encore une fois…</b><small>Ça fait tellement du bien. Réaffiche ton sacre de MVP.</small></span><span class="go-ar" aria-hidden="true">›</span></button>';
+      box.querySelector(".fete-again").addEventListener("click",()=>{ const a=feteSeen().filter(x=>x!==old.id); try{localStorage.setItem(FETE_KEY,JSON.stringify(a))}catch(e){} renderFete(id); });
+      box.hidden=false; return;
+    }
     const p=byId(id), t=feteText(rec,id);
     const d=rec.date.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"short"});
     box.innerHTML='<div class="fete-lab"><span>🏆 MVP du match</span><span></span></div>'+
@@ -3446,20 +3553,16 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       '<div class="fete-t"><b>'+t.a+'</b><small>'+(t.a>1?"caviars":"caviar")+'</small></div>'+
       (t.o?'<div class="fete-t loss"><b>'+t.o+'</b><small>csc</small></div>':'')+
       '<div class="fete-t '+(t.res==="win"?"win":t.res==="loss"?"loss":"")+'"><b>'+t.my+'–'+t.op+'</b><small>'+(t.res==="win"?"victoire":t.res==="loss"?"défaite":"nul")+'</small></div></div>'+
-      '<div class="fete-acts"><button type="button" class="fete-b replay">▶ Revivre mon sacre</button><a class="fete-b brag" target="_blank" rel="noopener">📲 Chambrer le groupe</a>'+
+      '<div class="fete-acts"><button type="button" class="fete-b replay">▶ Revivre mon sacre</button><button type="button" class="fete-b brag">📲 Chambrer le groupe</button>'+
       '<button type="button" class="fete-ok">OK, je reste humble 😇</button></div>';
     box.querySelector(".fete-lab span:last-child").textContent=d;
     box.querySelector(".fete-note").textContent=t.note;
     box.querySelector("q span").textContent="« "+t.q+" »";
     box.querySelector("q small").textContent="— "+t.sig;
     drawCard(box.querySelector("canvas"),Object.assign({},p,{fond:"forme",mvp:true}),.5);
-    const bits=[t.g?t.g+" but"+(t.g>1?"s":""):"",t.a?t.a+" caviar"+(t.a>1?"s":""):""].filter(Boolean).join(", ")||"zéro stat mais 100 % de classe";
-    const brag=pickF(["🏆 Qui c'est le MVP de "+d+" ? C'est bibi 😎 "+bits+". Merci, merci, pas d'autographes.",
-      "⭐ MVP de "+d+" : "+p.name+". "+bits+". Je signe les maillots à la buvette.",
-      "🎤 Petit rappel : le MVP de "+d+", c'est moi. "+bits+". Allez, bisous les remplaçants."],feteHash(rec.id)>>>2);
-    box.querySelector(".brag").href="https://wa.me/?text="+encodeURIComponent(brag+"\n👉 "+location.href.split("#")[0]);
+    box.querySelector(".brag").addEventListener("click",()=>openBrag(rec,id,t,d));
     box.querySelector(".replay").addEventListener("click",()=>{ lastReveal={id:"",t:0}; location.hash="m-"+rec.id; });
-    box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=feteSeen(); a.push(rec.id); try{localStorage.setItem(FETE_KEY,JSON.stringify(a.slice(-100)))}catch(e){} box.hidden=true; });
+    box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=feteSeen(); a.push(rec.id); try{localStorage.setItem(FETE_KEY,JSON.stringify(a.slice(-100)))}catch(e){} renderFete(id); });
     box.hidden=false;
   }
   function renderMe(){
