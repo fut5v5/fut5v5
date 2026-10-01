@@ -601,6 +601,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .codein{width:100%;font:inherit;font-size:1.6rem;letter-spacing:.3em;text-align:center;color:var(--ink);background:var(--bg);border:1px solid var(--tile-line);border-radius:12px;padding:12px;margin:0 0 12px}
 .okfill{background:var(--gold)!important;color:var(--navy)!important}
 #ivImg{width:100%;height:auto;border-radius:12px;display:block;margin:0 0 14px}
+#ivImg.tap{cursor:pointer}
 #ivMsg{color:var(--muted);font-size:.9rem;margin:0 0 12px}
 
 /* ---------- installation de l'application ---------- */
@@ -624,6 +625,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .me-link{color:var(--gold-deep);font-weight:700;font-size:.88rem;margin-top:2px}
 .me-news{border-bottom:1px solid var(--tile-line);padding:0 0 12px;margin:0 0 12px}
 /* ---------- bloc « Élu MVP » (après la révélation, sur l'accueil du MVP) : même univers que l'animation, ton MPG ---------- */
+#infB,#infR{white-space:pre-line}
+.sinfo-i{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:5px;vertical-align:2px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);background:none;font:700 .66rem/1 'Barlow',sans-serif;padding:0;cursor:pointer}
+.sinfo-i:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sinfo-ov{position:fixed;inset:0;z-index:70;background:rgba(3,8,24,.6);display:grid;place-items:center;padding:16px}
+.sinfo-pop{max-width:340px;width:100%;background:#1c3170;color:#f5f7fc;border:1px solid var(--gold);border-radius:16px;padding:16px 16px 14px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.sinfo-pop h2{font:800 1.3rem 'Barlow Condensed',sans-serif;margin:0 0 8px;color:var(--gold)}
+.sinfo-pop ul{margin:0 0 10px;padding-left:18px;line-height:1.4;font-size:.92rem}
+.sinfo-pop p{font-size:.82rem;color:#9fb0d6;line-height:1.4;margin:0}
+.sinfo-ok{margin-top:12px;width:100%;border:0;border-radius:10px;padding:9px;background:var(--gold);color:#0c1a3d;font:800 1rem 'Barlow Condensed',sans-serif;cursor:pointer}
 .fete{position:relative;overflow:hidden;border-radius:20px;margin:0 0 14px;padding:12px 12px 10px;color:#fff;
   background:linear-gradient(135deg,rgba(233,199,106,.18) 0 18%,transparent 18% 100%),radial-gradient(90% 70% at 20% 30%,#22367a 0%,#0c1a3d 60%,#060d24 100%);
   border:1px solid rgba(233,199,106,.7);box-shadow:0 12px 30px rgba(6,13,36,.45)}
@@ -1218,7 +1228,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     stats:{title:"Statistiques",items:[
       "Toutes les cartes des joueurs, à la façon de FIFA, avec leur indicateur de forme.",
       "Un appui sur une carte ouvre la fiche du joueur : buts marqués, matchs joués, nombre de fois MVP.",
-      "L'évolution de ses notes (vitesse, dribble, etc.) à chaque modification de sa carte, en petites courbes."]}
+      "L'évolution de ses notes (vitesse, technique, etc.) à chaque modification de sa carte, en petites courbes."]}
   };
   const home=document.getElementById("home"), screen=document.getElementById("screen"), carte=document.getElementById("carte");
   function show(route){
@@ -1249,13 +1259,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     home.hidden=true; screen.hidden=false; window.scrollTo(0,0);
   }
   /* ---------- moteur de dessin des cartes FUT ---------- */
-  const STATS=[["vit","VIT","Vitesse"],["tir","TIR","Tir"],["pas","PAS","Passe"],["dri","DRI","Dribble"],["car","CAR","Cardio"],["phy","PHY","Physique"],["gar","GAR","Gardien"]];
+  const STATS=[["vit","VIT","Vitesse"],["tir","TIR","Tir"],["pas","PAS","Passe"],["dri","TEC","Technique"],["car","CAR","Cardio"],["phy","DEF","Défense"],["gar","GAR","Gardien"]];
   const W=380, H=534, OX=10, OY=8;
   const PHOTO={x:80,y:30,w:250,h:330};
   const FONT='"Barlow Condensed","Arial Narrow",sans-serif';
   const clamp=v=>{v=Math.round(Number(v));return isFinite(v)?Math.max(0,Math.min(99,v)):0};
   const avgStats=p=>STATS.reduce((a,[k])=>a+clamp(p.stats[k]),0)/STATS.length;
   const overall=p=>Math.round(avgStats(p));
+  /* niveau « terrain » : moyenne des notes sans le gardien (sert à l'équilibrage, la note gardien n'y pèse pas) */
+  const fieldAvg=p=>STATS.filter(([k])=>k!=="gar").reduce((a,[k])=>a+clamp(p.stats[k]),0)/(STATS.length-1);
   let onImageReady=()=>{};
   const imgCache=new Map();
   function getImg(src){
@@ -1548,14 +1560,34 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
   /* ---------- lignes de notes ---------- */
   const list=$("#statsList");
+  /* aide pour noter : deux questions à se poser + repères (bouton ⓘ à côté de chaque note) */
+  const STAT_HELP={
+    vit:[["Sur 10 m, qui le bat à la course ?","Est-ce qu'il revient en défense aussi vite qu'il monte ?"],"60 = on le rattrape · 75 = rapide · 85+ = personne ne le suit"],
+    tir:[["Quand il frappe, est-ce que le gardien est inquiété ?","Il marque de loin, ou seulement de près ?"],"60 = rarement cadré · 75 = régulier · 85+ = chaque frappe est un danger"],
+    pas:[["Ses passes arrivent-elles dans les pieds, au bon moment ?","Il voit le partenaire démarqué avant les autres ?"],"60 = simple, parfois imprécis · 75 = propre · 85+ = il fait jouer toute l'équipe"],
+    dri:[["Il garde le ballon sous pression sans le perdre ?","Contrôle, dribble, crochet : il élimine en 1 contre 1 ?"],"60 = se débarrasse vite du ballon · 75 = à l'aise · 85+ = on ne lui prend pas le ballon"],
+    car:[["Il est encore là en fin de match, ou il demande à sortir ?","Il fait les efforts dans les deux sens toute la séance ?"],"60 = gros coup de moins bien · 75 = tient le rythme · 85+ = infatigable"],
+    phy:[["Il gagne ses duels et récupère des ballons ?","Il se replace et ferme les espaces, ou il reste devant ?"],"60 = défend peu · 75 = fiable · 85+ = un mur"],
+    gar:[["Au goal, il arrête les tirs cadrés ou il laisse passer ?","Il ose sortir et relance proprement ?"],"50 par défaut. Plus haut seulement pour les vrais bons gardiens : 70 = solide · 85+ = spécialiste. Les deux meilleurs sont mis dans des équipes différentes."]};
+  function openStatInfo(k){
+    const st=STATS.find(x=>x[0]===k), h=STAT_HELP[k]; if(!st||!h)return;
+    let ov=$("#sinfo"); if(!ov){ ov=document.createElement("div"); ov.id="sinfo"; ov.className="sinfo-ov";
+      ov.innerHTML='<div class="sinfo-pop" role="dialog" aria-modal="true" aria-labelledby="sinfoT"><h2 id="sinfoT"></h2><ul></ul><p></p><button type="button" class="sinfo-ok">OK</button></div>';
+      document.body.appendChild(ov); ov.addEventListener("click",e=>{ if(e.target===ov||e.target.classList.contains("sinfo-ok"))ov.hidden=true; });
+      document.addEventListener("keydown",e=>{ if(e.key==="Escape")ov.hidden=true; }); }
+    ov.querySelector("h2").textContent=st[1]+" · "+st[2];
+    ov.querySelector("ul").innerHTML=""; h[0].forEach(q=>{ const li=document.createElement("li"); li.textContent=q; ov.querySelector("ul").appendChild(li); });
+    ov.querySelector("p").textContent="Repères : "+h[1]; ov.hidden=false; ov.querySelector(".sinfo-ok").focus();
+  }
   STATS.forEach(([k,code,label])=>{
     const row=document.createElement("div"); row.className="srow"+(k==="car"?" car":"");
-    row.innerHTML='<span class="lab"><b>'+code+'</b><small>'+label+'</small></span>'+
+    row.innerHTML='<span class="lab"><b>'+code+'<button type="button" class="sinfo-i" aria-label="Aide pour noter : '+label+'">i</button></b><small>'+label+'</small></span>'+
       '<button type="button" class="step" aria-label="Baisser '+label+'">−</button>'+
       '<input type="range" min="0" max="99" id="r-'+k+'" aria-label="'+label+'">'+
       '<button type="button" class="step" aria-label="Monter '+label+'">+</button>'+
       '<span class="val" id="v-'+k+'">0<small id="d-'+k+'"></small></span>';
     list.appendChild(row);
+    row.querySelector(".sinfo-i").addEventListener("click",e=>{ e.preventDefault(); openStatInfo(k); });
     const [minus,plus]=row.querySelectorAll(".step");
     const set=v=>{cardUndo.record("st-"+k);draft.stats[k]=clamp(v);render()};
     row.querySelector("input").addEventListener("input",e=>set(e.target.value));
@@ -1777,32 +1809,37 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#foldPres").addEventListener("click",()=>{M.folded=true;renderMatch();});
   $("#unfoldPres").addEventListener("click",()=>{M.folded=false;renderMatch();});
 
-  /* --- équilibrage : note générale d'abord, puis cardio > physique > vitesse > autres > gardien --- */
-  const SEC_W={car:.5,phy:.3,vit:.2,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W), GK_W=.02;
+  /* --- équilibrage : niveau terrain (sans gardien) d'abord, puis cardio > défense > vitesse > autres ;
+     les deux meilleurs gardiens présents (GAR > 50) sont obligatoirement séparés, la note gardien n'a sinon aucun poids --- */
+  const SEC_W={car:.5,phy:.3,vit:.2,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W);
   function balance(){
     if(M.present.size>=2)matchUndo.record();
     const pool=roster.filter(p=>M.present.has(p.id)), n=pool.length;
     if(n<2)return;
-    const vec=pool.map(p=>{const v={ov:avgStats(p),gar:clamp(p.stats.gar)};SEC_K.forEach(k=>v[k]=clamp(p.stats[k]));return v});
+    const vec=pool.map(p=>{const v={ov:fieldAvg(p),gar:clamp(p.stats.gar)};SEC_K.forEach(k=>v[k]=clamp(p.stats[k]));return v});
+    /* les deux meilleurs gardiens (au-dessus de 50) doivent être dans deux équipes différentes */
+    const gks=vec.map((v,i)=>[v.gar,i]).filter(x=>x[0]>50).sort((x,y)=>y[0]-x[0]).slice(0,2).map(x=>x[1]);
+    const gkOk=()=>gks.length<2||inA[gks[0]]!==inA[gks[1]];
     const k=Math.floor(n/2), inA=new Uint8Array(n);
-    const score=()=>{let nA=0,nB=0,oA=0,oB=0,gA=0,gB=0;const sA={},sB={};SEC_K.forEach(q=>{sA[q]=0;sB[q]=0});
-      for(let i=0;i<n;i++){const v=vec[i];if(inA[i]){nA++;oA+=v.ov;SEC_K.forEach(q=>sA[q]+=v[q]);gA=Math.max(gA,v.gar)}else{nB++;oB+=v.ov;SEC_K.forEach(q=>sB[q]+=v[q]);gB=Math.max(gB,v.gar)}}
-      let sec=GK_W*Math.abs(gA-gB);SEC_K.forEach(q=>{sec+=SEC_W[q]*Math.abs(sA[q]/nA-sB[q]/nB)});return [Math.abs(oA/nA-oB/nB),sec]};
+    const score=()=>{let nA=0,nB=0,oA=0,oB=0;const sA={},sB={};SEC_K.forEach(q=>{sA[q]=0;sB[q]=0});
+      for(let i=0;i<n;i++){const v=vec[i];if(inA[i]){nA++;oA+=v.ov;SEC_K.forEach(q=>sA[q]+=v[q])}else{nB++;oB+=v.ov;SEC_K.forEach(q=>sB[q]+=v[q])}}
+      let sec=0;SEC_K.forEach(q=>{sec+=SEC_W[q]*Math.abs(sA[q]/nA-sB[q]/nB)});return [Math.abs(oA/nA-oB/nB),sec]};
     const res=[];
     if(n<=20){
       let mask=(1<<k)-1; const lim=1<<n;
       while(mask<lim){
-        if(!(n%2===0&&!(mask&1))){for(let i=0;i<n;i++)inA[i]=(mask>>i)&1;const [a,b]=score();res.push([Array.from(inA).join(""),a,b]);}
+        if(!(n%2===0&&!(mask&1))){for(let i=0;i<n;i++)inA[i]=(mask>>i)&1;if(gkOk()){const [a,b]=score();res.push([Array.from(inA).join(""),a,b]);}}
         const c=mask&-mask,r=mask+c; mask=(((r^mask)>>>2)/c)|r;
       }
     } else {
       for(let rep=0;rep<200;rep++){
         const idx=[...Array(n).keys()].sort(()=>Math.random()-.5); inA.fill(0); idx.slice(0,k).forEach(i=>inA[i]=1);
-        const cost=()=>{const [a,b]=score();return a*10+b}; let best=cost(),imp=true;
+        const cost=()=>{const [a,b]=score();return a*10+b+(gkOk()?0:1e6)}; let best=cost(),imp=true;
         while(imp){imp=false;for(let i=0;i<n&&!imp;i++)for(let j=0;j<n&&!imp;j++)if(inA[i]&&!inA[j]){inA[i]=0;inA[j]=1;const c=cost();if(c<best-1e-9){best=c;imp=true}else{inA[i]=1;inA[j]=0}}}
-        const [a,b]=score(); res.push([Array.from(inA).join(""),a,b]);
+        if(gkOk()){const [a,b]=score(); res.push([Array.from(inA).join(""),a,b]);}
       }
     }
+    if(!res.length)return;
     const bestOv=Math.min(...res.map(r=>r[1])), near=res.filter(r=>r[1]<=bestOv+.25);
     const bestSec=Math.min(...near.map(r=>r[2]));
     let c=near.filter(r=>r[2]<=bestSec+Math.max(.2,bestSec*.1));
@@ -1827,7 +1864,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* --- tableau d'équilibre --- */
   function teamAgg(list){
     if(!list.length)return null; const n=list.length, m=k=>list.reduce((a,p)=>a+clamp(p.stats[k]),0)/n;
-    return {n,ov:list.reduce((a,p)=>a+avgStats(p),0)/n,car:m("car"),phy:m("phy"),vit:m("vit"),gk:Math.max(...list.map(p=>clamp(p.stats.gar)))};
+    const gkp=list.slice().sort((x,y)=>clamp(y.stats.gar)-clamp(x.stats.gar))[0];
+    return {n,ov:list.reduce((a,p)=>a+fieldAvg(p),0)/n,car:m("car"),phy:m("phy"),vit:m("vit"),gk:clamp(gkp.stats.gar),gkName:gkp.name};
   }
   function verdict(a,b){
     const d=Math.abs(a.ov-b.ov), dc=Math.abs(a.car-b.car), dp=Math.abs(a.phy-b.phy), dv=Math.abs(a.vit-b.vit), ath=Math.max(dc,dp,dv);
@@ -1840,7 +1878,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function renderBoard(){
     const a=teamAgg(inTeam("blanc")), b=teamAgg(inTeam("rouge"));
     $("#avB").textContent=a?fmt1(a.ov):"–"; $("#avR").textContent=b?fmt1(b.ov):"–";
-    $("#infB").textContent=a?a.n+" joueurs, cardio "+Math.round(a.car):""; $("#infR").textContent=b?b.n+" joueurs, cardio "+Math.round(b.car):"";
+    const inf=t=>t.n+" joueurs, cardio "+Math.round(t.car)+"\n🧤 "+t.gkName+" "+t.gk;
+    $("#infB").textContent=a?inf(a):""; $("#infR").textContent=b?inf(b):"";
     const mid=$("#sbMid"); mid.classList.remove("ok","warn"); let pos=50;
     if(a&&b){const v=verdict(a,b); $("#sbLab").textContent=v.label; mid.classList.add(v.cls); $("#sbGap").textContent="Écart "+fmt1(v.d)+" pt"; pos=v.pos;}
     else {$("#sbLab").textContent="Équipes incomplètes"; $("#sbGap").textContent="";}
@@ -1875,7 +1914,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     d.style.setProperty("--x",s.x); d.style.setProperty("--y",s.y); pitchEl.appendChild(d); slotEls[s.id]=d;});
   function cardEl(p,scale){
     const b=document.createElement("button"); b.type="button"; b.className="pc"; b.setAttribute("aria-label",p.name+", "+overall(p));
-    const cv=document.createElement("canvas"); drawCard(cv,p,scale); b.appendChild(cv); makeDraggable(b,p.id); return b;
+    const cv=document.createElement("canvas"); drawCard(cv,p,scale); b.appendChild(cv); makeDraggable(b,p.id);
+    b.addEventListener("click",()=>{ if(!noClick&&!drag)openPlayer(p.id); });   /* simple toucher : stats du joueur (l'appui long reste le glisser) */
+    return b;
   }
   function renderPitch(){
     SLOTS.forEach(s=>{const el=slotEls[s.id]; el.innerHTML=""; const p=M.layout[s.id]&&byId(M.layout[s.id]);
@@ -2299,13 +2340,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const text="FUT 5V5 : BLANC "+sb+" – "+sr+" COULEURS. Le MVP ? À découvrir dans l'appli 👀";
     shareImage(reportBlob,"compte-rendu-fut5v5.png",text,$("#shareMsg"));
   });
+  let compoHits=null;   /* zones des cartes sur l'image de compo (pour les rendre cliquables) */
   async function buildCompoImage(){
     if(document.fonts){try{await document.fonts.ready}catch(e){}}
     const onField=Object.values(M.layout).map(byId).filter(Boolean);
     await Promise.all(onField.map(p=>getImg(p.photo).promise));
     const Wd=1080, PW=1000, PH=1900;
     const benchB=inTeam("blanc").filter(p=>!slotOf(p.id)), benchR=inTeam("rouge").filter(p=>!slotOf(p.id));
-    const headH=270, boardH=310, benchH=(benchB.length||benchR.length)?120:0, Hd=headH+boardH+PH+benchH+60;
+    const headH=270, boardH=340, benchH=(benchB.length||benchR.length)?120:0, Hd=headH+boardH+PH+benchH+60;
     const cv=document.createElement("canvas"); cv.width=Wd; cv.height=Hd; const c=cv.getContext("2d");
     const bg=c.createLinearGradient(0,0,Wd,Hd); bg.addColorStop(0,"#0c1a3d"); bg.addColorStop(1,"#16295e"); c.fillStyle=bg; c.fillRect(0,0,Wd,Hd);
     c.fillStyle="rgba(70,110,255,.10)"; c.beginPath(); c.moveTo(Wd*.4,0); c.lineTo(Wd*.62,0); c.lineTo(Wd*.08,Hd); c.lineTo(-Wd*.15,Hd); c.closePath(); c.fill();
@@ -2321,10 +2363,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     drawJersey(c,100,y+24,40,"#f5f7fc","#9fb0d6"); drawJersey(c,Wd-100,y+24,40,"#d6322b","#ff8a82");
     c.textAlign="left"; c.font="800 40px "+FONT; c.fillStyle="#f5f7fc"; c.fillText("BLANC",80,y+102);
     c.font="800 96px "+FONT; c.fillText(a?fmt1(a.ov):"–",80,y+196);
-    c.font="500 26px 'Barlow',sans-serif"; c.fillStyle="#9fb0d6"; if(a)c.fillText(a.n+" joueurs, cardio "+Math.round(a.car),80,y+236);
+    c.font="500 26px 'Barlow',sans-serif"; c.fillStyle="#9fb0d6"; if(a){c.fillText(a.n+" joueurs, cardio "+Math.round(a.car),80,y+236);c.fillText("🧤 "+a.gkName+" "+a.gk,80,y+270);}
     c.textAlign="right"; c.font="800 40px "+FONT; c.fillStyle="#ff6b61"; c.fillText("COULEURS",Wd-80,y+102);
     c.font="800 96px "+FONT; c.fillStyle="#f5f7fc"; c.fillText(b?fmt1(b.ov):"–",Wd-80,y+196);
-    c.font="500 26px 'Barlow',sans-serif"; c.fillStyle="#9fb0d6"; if(b)c.fillText(b.n+" joueurs, cardio "+Math.round(b.car),Wd-80,y+236);
+    c.font="500 26px 'Barlow',sans-serif"; c.fillStyle="#9fb0d6"; if(b){c.fillText(b.n+" joueurs, cardio "+Math.round(b.car),Wd-80,y+236);c.fillText("🧤 "+b.gkName+" "+b.gk,Wd-80,y+270);}
     if(a&&b){
       const v=verdict(a,b); c.textAlign="center";
       c.font="800 42px "+FONT; c.fillStyle=v.cls==="ok"?"#4ade80":"#fbbf24"; c.fillText(v.label,540,y+110);
@@ -2335,10 +2377,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     }
     y+=boardH;
     drawPitchCanvas(c,(Wd-PW)/2,y,PW);
-    const cw=PW*.2, ch=cw*H/W;
+    const cw=PW*.2, ch=cw*H/W; compoHits=[]; compoHits.W=Wd; compoHits.H=Hd;
     SLOTS.forEach(s=>{
       const p=M.layout[s.id]&&byId(M.layout[s.id]); if(!p)return;
-      const cx=(Wd-PW)/2+PW*s.x/100, cy=y+PH*s.y/100;
+      const cx=(Wd-PW)/2+PW*s.x/100, cy=y+PH*s.y/100; compoHits.push({x:cx-cw/2,y:cy-ch/2,w:cw,h:ch,pid:p.id});
       const off=document.createElement("canvas"); drawCard(off,p,cw/W*1.6); c.drawImage(off,cx-cw/2,cy-ch/2,cw,ch);
       c.fillStyle=s.side==="rouge"?"#d6322b":"#ffffff"; c.fillRect(cx-cw*.22,cy+ch/2-ch*.03,cw*.44,ch*.035);
     });
@@ -3018,9 +3060,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
   /* --- visionneuse d'image (quand le partage direct est bloqué) --- */
   let viewerUrl=null;
-  function showImage(blob,title,text){
+  let viewerHits=null;
+  function showImage(blob,title,text,hits){
     if(viewerUrl)URL.revokeObjectURL(viewerUrl); viewerUrl=URL.createObjectURL(blob);
-    $("#ivTitle").textContent=title||"Image"; $("#ivImg").src=viewerUrl; $("#ivMsg").textContent="";
+    viewerHits=hits||null; $("#ivImg").classList.toggle("tap",!!viewerHits);
+    $("#ivTitle").textContent=title||"Image"; $("#ivImg").src=viewerUrl; $("#ivMsg").textContent=viewerHits?"Touche une carte pour voir les stats du joueur.":"";
     $("#imgViewer").hidden=false; document.body.style.overflow="hidden";
     $("#ivShare").onclick=async()=>{
       const file=new File([blob],"fut5v5.png",{type:"image/png"});
@@ -3029,13 +3073,19 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     };
   }
   $("#ivClose").addEventListener("click",()=>{$("#imgViewer").hidden=true; document.body.style.overflow="";});
+  $("#ivImg").addEventListener("click",e=>{
+    if(!viewerHits)return; const r=e.currentTarget.getBoundingClientRect();
+    const x=(e.clientX-r.left)*viewerHits.W/r.width, y=(e.clientY-r.top)*viewerHits.H/r.height;
+    const h=viewerHits.find(k=>x>=k.x&&x<=k.x+k.w&&y>=k.y&&y<=k.y+k.h); if(!h)return;
+    $("#imgViewer").hidden=true; document.body.style.overflow=""; openPlayer(h.pid);
+  });
 
   /* --- compo du prochain match pour les joueurs --- */
   $("#nextSee").addEventListener("click",async()=>{
     if(isAdmin()){location.hash="match";return;}
     toast("Création de l'image…");
     const blob=await buildCompoImage();
-    showImage(blob,"Compo du prochain match","Compo FUT 5V5, "+whenLabel(M.date,true));
+    showImage(blob,"Compo du prochain match","Compo FUT 5V5, "+whenLabel(M.date,true),compoHits);
   });
 
   /* --- sauvegarde du match prévu / en cours --- */

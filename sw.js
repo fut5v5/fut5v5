@@ -1,5 +1,5 @@
 /* FUT 5V5 : service worker (installation, ouverture hors connexion, mises à jour) */
-const VERSION = 'fut5v5-2026-10-01-21-compteur-mvp';
+const VERSION = 'fut5v5-2026-10-02-24-aide-notes';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/badge-96.png'];
 
