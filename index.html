@@ -746,6 +746,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .gearbtn svg{width:20px;height:20px}
 .hrow2{display:flex;gap:6px}
 .gearbtn{padding:8px 10px!important}
+.draftbar{border:1.5px dashed var(--gold);border-radius:14px;padding:12px;margin:6px 0 4px;display:flex;flex-direction:column;gap:8px}
+.draftbar p{margin:0;line-height:1.35}.draftbar p b{display:block}.draftbar p span{display:block;font-size:.85rem;opacity:.8;margin-top:2px}
+.draft-go,.draft-undo{width:100%;border-radius:12px;padding:12px;font-weight:700;font-size:1rem;cursor:pointer}
+.draft-go{border:0;background:var(--gold);color:#0c1a3d}.draft-undo{border:1px solid var(--tile-line);background:transparent;color:inherit}
+.draft-sum{margin:0 0 12px;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}.draft-sum li{line-height:1.35}.draft-sum small{opacity:.75}
 .notify-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:1.5px solid var(--gold);background:transparent;color:var(--ink);border-radius:14px;padding:13px;font-weight:700;font-size:1rem;cursor:pointer;margin:6px 0 4px}
 .notify-btn.on{background:var(--gold);color:#0c1a3d}
 .notify-btn:disabled{opacity:.5;cursor:default}
@@ -996,6 +1001,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>
         Envoyer la compo sur WhatsApp</button>
       <p class="share-msg" id="compoMsg"></p>
+      <div class="draftbar admin-only" id="draftBar" hidden>
+        <p><b>✏️ Compo modifiée, pas encore envoyée</b><span>Les joueurs voient toujours la compo envoyée. Teste autant de propositions que tu veux, puis valide.</span></p>
+        <button type="button" class="draft-go" id="draftSend">✅ Valider et prévenir</button>
+        <button type="button" class="draft-undo" id="draftUndo">↩️ Revenir à la compo envoyée</button>
+      </div>
       <button type="button" class="notify-btn admin-only" id="notifyPlayers"><span aria-hidden="true">🔔</span><span id="notifyLabel">Prévenir les joueurs</span></button>
       <p class="share-msg" id="notifyMsg"></p>
       <p class="btitle"><span class="dot rouge"></span>Remplaçants COULEURS</p>
@@ -1568,7 +1578,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     dri:[["Il garde le ballon sous pression sans le perdre ?","Contrôle, dribble, crochet : il élimine en 1 contre 1 ?"],"60 = se débarrasse vite du ballon · 75 = à l'aise · 85+ = on ne lui prend pas le ballon"],
     car:[["Il est encore là en fin de match, ou il demande à sortir ?","Il fait les efforts dans les deux sens toute la séance ?"],"60 = gros coup de moins bien · 75 = tient le rythme · 85+ = infatigable"],
     phy:[["Il gagne ses duels et récupère des ballons ?","Il se replace et ferme les espaces, ou il reste devant ?"],"60 = défend peu · 75 = fiable · 85+ = un mur"],
-    gar:[["Au goal, il arrête les tirs cadrés ou il laisse passer ?","Il ose sortir et relance proprement ?"],"50 par défaut. Plus haut seulement pour les vrais bons gardiens : 70 = solide · 85+ = spécialiste. Les deux meilleurs sont mis dans des équipes différentes."]};
+    gar:[["Au goal, il arrête les tirs cadrés ou il laisse passer ?","Il ose sortir et relance proprement ?"],"50 par défaut. À partir de 65 = bon gardien : l'appli sépare les deux meilleurs et répartit les bons gardiens à égalité entre les équipes. 70 = solide · 85+ = spécialiste."]};
   function openStatInfo(k){
     const st=STATS.find(x=>x[0]===k), h=STAT_HELP[k]; if(!st||!h)return;
     let ov=$("#sinfo"); if(!ov){ ov=document.createElement("div"); ov.id="sinfo"; ov.className="sinfo-ov";
@@ -1740,10 +1750,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const M={present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""};
   const SAVE_KEY="fut5v5:prochain-match";
   let quiet=false;
+  /* après convocation (et avant le live) : les modifications restent en brouillon sur ce téléphone jusqu'à « Valider et prévenir » */
+  const compoSnap=()=>({present:[...M.present].sort(),team:Object.assign({},M.team),layout:Object.assign({},M.layout),date:M.date});
+  const sameCompo=(a,b)=>!!a&&!!b&&JSON.stringify([a.present.slice().sort(),a.present.slice().sort().map(p=>a.team[p]||""),a.layout,a.date])===JSON.stringify([b.present.slice().sort(),b.present.slice().sort().map(p=>b.team[p]||""),b.layout,b.date]);
+  const draftable=()=>isAdmin()&&!!M.convokedAt&&!M.start&&!!M.sent;
   function saveMatch(){
     if(!isAdmin()||quiet)return;
     if((M.made||M.present.size)&&!M.id)M.id="m"+Date.now().toString(36);
-    persistLocal(); scheduleSync();
+    if(draftable()){ M.draft=!sameCompo(compoSnap(),M.sent); persistLocal(); renderDraftBar(); return; }
+    M.draft=false; persistLocal(); scheduleSync();
   }
   const inTeam=side=>roster.filter(p=>M.present.has(p.id)&&M.team[p.id]===side);
   const slotOf=id=>Object.keys(M.layout).find(s=>M.layout[s]===id)||null;
@@ -1787,7 +1802,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         matchUndo.record(); liveUndo.clear();
         const oldId=M.id; clearTimeout(syncTimer);
         if(oldId)api("setMatchStatus",ADMIN.code,oldId,"supprimer").catch(e=>toast("Suppression non enregistrée : "+errMsg(e)));
-        Object.assign(M,{id:null,convokedAt:"",present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
+        Object.assign(M,{id:null,convokedAt:"",sent:null,draft:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
         closeSheet(); renderMatch(); window.scrollTo(0,0);
         toast("Match supprimé. Touche Annuler pour le remettre.");
       });
@@ -1810,20 +1825,24 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#unfoldPres").addEventListener("click",()=>{M.folded=false;renderMatch();});
 
   /* --- équilibrage : niveau terrain (sans gardien) d'abord, puis cardio > défense > vitesse > autres ;
-     les deux meilleurs gardiens présents (GAR > 50) sont obligatoirement séparés, la note gardien n'a sinon aucun poids --- */
-  const SEC_W={car:.5,phy:.3,vit:.2,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W);
+     bons gardiens (GAR ≥ 65) : les deux meilleurs séparés et répartition équitable (écart max 1), la note gardien n'a sinon aucun poids --- */
+  const SEC_W={car:.5,phy:.3,vit:.2,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W), GK_MIN=65;
   function balance(){
     if(M.present.size>=2)matchUndo.record();
     const pool=roster.filter(p=>M.present.has(p.id)), n=pool.length;
     if(n<2)return;
     const vec=pool.map(p=>{const v={ov:fieldAvg(p),gar:clamp(p.stats.gar)};SEC_K.forEach(k=>v[k]=clamp(p.stats[k]));return v});
-    /* les deux meilleurs gardiens (au-dessus de 50) doivent être dans deux équipes différentes */
-    const gks=vec.map((v,i)=>[v.gar,i]).filter(x=>x[0]>50).sort((x,y)=>y[0]-x[0]).slice(0,2).map(x=>x[1]);
-    const gkOk=()=>gks.length<2||inA[gks[0]]!==inA[gks[1]];
+    /* bons gardiens (GAR ≥ 65) : les deux meilleurs séparés, puis jamais plus d'un bon gardien d'écart entre les équipes */
+    const gks=vec.map((v,i)=>[v.gar,i]).filter(x=>x[0]>=GK_MIN).sort((x,y)=>y[0]-x[0]).map(x=>x[1]);
+    const gkOk=()=>{ if(gks.length<2)return true; if(inA[gks[0]]===inA[gks[1]])return false;
+      let a=0; gks.forEach(i=>{if(inA[i])a++}); return Math.abs(a-(gks.length-a))<=1; };
     const k=Math.floor(n/2), inA=new Uint8Array(n);
     const score=()=>{let nA=0,nB=0,oA=0,oB=0;const sA={},sB={};SEC_K.forEach(q=>{sA[q]=0;sB[q]=0});
       for(let i=0;i<n;i++){const v=vec[i];if(inA[i]){nA++;oA+=v.ov;SEC_K.forEach(q=>sA[q]+=v[q])}else{nB++;oB+=v.ov;SEC_K.forEach(q=>sB[q]+=v[q])}}
-      let sec=0;SEC_K.forEach(q=>{sec+=SEC_W[q]*Math.abs(sA[q]/nA-sB[q]/nB)});return [Math.abs(oA/nA-oB/nB),sec]};
+      let sec=0;SEC_K.forEach(q=>{sec+=SEC_W[q]*Math.abs(sA[q]/nA-sB[q]/nB)});
+      /* départage : qualité des bons gardiens la plus proche possible (ne touche pas l'équilibre terrain) */
+      let gA=0,gB=0; gks.forEach(i=>{ if(inA[i])gA+=vec[i].gar; else gB+=vec[i].gar; }); sec+=.01*Math.abs(gA-gB);
+      return [Math.abs(oA/nA-oB/nB),sec]};
     const res=[];
     if(n<=20){
       let mask=(1<<k)-1; const lim=1<<n;
@@ -2401,7 +2420,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     matchUndo.clear(); liveUndo.clear();
     /* « Retour à l'accueil » ferme tout : compte rendu ET visionneuse d'image restée ouverte derrière */
     $("#report").hidden=true; $("#imgViewer").hidden=true; document.body.style.overflow="";
-    Object.assign(M,{id:null,convokedAt:"",pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
+    Object.assign(M,{id:null,convokedAt:"",sent:null,draft:false,pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:defaultDate(),liveMode:""});
     try{localStorage.removeItem(SAVE_KEY)}catch(e){}
     renderMatch(); location.hash="";
   });
@@ -3094,6 +3113,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function scheduleSync(){ if(!isAdmin()||!M.id)return; clearTimeout(syncTimer); syncTimer=setTimeout(syncPlanned,700); }
   async function syncPlanned(){
     if(!isAdmin()||!M.id||(!M.made&&!M.present.size))return;
+    if(M.draft&&draftable())return;   /* brouillon : rien ne part tant que ce n'est pas validé */
     if(syncBusy){syncAgain=true;return;}
     syncBusy=true;
     try{ const r=await api("savePlanned",ADMIN.code,plannedPayload()); M.pending=false;
@@ -3106,7 +3126,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function persistLocal(){
     try{
       if(!M.made&&!M.present.size){localStorage.removeItem(SAVE_KEY);return}
-      localStorage.setItem(SAVE_KEY,JSON.stringify({id:M.id,pending:!!M.pending,present:[...M.present],team:M.team,layout:M.layout,made:M.made,goals:M.goals,start:M.start,date:M.date,convokedAt:M.convokedAt||"",liveMode:M.liveMode||""}));
+      localStorage.setItem(SAVE_KEY,JSON.stringify({id:M.id,pending:!!M.pending,present:[...M.present],team:M.team,layout:M.layout,made:M.made,goals:M.goals,start:M.start,date:M.date,convokedAt:M.convokedAt||"",liveMode:M.liveMode||"",sent:M.sent||null,draft:!!M.draft}));
     }catch(e){}
   }
   window.addEventListener("online",()=>{ if(M.pending)syncPlanned(); });
@@ -3741,13 +3761,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const busy=started&&(location.hash==="#match"||!$("#live").hidden||M.pending||syncBusy);
     if(!busy){
       let local=null; try{local=JSON.parse(localStorage.getItem(SAVE_KEY)||"null")}catch(e){}
-      const src=(local&&local.pending&&(!data.planned||data.planned.id===local.id))?local:(data.planned?{
+      const src=(local&&(local.pending||local.draft)&&(!data.planned||data.planned.id===local.id))?local:(data.planned?{
         id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date),convokedAt:data.planned.convokedAt||"",liveMode:data.planned.liveMode||""}:null);
       if(src){
         M.id=src.id; M.present=new Set((src.present||[]).filter(id=>roster.some(p=>p.id===id)));
         Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending,convokedAt:src.convokedAt||M.convokedAt||"",liveMode:src.liveMode||""});
+        M.draft=!!src.draft&&!!src.sent; M.sent=src.sent||(M.convokedAt?compoSnap():null);
       } else {
-        Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,date:defaultDate(),pending:false,liveMode:""});
+        Object.assign(M,{id:null,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,date:defaultDate(),pending:false,liveMode:"",sent:null,draft:false});
         try{localStorage.removeItem(SAVE_KEY)}catch(e){}
       }
     }
@@ -3890,9 +3911,46 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{ const t=await getPushToken(); if(t){ try{localStorage.setItem("fut5v5:push-token",t);localStorage.setItem("fut5v5:push-date",String(Date.now()))}catch(e){} syncPush(); } }catch(e){}
   }
   /* organisateur : convoquer les joueurs */
+  function renderDraftBar(){
+    const on=!!M.draft&&draftable(); $("#draftBar").hidden=!on;
+    const b=$("#notifyPlayers"); if(b)b.hidden=!M.made||on;
+  }
+  function draftSummary(){
+    const a=M.sent, now=compoSnap(), nm=p=>(byId(p)||{}).name||"?";
+    const was=p=>a.present.indexOf(p)>=0, is=p=>now.present.indexOf(p)>=0, col=t=>t==="rouge"?"COULEURS":"BLANC";
+    const out=[];
+    now.present.filter(p=>!was(p)).forEach(p=>out.push(["📋",nm(p),"ajouté, convoqué en "+col(now.team[p])]));
+    a.present.filter(p=>!is(p)).forEach(p=>out.push(["❌",nm(p),"retiré de la feuille de match"]));
+    now.present.filter(p=>was(p)&&now.team[p]&&a.team[p]&&now.team[p]!==a.team[p]).forEach(p=>out.push(["🔁",nm(p),"passe en "+col(now.team[p])]));
+    now.present.filter(p=>was(p)&&now.team[p]===a.team[p]).forEach(p=>{
+      const m=(tm,list)=>list.filter(q=>q!==p&&tm[q]===tm[p]).sort().join(",");
+      if(m(a.team,a.present)!==m(now.team,now.present))out.push(["🔄",nm(p),"coéquipiers modifiés"]); });
+    return out;
+  }
+  $("#draftUndo").addEventListener("click",()=>{
+    if(!M.sent)return; matchUndo.record();
+    M.present=new Set(M.sent.present); M.team=Object.assign({},M.sent.team); M.layout=Object.assign({},M.sent.layout); M.date=M.sent.date||M.date;
+    M.draft=false; persistLocal(); quiet=true; syncForm(); renderMatch(); renderHome(); quiet=false; renderDraftBar(); toast("Compo envoyée rétablie.");
+  });
+  $("#draftSend").addEventListener("click",()=>{
+    const list=draftSummary();
+    openSheet("Valider la nouvelle compo",list.length?"Ces joueurs vont recevoir une notification :":"Pas de changement d'équipe : la compo est enregistrée sans notification.",body=>{
+      if(list.length){ const ul=document.createElement("ul"); ul.className="draft-sum";
+        list.forEach(([ic,n,t])=>{ const li=document.createElement("li"); li.textContent=ic+" "+n+" : "; const sm=document.createElement("small"); sm.textContent=t; li.appendChild(sm); ul.appendChild(li); });
+        body.appendChild(ul); }
+      const go=document.createElement("button"); go.type="button"; go.className="draft-go"; go.textContent=list.length?"✅ Valider et prévenir":"✅ Valider"; body.appendChild(go);
+      go.addEventListener("click",async()=>{
+        go.disabled=true; go.textContent="Envoi…";
+        try{ clearTimeout(syncTimer); await api("savePlanned",ADMIN.code,Object.assign(plannedPayload(),{notify:true}));
+          M.sent=compoSnap(); M.draft=false; M.pending=false; persistLocal(); closeSheet(); renderDraftBar(); renderHome();
+          toast(list.length?"Compo validée, "+list.length+" joueur"+(list.length>1?"s":"")+" prévenu"+(list.length>1?"s":"")+".":"Compo validée.");
+        }catch(e){ go.disabled=false; go.textContent="✅ Valider et prévenir"; toast("Envoi impossible : "+errMsg(e)); }
+      });
+    });
+  });
   function renderNotifyBtn(){
     const b=$("#notifyPlayers"); if(!b)return;
-    b.hidden=!M.made;
+    b.hidden=!M.made; renderDraftBar();
     $("#notifyLabel").textContent=M.convokedAt?"Prévenir à nouveau les joueurs":"Prévenir les joueurs";
     $("#notifyMsg").textContent=M.convokedAt?"Joueurs prévenus le "+new Date(M.convokedAt).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})+" à "+(d=>d.getHours()+"h"+String(d.getMinutes()).padStart(2,"0"))(new Date(M.convokedAt))+".":"";
   }
@@ -3901,7 +3959,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{
       clearTimeout(syncTimer); await api("savePlanned",ADMIN.code,plannedPayload());
       const r=await api("sendConvocations",ADMIN.code,M.id);
-      M.convokedAt=r.date; persistLocal();
+      M.convokedAt=r.date; M.sent=compoSnap(); M.draft=false; persistLocal(); renderDraftBar();
       toast(!r.configured?"Convocation enregistrée. Les notifications ne sont pas encore configurées (Firebase).":
         r.sent+" joueur"+(r.sent>1?"s":"")+" prévenu"+(r.sent>1?"s":"")+" sur "+r.total+"."+(r.sent<r.total?" Les autres n'ont pas activé les notifications : pense au WhatsApp.":""));
     }catch(e){ toast("Envoi impossible : "+errMsg(e)); }
