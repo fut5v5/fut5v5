@@ -385,6 +385,15 @@ button{font:inherit;color:inherit}
 .pcardbox h3{margin:0 0 10px;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.3rem;display:flex;justify-content:space-between;align-items:baseline}
 .pcardbox h3 small{font-family:'Barlow',sans-serif;font-weight:500;font-size:.82rem;color:var(--muted)}
 .ktiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.phof{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.phof span{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:linear-gradient(135deg,#1b2c63,#0c1a3d);border:1px solid rgba(233,199,106,.55);color:#f5e7b8;font:700 .8rem 'Barlow',sans-serif}
+.phof span b{font:800 .95rem 'Barlow Condensed',sans-serif;color:#e9c76a}
+.phof-t{font:800 .78rem 'Barlow Condensed',sans-serif;letter-spacing:.08em;color:var(--gold);width:100%;margin:0}
+.hofl{list-style:none;margin:0;padding:0}
+.hofl li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--tile-line)}
+.hofl li:first-child{border-top:0}
+.hofl li span{font-weight:600}
+.hofl li small{color:var(--muted);font-size:.82rem;white-space:nowrap}
 .kt{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px;border-radius:12px;background:var(--bg)}
 .kt b{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.6rem;line-height:1}
 .kt svg{width:24px;height:24px;display:block}
@@ -407,6 +416,7 @@ button{font:inherit;color:inherit}
 .srows li{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--tile-line);font-size:.98rem}
 .srows li:last-child{border-bottom:0}
 .srows li span{display:flex;align-items:center;gap:8px}
+.hofi{display:inline-block;width:20px;text-align:center;font-size:1.05rem;line-height:1}
 .srows li b{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.25rem}
 .srows .ic{width:18px;height:18px}
 /* matchs */
@@ -564,7 +574,10 @@ input[type="datetime-local"],input[type="search"],input[type="text"]{color-schem
 .mx-btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:8;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;
   border-radius:999px;padding:8px 14px;font:700 .95rem 'Barlow',sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .mx-btn:focus-visible{outline:2px solid #e9c76a;outline-offset:2px}
-.mx-skip{right:14px} .mx-sound{left:14px;min-width:44px}
+.mx-skip{right:14px} .mx-sound{left:14px;min-width:44px} .mx-pause{left:70px;min-width:44px}
+.hf-paused *{animation-play-state:paused!important}
+.hf-pausetag{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 62px);transform:translateX(-50%);z-index:8;font:800 .9rem 'Barlow Condensed',sans-serif;letter-spacing:.12em;color:#e9c76a;background:rgba(5,12,32,.7);border:1px solid rgba(233,199,106,.5);border-radius:999px;padding:4px 12px}
+.hf-auto{display:block;margin-top:6px;font:600 .78rem 'Barlow',sans-serif;color:#c9d4f2;opacity:.8;text-align:center}
 .mx-tap{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:8;font:600 .85rem 'Barlow',sans-serif;color:#c9d4f2;opacity:.8}
 
 .mx-stats{position:absolute;left:50%;top:calc(25% + min(44vw,215px)*1.405 + 76px);transform:translate(-50%,14px);z-index:4;display:flex;gap:6px;opacity:0;
@@ -2863,11 +2876,17 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(PV.tab==="saison")$("#pSeason").addEventListener("change",e=>{PV.season=e.target.value==="all"?"all":+e.target.value;renderPlayerBody()});
   }
   function kt(val,icon,label){return '<div class="kt"><b>'+val+'</b>'+icon+'<span>'+label+'</span></div>';}
+  /* titres Hall of Fame d'un joueur (1re place), éventuellement sur une saison */
+  function hofWins(pid,season){ const out=[]; try{ hofDone().forEach(h=>{ const d=hofRange(h.key)[0]; if(season!=null&&season!=="all"&&seasonStart(d)!==season)return;
+      [["fidele",h.fidele],["caviar",h.caviar],["buteur",h.buteur]].forEach(([k,l])=>{ if(l[0]&&l[0].id===pid)out.push({k,key:h.key,label:h.label}); }); }); }catch(e){} return out; }
+  const hofCount=w=>{ const c={fidele:0,caviar:0,buteur:0}; w.forEach(x=>c[x.k]++); return c; };
+  function hofPills(w){ if(!w.length)return ""; const c=hofCount(w);
+    return '<div class="phof"><p class="phof-t">🏛️ HALL OF FAME</p>'+["buteur","caviar","fidele"].filter(k=>c[k]).map(k=>'<span>'+HOF_T[k][0]+' '+HOF_T[k][1]+(c[k]>1?' <b>×'+c[k]+'</b>':'')+'</span>').join("")+'</div>'; }
   function detailsHTML(p){
     const s=pstats(p.id,inSeason(CUR_SEASON));
     return '<div class="pcardbox"><h3>Saison '+seasonLabel(CUR_SEASON)+'<small>septembre à septembre</small></h3><div class="ktiles">'+
       kt(s.mp,IC_PITCH,"matchs")+kt(s.g,IC_BALL.replace('class="ic" ',''),"buts")+kt(s.a,IC_BOOT.replace('class="ic" ',''),"passes déc.")+
-      kt(s.csc,IC_CSC.replace('class="ic" ',''),"CSC")+kt(s.mvp,IC_STAR.replace('class="ic" ',''),"MVP")+'</div></div>'+
+      kt(s.csc,IC_CSC.replace('class="ic" ',''),"CSC")+kt(s.mvp,IC_STAR.replace('class="ic" ',''),"MVP")+'</div>'+hofPills(hofWins(p.id,CUR_SEASON))+'</div>'+
       '<div class="pcardbox"><h3>Aperçu des attributs</h3><div id="radarBox"></div>'+
       '<div class="tl" id="tlBox"></div>'+
       '<div class="cmp"><span class="av"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.5"/><path d="M3 21c1.5-4.5 5-6.5 9-6.5s7.5 2 9 6.5z"/></svg></span>'+
@@ -2933,7 +2952,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         row(IC_BOOT,"Passes décisives",s.a)+row("","Passes décisives par match",s.mp?f1(s.a/s.mp):"–")+
         row("","Minutes par but",s.g?Math.round(s.min/s.g):"–")+'</ul></div>'+
       '<div class="pcardbox"><h3>Distinctions et erreurs</h3><ul class="srows">'+
-        row(IC_STAR,"MVP",s.mvp)+row(IC_CSC,"Buts contre son camp",s.csc)+'</ul></div>';
+        row(IC_STAR,"MVP",s.mvp)+(()=>{ const c=hofCount(hofWins(p.id,PV.season)); return ["buteur","caviar","fidele"].map(k=>row('<span class="hofi">'+HOF_T[k][0]+'</span>',HOF_T[k][1],c[k])).join(""); })()+row(IC_CSC,"Buts contre son camp",s.csc)+'</ul></div>';
   }
   function matchsHTML(p){
     const list=matches.filter(m=>m.present.includes(p.id));
@@ -2957,11 +2976,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function careerHTML(p){
     const ss=seasonsOf(p.id);
     const jersey=s=>s.jB>s.jR?JSY_W:s.jR>s.jB?JSY_R:(s.mp?'<svg class="jsy" viewBox="0 0 32 32" aria-hidden="true"><defs><clipPath id="cjL"><rect width="16" height="32"/></clipPath><clipPath id="cjR"><rect x="16" width="16" height="32"/></clipPath></defs><path d="M11 4l-7 4 3 7 3-1v14h12V14l3 1 3-7-7-4c-1 2.4-2.8 3.5-5 3.5S12 6.4 11 4z" fill="#f5f7fc" clip-path="url(#cjL)"/><path d="M11 4l-7 4 3 7 3-1v14h12V14l3 1 3-7-7-4c-1 2.4-2.8 3.5-5 3.5S12 6.4 11 4z" fill="#d6322b" clip-path="url(#cjR)"/><path d="M11 4l-7 4 3 7 3-1v14h12V14l3 1 3-7-7-4c-1 2.4-2.8 3.5-5 3.5S12 6.4 11 4z" fill="none" stroke="#8a97b8" stroke-width="1.2"/></svg>':"–");
-    const tr=(label,s,cls)=>'<tr'+(cls?' class="'+cls+'"':'')+'><td>'+label+'</td><td>'+(cls?"":jersey(s))+'</td><td>'+s.mp+'</td><td>'+s.g+'</td><td>'+s.a+'</td><td>'+s.mvp+'</td><td>'+s.csc+'</td><td>'+s.min.toLocaleString("fr-FR")+'</td></tr>';
-    let h='<div class="pcardbox" style="overflow-x:auto"><table class="ctable"><thead><tr><th>Saison</th><th>Maillot</th><th>MJ</th><th>'+IC_BALL+'</th><th>'+IC_BOOT+'</th><th>'+IC_STAR+'</th><th>'+IC_CSC+'</th><th>MIN</th></tr></thead><tbody>';
-    ss.forEach(y=>{h+=tr(seasonLabel(y),pstats(p.id,inSeason(y)))});
-    h+=tr("Total",pstats(p.id,null),"tot");
-    return h+'</tbody></table></div><p class="share-msg">MJ : matchs joués. Maillot : celui porté le plus souvent dans la saison (moitié-moitié en cas d\'égalité). Minutes : 90 par match.</p>';
+    const tr=(label,s,cls,hf)=>'<tr'+(cls?' class="'+cls+'"':'')+'><td>'+label+'</td><td>'+(cls?"":jersey(s))+'</td><td>'+s.mp+'</td><td>'+s.g+'</td><td>'+s.a+'</td><td>'+s.mvp+'</td><td>'+hf+'</td><td>'+s.csc+'</td><td>'+s.min.toLocaleString("fr-FR")+'</td></tr>';
+    let h='<div class="pcardbox" style="overflow-x:auto"><table class="ctable"><thead><tr><th>Saison</th><th>Maillot</th><th>MJ</th><th>'+IC_BALL+'</th><th>'+IC_BOOT+'</th><th>'+IC_STAR+'</th><th title="Titres Hall of Fame">🏛️</th><th>'+IC_CSC+'</th><th>MIN</th></tr></thead><tbody>';
+    ss.forEach(y=>{h+=tr(seasonLabel(y),pstats(p.id,inSeason(y)),"",hofWins(p.id,y).length)});
+    const all=hofWins(p.id,null);
+    h+=tr("Total",pstats(p.id,null),"tot",all.length);
+    h+='</tbody></table></div>';
+    if(all.length)h+='<div class="pcardbox"><h3>🏛️ Hall of Fame<small>'+all.length+' titre'+(all.length>1?"s":"")+'</small></h3>'+
+      '<ul class="hofl">'+all.slice().reverse().map(x=>'<li><span>'+HOF_T[x.k][0]+' '+HOF_T[x.k][1]+'</span><small>'+x.label+'</small></li>').join("")+'</ul></div>';
+    return h+'<p class="share-msg">MJ : matchs joués. 🏛️ : titres Hall of Fame (1re place d\'un bimestre). Maillot : celui porté le plus souvent dans la saison (moitié-moitié en cas d\'égalité). Minutes : 90 par match.</p>';
   }
 
   /* ---------- partage d'un onglet de la fiche joueur en image ---------- */
@@ -3018,8 +3041,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(tab==="details"){
       title="Détails, saison "+seasonLabel(CUR_SEASON);
       const s=pstats(p.id,inSeason(CUR_SEASON));
-      panel(c,X,y,PWd,330,"Saison "+seasonLabel(CUR_SEASON)); kpiTiles(c,X+28,y+100,PWd-56,[[s.mp,"pitch","matchs"],[s.g,"ball","buts"],[s.a,"boot","passes déc."],[s.csc,"csc","CSC"],[s.mvp,"star","MVP"]]);
-      y+=360;
+      const hw=hofWins(p.id,CUR_SEASON), hcn=hofCount(hw), hk=["buteur","caviar","fidele"].filter(k=>hcn[k]);
+      panel(c,X,y,PWd,hk.length?460:330,"Saison "+seasonLabel(CUR_SEASON)); kpiTiles(c,X+28,y+100,PWd-56,[[s.mp,"pitch","matchs"],[s.g,"ball","buts"],[s.a,"boot","passes déc."],[s.csc,"csc","CSC"],[s.mvp,"star","MVP"]]);
+      if(hk.length){ const by=y+340; c.textAlign="left"; c.font="800 28px "+FONT; c.fillStyle="#e9c76a"; c.fillText("🏛️ HALL OF FAME",X+32,by);
+        let px=X+32; const py=by+20, ph=58;
+        hk.forEach(k=>{ const t=HOF_T[k][0]+" "+HOF_T[k][1]+(hcn[k]>1?" ×"+hcn[k]:""); c.font="700 28px 'Barlow',sans-serif"; const w=c.measureText(t).width+40;
+          if(px+w>X+PWd-32)return; const g=c.createLinearGradient(px,py,px+w,py+ph); g.addColorStop(0,"#1b2c63"); g.addColorStop(1,"#0c1a3d");
+          c.fillStyle=g; rr(c,px,py,w,ph,ph/2); c.fill(); c.strokeStyle="rgba(233,199,106,.7)"; c.lineWidth=2; c.stroke();
+          c.fillStyle="#f5e7b8"; c.textAlign="left"; c.fillText(t,px+20,py+39); px+=w+14; }); }
+      y+=hk.length?490:360;
       const h=histOf(p), e=h[Math.min(PV.hi==null?h.length-1:PV.hi,h.length-1)], cmp=PV.cmp&&byId(PV.cmp);
       const ph=cmp?1000:940; panel(c,X,y,PWd,ph,"Aperçu des attributs");
       radarCanvas(c,Wd/2,y+470,250,e.stats,cmp?statsAt(cmp,e.date):null);
@@ -3037,13 +3067,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const s=pstats(p.id,PV.season==="all"?null:inSeason(PV.season)), f1=n=>n.toLocaleString("fr-FR",{maximumFractionDigits:2});
       const block=(t,rows)=>{ const ph=100+rows.length*72; panel(c,X,y,PWd,ph,t);
         rows.forEach(([icon,label,val],i)=>{ const ry=y+100+i*72; if(i){c.fillStyle="rgba(255,255,255,.1)";c.fillRect(X+32,ry,PWd-64,2);}
-          let tx=X+32; if(icon){ if(icon==="ball")drawBall(c,tx+18,ry+36,17,false); else if(icon==="boot")drawBoot(c,tx+18,ry+36,17); else if(icon==="csc")drawBall(c,tx+18,ry+36,17,true); else star(c,tx+18,ry+36,17,THEMES.or); tx+=50; }
+          let tx=X+32; if(icon){ if(icon==="ball")drawBall(c,tx+18,ry+36,17,false); else if(icon==="boot")drawBoot(c,tx+18,ry+36,17); else if(icon==="csc")drawBall(c,tx+18,ry+36,17,true); else if(icon.indexOf("emo:")===0){ c.textAlign="center"; c.font="32px sans-serif"; c.fillText(icon.slice(4),tx+18,ry+48); } else star(c,tx+18,ry+36,17,THEMES.or); tx+=50; }
           c.textAlign="left"; c.font="500 34px 'Barlow',sans-serif"; c.fillStyle="#dfe6f7"; c.fillText(label,tx,ry+48);
           c.textAlign="right"; c.font="800 44px "+FONT; c.fillStyle="#fff"; c.fillText(String(val),X+PWd-32,ry+50); });
         y+=ph+26; };
       block("Matchs",[[null,"Matchs joués",s.mp],[null,"Victoires",s.w],[null,"Nuls",s.d],[null,"Défaites",s.l],[null,"Pourcentage de victoires",s.mp?Math.round(s.w/s.mp*100)+" %":"–"],[null,"Total des minutes jouées",s.min.toLocaleString("fr-FR")]]);
       block("Attaque",[["ball","Buts",s.g],[null,"Buts par match",s.mp?f1(s.g/s.mp):"–"],["boot","Passes décisives",s.a],[null,"Passes décisives par match",s.mp?f1(s.a/s.mp):"–"],[null,"Minutes par but",s.g?Math.round(s.min/s.g):"–"]]);
-      block("Distinctions et erreurs",[["star","MVP",s.mvp],["csc","Buts contre son camp",s.csc]]);
+      const hc=hofCount(hofWins(p.id,PV.season));
+      block("Distinctions et erreurs",[["star","MVP",s.mvp]].concat(["buteur","caviar","fidele"].map(k=>["emo:"+HOF_T[k][0],HOF_T[k][1],hc[k]])).concat([["csc","Buts contre son camp",s.csc]]));
     } else if(tab==="matchs"){
       title="Bilan des matchs";
       const list=matches.filter(m=>m.present.includes(p.id)), s=pstats(p.id,null), sS=pstats(p.id,inSeason(CUR_SEASON));
@@ -3096,6 +3127,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         [s.mp,s.g,s.a,s.mvp,s.csc].forEach((v,j)=>{c.textAlign="center";c.fillText(String(v),cols[j+2][0],yy)});
         c.textAlign="right"; c.fillText(s.min.toLocaleString("fr-FR"),cols[7][0],yy); });
       y+=ph+26;
+      const hw=hofWins(p.id,null).slice().reverse();
+      if(hw.length){ const hp=110+hw.length*72; panel(c,X,y,PWd,hp,"🏛️ Hall of Fame");
+        hw.forEach((x,i)=>{ const ry=y+100+i*72; if(i){c.fillStyle="rgba(255,255,255,.1)";c.fillRect(X+32,ry,PWd-64,2);}
+          c.textAlign="left"; c.font="600 34px 'Barlow',sans-serif"; c.fillStyle="#f5e7b8"; c.fillText(HOF_T[x.k][0]+" "+HOF_T[x.k][1],X+32,ry+48);
+          c.textAlign="right"; c.font="500 30px 'Barlow',sans-serif"; c.fillStyle="#a9b8dc"; c.fillText(x.label,X+PWd-32,ry+48); });
+        y+=hp+26; }
     }
     tabHeader(c,p,Wd,title);
     const out=document.createElement("canvas"); out.width=Wd; out.height=y+20; out.getContext("2d").drawImage(cv,0,0);
@@ -3518,7 +3555,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function hofAudio(){
     const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null;
     const ctx=new AC(), sr=ctx.sampleRate, out=ctx.createGain(), lim=ctx.createDynamicsCompressor();
-    lim.threshold.value=-6; lim.ratio.value=12; out.gain.value=soundOn()?0.6:0; out.connect(lim); lim.connect(ctx.destination);
+    lim.threshold.value=-6; lim.ratio.value=12; out.gain.value=soundOn()?1:0; out.connect(lim); lim.connect(ctx.destination);
     const ir=ctx.createBuffer(2,Math.floor(sr*2.6),sr); for(let ch=0;ch<2;ch++){ const d=ir.getChannelData(ch); let lp=0; for(let i=0;i<d.length;i++){ const t=i/sr; lp+=(Math.random()*2-1-lp)*.35; d[i]=lp*Math.pow(1-t/2.6,2.2); } }
     const rev=ctx.createConvolver(); rev.buffer=ir; const wet=ctx.createGain(); wet.gain.value=.45; rev.connect(wet); wet.connect(out);
     const bus=ctx.createGain(); bus.connect(out); bus.connect(rev);
@@ -3528,11 +3565,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const filt=(type,f,q)=>{ const x=ctx.createBiquadFilter(); x.type=type; x.frequency.value=f; x.Q.value=q||.7; return x; };
     const env=(g,t0,pts)=>{ g.gain.setValueAtTime(.0001,t0); pts.forEach(([t,v])=>g.gain.exponentialRampToValueAtTime(Math.max(.0001,v),t0+t)); };
     return { ctx,
-      mute(m){ out.gain.setTargetAtTime(m?0:.6,ctx.currentTime,.03); },
+      mute(m){ out.gain.setTargetAtTime(m?0:1,ctx.currentTime,.03); },
       stop(){ try{ out.gain.setTargetAtTime(0,ctx.currentTime,.1); setTimeout(()=>ctx.close().catch(()=>{}),700); }catch(e){} },
       /* comète qui descend : souffle filtré qui monte */
       whoosh(big){ const t=now(), d=big?1.3:.8, n=noise(t,d+.1), f=filt("bandpass",400,1.2), g=ctx.createGain();
-        f.frequency.setValueAtTime(300,t); f.frequency.exponentialRampToValueAtTime(big?5200:3500,t+d); env(g,t,[[d*.8,big?.5:.32],[d+.05,.0001]]); n.connect(f); f.connect(g); g.connect(bus); },
+        f.frequency.setValueAtTime(300,t); f.frequency.exponentialRampToValueAtTime(big?5200:3500,t+d); env(g,t,[[d*.8,big?.75:.55],[d+.05,.0001]]); n.connect(f); f.connect(g); g.connect(bus); },
       /* impact : coup grave + éclat */
       boom(big){ const t=now(), o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(big?95:120,t); o.frequency.exponentialRampToValueAtTime(big?34:55,t+.6);
         env(g,t,[[.01,big?1:.6],[big?1.2:.7,.0001]]); o.connect(g); g.connect(bus); o.start(t); o.stop(t+1.3);
@@ -3565,20 +3602,24 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const ov=document.createElement("div"); ov.className="mx hf"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label","Hall of Fame "+hof.label);
     ov.innerHTML='<div class="mx-bg"><div class="mx-stands"></div><div class="mx-lights"></div><div class="mx-floor"></div></div>'+
       '<canvas class="mx-fx mx-fxb"></canvas><div class="hf-scene"></div><canvas class="mx-fx mx-fxf"></canvas><div class="mx-flash"></div>'+
-      '<button type="button" class="mx-btn mx-sound" aria-label="Son"></button><button type="button" class="mx-btn mx-skip">Passer ⏭</button>';
+      '<button type="button" class="mx-btn mx-sound" aria-label="Son"></button><button type="button" class="mx-btn mx-pause" aria-label="Pause">⏸</button><button type="button" class="mx-btn mx-skip">Passer ⏭</button>';
     const lights=ov.querySelector(".mx-lights"); for(let i=0;i<9;i++){ const e=document.createElement("i"), u=i/8; e.style.left=(6+u*88)+"%"; e.style.top=(Math.pow(u-.5,2)*120)+"%"; e.style.transitionDelay=(i%3)*.12+"s"; lights.appendChild(e); }
     document.body.appendChild(ov); document.body.style.overflow="hidden";
     requestAnimationFrame(()=>ov.classList.add("on")); setTimeout(()=>ov.classList.add("p-lights"),200);
     const scene=ov.querySelector(".hf-scene");
+    /* horloge de la cérémonie : s'arrête pendant la pause */
+    let paused=false, pauseT0=0, pauseSum=0; const clk=()=>(paused?pauseT0:performance.now())-pauseSum;
+    /* roulement de tambour enregistré (fichier), baissé à la fin */
+    const roll=new Audio(window.FUT5V5_HOF_ROLL||"hall-of-fame-roulement.mp3"); roll.preload="auto"; roll.muted=!soundOn(); try{roll.load()}catch(e){}
     let audio=null; try{ audio=hofAudio(); }catch(e){}
     /* musique d'habillage (une des musiques FUT 5V5), baissée pendant le roulement de tambour */
     const mus=new Audio(window.FUT5V5_HOF_MUSIC||"hall-of-fame-musique.mp3"); mus.loop=true; mus.volume=0; mus.muted=!soundOn();
     let musT=0; const fadeTo=(v,ms)=>{ clearInterval(musT); const v0=mus.volume, t0=performance.now();
       musT=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/ms); try{mus.volume=Math.max(0,Math.min(1,v0+(v-v0)*k));}catch(e){} if(k>=1)clearInterval(musT); },40); };
-    const musStart=()=>{ mus.play().then(()=>fadeTo(.42,1200)).catch(()=>{}); };
-    mus.play().then(()=>fadeTo(.42,1200)).catch(()=>{ ov.addEventListener("pointerdown",musStart,{once:true}); });
+    let musBase=.24; const musStart=()=>{ if(paused)return; mus.play().then(()=>fadeTo(musBase,1200)).catch(()=>{}); };
+    mus.play().then(()=>fadeTo(musBase,1200)).catch(()=>{ ov.addEventListener("pointerdown",musStart,{once:true}); });
     const sb=ov.querySelector(".mx-sound"), paint=()=>{ sb.textContent=soundOn()?"🔊":"🔇"; }; paint();
-    sb.addEventListener("click",()=>{ const on=!soundOn(); try{localStorage.setItem(MVP_SOUND_KEY,on?"1":"0")}catch(e){} paint(); mus.muted=!on; if(on&&mus.paused)musStart();
+    sb.addEventListener("click",()=>{ const on=!soundOn(); try{localStorage.setItem(MVP_SOUND_KEY,on?"1":"0")}catch(e){} paint(); mus.muted=!on; roll.muted=!on; if(on&&mus.paused)musStart();
       if(audio){ if(audio.ctx.state==="suspended")audio.ctx.resume().catch(()=>{}); audio.mute(!on); } });
     if(audio){ try{ await audio.ctx.resume(); }catch(e){} }
     const A=(fn,...x)=>{ try{ if(audio&&audio.ctx.state==="running")audio[fn](...x); }catch(e){} };
@@ -3586,7 +3627,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     let done=false, raf=0, last=performance.now(), fw=0, conf=0;
     const TEAL=["#6ff5dc","#3fe0c5","#b9fff0"], GOLD=["#fff3c4","#ffd35c","#e9c76a","#ffae2b"], pick=a=>a[Math.floor(Math.random()*a.length)];
     const comets=[];
-    const loop=now=>{ if(done)return; const dt=Math.min(.05,(now-last)/1000); last=now; const W=fxF.W, H=fxF.H;
+    const loop=n0=>{ if(done)return; if(paused){ last=n0; raf=requestAnimationFrame(loop); return; } const now=clk(); const dt=Math.min(.05,(n0-last)/1000); last=n0; const W=fxF.W, H=fxF.H;
       comets.forEach(c=>{ const k=Math.min(1,(now-c.t0)/c.dur), e=k*k*(3-2*k), x=c.x0+(c.x1-c.x0)*e+Math.sin(k*5)*6, y=c.y0+(c.y1-c.y0)*e;
         if(k<1){ for(let i=0;i<(c.big?10:6);i++) fxF.spark(x+(Math.random()-.5)*10,y-Math.random()*14,(Math.random()-.5)*40,-20-Math.random()*60,.6+Math.random()*.5,(c.big?2:1.4)+Math.random()*1.8,pick(c.big?GOLD:TEAL),40);
           fxF.spark(x,y,0,0,.12,c.big?10:7,"#ffffff"); } });
@@ -3597,10 +3638,21 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     raf=requestAnimationFrame(loop);
     const onResize=()=>{ fxB.size(); fxF.size(); }; window.addEventListener("resize",onResize);
     let skipRes; const skipP=new Promise(r=>skipRes=r);
-    const sleep=ms=>Promise.race([new Promise(r=>setTimeout(r,ms)),skipP]);
-    const close=()=>{ if(done)return; done=true; skipRes(); cancelAnimationFrame(raf); window.removeEventListener("resize",onResize); if(audio)audio.stop(); ov.classList.add("out");
+    /* attente qui tient compte de la pause */
+    const sleep=ms=>Promise.race([new Promise(r=>{ const end=clk()+ms, tick=()=>{ if(done)return r(); const left=end-clk(); if(left<=0)r(); else setTimeout(tick,Math.min(left,80)); }; tick(); }),skipP]);
+    const close=()=>{ if(done)return; done=true; skipRes(); cancelAnimationFrame(raf); window.removeEventListener("resize",onResize); if(audio)audio.stop(); try{roll.pause()}catch(e){} ov.classList.add("out");
       fadeTo(0,300); setTimeout(()=>{ try{mus.pause()}catch(e){} ov.remove(); document.body.style.overflow=""; if(typeof onHofClosed==="function")onHofClosed(hof); },320); };
     ov.querySelector(".mx-skip").addEventListener("click",close);
+    const pb=ov.querySelector(".mx-pause"); let rollWas=false, ptag=null;
+    const setPause=p=>{ if(done||p===paused)return; paused=p;
+      if(p){ pauseT0=performance.now(); ov.classList.add("hf-paused"); ov.getAnimations({subtree:true}).forEach(a=>{ try{a.pause()}catch(e){} });
+        rollWas=!roll.paused; try{roll.pause(); mus.pause();}catch(e){} if(audio)audio.ctx.suspend().catch(()=>{});
+        pb.textContent="▶"; pb.setAttribute("aria-label","Reprendre"); ptag=document.createElement("div"); ptag.className="hf-pausetag"; ptag.textContent="⏸ PAUSE"; ov.appendChild(ptag); }
+      else{ pauseSum+=performance.now()-pauseT0; ov.classList.remove("hf-paused"); ov.getAnimations({subtree:true}).forEach(a=>{ try{ if(a.playState==="paused")a.play(); }catch(e){} });
+        if(soundOn()){ mus.play().catch(()=>{}); if(rollWas)roll.play().catch(()=>{}); } if(audio)audio.ctx.resume().catch(()=>{});
+        pb.textContent="⏸"; pb.setAttribute("aria-label","Pause"); if(ptag){ ptag.remove(); ptag=null; } } };
+    pb.addEventListener("click",()=>setPause(!paused));
+    const duck=(v,ms)=>{ if(!paused)fadeTo(v,ms); };
     const el=(tag,cls,html)=>{ const e=document.createElement(tag); e.className=cls; if(html!=null)e.innerHTML=html; return e; };
     const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
     /* une carte qui arrive avec la comète, tourne et se retourne */
@@ -3608,14 +3660,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       w.innerHTML='<div class="hf-face hf-back">FUT<small>5V5</small></div>'; const cv=el("canvas","hf-face hf-front"); w.appendChild(cv);
       drawCard(cv,Object.assign({},p,{fond:"hof"}),.8); return w; };
     const comet=(target,big)=>{ const r=target.getBoundingClientRect(), x1=r.left+r.width/2, y1=r.top+r.height/2, dur=big?1300:800;
-      comets.push({t0:performance.now(),dur,x0:x1+(Math.random()-.5)*40,y0:-40,x1,y1,big}); A("whoosh",big); return sleep(dur); };
+      if(!big)duck(.09,250); comets.push({t0:clk(),dur,x0:x1+(Math.random()-.5)*40,y0:-40,x1,y1,big}); A("whoosh",big); return sleep(dur); };
     const reveal=async(card,big)=>{ card.style.opacity="1";
       card.animate([{transform:"rotateY(180deg) scale(.6)"},{transform:"rotateY(900deg) scale(1.05)"}],{duration:big?1500:900,easing:"cubic-bezier(.2,.65,.25,1)",fill:"forwards"});
       await sleep(big?1500:900); if(done)return;
       card.animate([{transform:"rotateY(900deg) scale(1.05)"},{transform:"rotateY(1080deg) scale(1)"}],{duration:380,easing:"ease-out",fill:"forwards"});
       await sleep(260); if(done)return;
       const r=card.getBoundingClientRect(), f=ov.querySelector(".mx-flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
-      fxF.burst(r.left+r.width/2,r.top+r.height/2,big?"#fff3c4":"#b9fff0",big?140:60); A("boom",big); };
+      fxF.burst(r.left+r.width/2,r.top+r.height/2,big?"#fff3c4":"#b9fff0",big?140:60); A("boom",big); if(!big)setTimeout(()=>duck(musBase,900),500); };
     const header=(k)=>{ const [ic,t,q]=HOF_T[k], h=el("div","hf-head",'<small>'+esc(hof.label)+'</small><b>'+ic+' '+esc(t)+'</b><em>'+esc(HOF_SUB[k])+'</em><i>« '+esc(q[(hof.key.length+t.length)%q.length])+' »</i>'); scene.appendChild(h); requestAnimationFrame(()=>h.classList.add("on")); return h; };
     const chips=list=>{ const c=el("div","hf-stats"); list.forEach(([v,l])=>c.appendChild(el("div","mx-st",'<b>'+esc(v)+'</b><small>'+esc(l)+'</small>'))); return c; };
     const nameOf=pid=>(byId(pid)||{}).name||"?";
@@ -3649,8 +3701,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
           await comet(c,false); if(done)return; await reveal(c,false); if(done)return;
           spot.appendChild(el("div","hf-mname",esc(nameOf(r.id))+'<small>'+r.g+' buts</small>')); await sleep(1200); if(done)return; }
         const r=hof.buteur[0], spot=steps["1"].querySelector(".hf-spot"), c=mkCard(r.id,Math.min(innerWidth*.3,140)); spot.appendChild(c);
-        ov.classList.add("hf-dim"); fadeTo(.06,500); A("drumroll",5.3); await sleep(2500); if(done)return; ov.classList.remove("hf-dim");
-        await comet(c,true); if(done)return; await reveal(c,true); if(done)return; A("crash"); fadeTo(.55,700);
+        ov.classList.add("hf-dim"); duck(.04,500);
+        if(soundOn()){ try{ roll.currentTime=0; roll.volume=1; await roll.play().catch(()=>{ A("drumroll",5.3); }); }catch(e){ A("drumroll",5.3); } }
+        await sleep(2050); if(done)return; ov.classList.remove("hf-dim");
+        await comet(c,true); if(done)return; await reveal(c,true); if(done)return; try{roll.pause()}catch(e){} A("crash"); musBase=.32; duck(musBase,700);
         fw=5; conf=4.5; for(let i=0;i<90;i++) fxF.confetti(Math.random()*fxF.W,-10-Math.random()*80); A("cheer",6,true);
         spot.appendChild(el("div","hf-mname big",esc(nameOf(r.id))+'<small>'+r.g+' buts · '+r.mp+' matchs</small>')); await sleep(5200); if(done)return; await clear(); if(done)return; }
       /* récap */
@@ -3658,8 +3712,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       [["fidele",hof.fidele[0],r=>r.mp+" matchs"],["caviar",hof.caviar[0],r=>r.a+" passes"],["buteur",hof.buteur[0],r=>r.g+" buts"]].forEach(([k,r,f])=>{ if(!r)return;
         const it=el("div","hf-fitem"), c=mkCard(r.id,Math.min(innerWidth*.24,104)); c.style.opacity="1"; c.style.transform="rotateY(0)"; it.appendChild(c);
         it.appendChild(el("div","hf-mname",HOF_T[k][0]+' '+esc(nameOf(r.id))+'<small>'+esc(HOF_SUB[k])+' · '+f(r)+'</small>')); list.appendChild(it); });
-      fin.appendChild(list); const ok=el("button","hf-close","Fermer"); ok.type="button"; ok.addEventListener("click",close); fin.appendChild(ok); scene.appendChild(fin);
+      fin.appendChild(list); const ok=el("button","hf-close","Fermer"); ok.type="button"; ok.addEventListener("click",close); fin.appendChild(ok);
+      const auto=el("small","hf-auto",""); fin.appendChild(auto); scene.appendChild(fin);
       requestAnimationFrame(()=>fin.classList.add("on"));
+      /* reste affiché 8 s puis se ferme tout seul (la pause garde l'écran) */
+      for(let k=8;k>0;k--){ auto.textContent="Fermeture dans "+k+" s · ⏸ pour garder l'écran"; await sleep(1000); if(done)return; }
+      fadeTo(0,900); await sleep(600); close();
     }catch(e){ close(); }
   }
   var pendingHof=null;
@@ -3681,7 +3739,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function onHofClosed(h){ try{ const id=myId(); if(id)renderHofHome(id); }catch(e){} try{ const a=JSON.parse(localStorage.getItem(HOF_SEEN)||"[]"); if(a.indexOf(h.key)<0){ a.push(h.key); localStorage.setItem(HOF_SEEN,JSON.stringify(a)); } }catch(e){} renderHofEntry(); }
   /* première ouverture après la fin d'un bimestre : l'animation se lance toute seule (une fois) */
   function autoHof(){ const d=hofDone(); if(!d.length||document.querySelector(".mx"))return; let seen=[]; try{seen=JSON.parse(localStorage.getItem(HOF_SEEN)||"[]")}catch(e){}
-    if(seen.indexOf(d[0].key)<0&&!/^#?m-/.test(location.hash))setTimeout(()=>playHof(d[0]),900); }
+    if(seen.indexOf(d[0].key)<0&&!/^#?m-/.test(location.hash)){ seen.push(d[0].key); try{localStorage.setItem(HOF_SEEN,JSON.stringify(seen))}catch(e){} setTimeout(()=>playHof(d[0]),900); } }
   function renderHofEntry(){ const b=$("#hofOpen"); if(b)b.hidden=!hofDone().length; }
   function openHofHistory(){
     openSheet("🏛️ Hall of Fame","Touche un bimestre pour revoir sa cérémonie.",body=>{
