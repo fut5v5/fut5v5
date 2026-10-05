@@ -575,6 +575,70 @@ input[type="datetime-local"],input[type="search"],input[type="text"]{color-schem
 .mx-st b{display:block;font-weight:900;font-size:min(6.4vw,28px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mx-st small{display:block;margin-top:2px;font:700 .64rem 'Barlow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e9c76a;white-space:nowrap}
 .mx-st.win b{color:#7ff0b5} .mx-st.loss b{color:#ff9b93}
+/* ---------- Hall of Fame (réutilise le décor et les boutons de la révélation MVP) ---------- */
+.fete.hofhome{background:linear-gradient(135deg,rgba(233,199,106,.2) 0 16%,transparent 16% 100%),radial-gradient(90% 70% at 20% 30%,#1d47d6 0%,#0b1f7a 60%,#040b36 100%)}
+.fete.hofhome .fete-t{background:rgba(4,12,60,.6)}
+.hof-open{margin-left:auto;border:1.5px solid var(--gold);background:transparent;color:var(--gold);border-radius:999px;padding:6px 12px;font:700 .85rem 'Barlow',sans-serif;cursor:pointer;white-space:nowrap}
+.hofbs{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
+.hofb{display:inline-flex;align-items:center;gap:1px;padding:1px 5px;border-radius:999px;background:linear-gradient(135deg,#1d47d6,#0e2aa0);border:1px solid #e9c76a;font-size:.72rem;line-height:1.3}
+.hofb small{font:800 .66rem 'Barlow Condensed',sans-serif;color:#fff3c4}
+.cg .m .hofbs{margin-left:4px}
+.hofrow{display:block;width:100%;text-align:left;border:1px solid var(--tile-line);background:var(--tile);color:inherit;border-radius:12px;padding:10px 12px;margin:0 0 8px;cursor:pointer}
+.hofrow b{display:block;font:800 1.1rem 'Barlow Condensed',sans-serif;color:var(--gold)}
+.hofrow span{display:block;font-size:.85rem;opacity:.85;margin-top:2px}
+.hf-scene{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;transition:opacity .4s}
+.hf-scene.fade{opacity:0}
+.hf.hf-dim .mx-bg{opacity:.35;transition:opacity .4s}
+.hf-intro{margin:auto;text-align:center;opacity:0;transform:scale(.8);transition:opacity .6s,transform .8s cubic-bezier(.2,.9,.3,1.2)}
+.hf-intro.on{opacity:1;transform:none}
+.hf-intro span{display:block;font-size:min(16vw,70px)}
+.hf-intro b{display:block;font-weight:900;font-style:italic;font-size:min(15vw,72px);line-height:1;letter-spacing:.02em;
+  background:linear-gradient(180deg,#fff7d6,#e9c76a 55%,#b8862a);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .12em}
+.hf-intro small{display:block;margin-top:8px;font:700 1rem 'Barlow',sans-serif;color:#dfe6ff;letter-spacing:.06em;text-transform:uppercase}
+.hf-head{margin-top:calc(env(safe-area-inset-top,0px) + 62px);padding:0 16px;text-align:center;opacity:0;transform:translateY(-10px);transition:opacity .5s,transform .5s}
+.hf-head.on{opacity:1;transform:none}
+.hf-head small{display:block;font:700 .78rem 'Barlow',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9fb0d6}
+.hf-head b{display:block;font-weight:900;font-style:italic;font-size:min(9vw,40px);line-height:1.05;text-transform:uppercase;color:#e9c76a;margin-top:2px}
+.hf-head em{display:inline-block;margin-top:6px;font:800 .78rem 'Barlow',sans-serif;font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:#0c1a3d;background:#e9c76a;border-radius:999px;padding:3px 10px}
+.hf-head i{display:block;margin-top:6px;font:italic 500 .92rem 'Barlow',sans-serif;color:#c9d4f2}
+.hf-solo{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4vh;perspective:1100px}
+.hf-card{position:relative;aspect-ratio:380/534;transform-style:preserve-3d;transform:rotateY(180deg) scale(.6);opacity:0}
+.hf-face{position:absolute;inset:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.hf-back{transform:rotateY(180deg);border-radius:14px;background:linear-gradient(145deg,#f7df95,#c99a2e 55%,#8c6414);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-weight:900;font-style:italic;font-size:min(9vw,40px);color:#fff;text-shadow:0 2px 4px rgba(80,50,0,.5);box-shadow:0 0 30px rgba(233,199,106,.5)}
+.hf-back small{font-size:.7em}
+.hf-front{filter:drop-shadow(0 10px 20px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(233,199,106,.45))}
+.hf-name{font-weight:900;font-size:min(9vw,40px);line-height:1;text-transform:uppercase;text-align:center;background:linear-gradient(180deg,#fff,#e9c76a);-webkit-background-clip:text;background-clip:text;color:transparent;animation:hfIn .5s ease-out}
+.hf-stats{display:flex;gap:6px;animation:hfIn .5s ease-out .1s both}
+.hf-trio{display:flex;align-items:flex-end;justify-content:center;gap:10px;width:100%;padding:0 10px;margin-top:2vh}
+.hf-trio .hf-solo{margin-top:0}
+.hf-mini{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transform:translateY(30px);transition:opacity .5s,transform .6s cubic-bezier(.2,.9,.3,1.2);margin-bottom:60px}
+.hf-mini.on{opacity:.92;transform:none}
+.hf-mname{text-align:center;font-weight:800;font-size:1.05rem;line-height:1.1;text-transform:uppercase;animation:hfIn .5s ease-out}
+.hf-mname small{display:block;font:700 .72rem 'Barlow',sans-serif;color:#e9c76a;letter-spacing:.06em;text-transform:none}
+.hf-mname.big{font-size:min(8vw,34px);color:#fff3c4}
+.hf-mname.big small{font-size:.85rem}
+.hf-podium{position:absolute;left:0;right:0;bottom:6%;display:flex;align-items:flex-end;justify-content:center;gap:6px;padding:0 10px}
+.hf-step{flex:1;max-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.hf-spot{display:flex;flex-direction:column;align-items:center;gap:4px;perspective:900px;margin-bottom:6px}
+.hf-block{width:100%;border-radius:10px 10px 0 0;display:grid;place-items:center;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 10px 30px rgba(0,0,0,.4);animation:hfUp .7s cubic-bezier(.2,.9,.3,1.1) both}
+.hf-block b{font-weight:900;font-style:italic;font-size:2rem;color:rgba(0,0,0,.45)}
+.hf-step.gold .hf-block{height:min(22vh,150px);background:linear-gradient(180deg,#fff1b8,#e9c76a 50%,#b8862a)}
+.hf-step.silver .hf-block{height:min(15vh,105px);background:linear-gradient(180deg,#f4f6fb,#c3cad8 50%,#8e97a8);animation-delay:.15s}
+.hf-step.bronze .hf-block{height:min(10vh,72px);background:linear-gradient(180deg,#f6c99b,#c98a4c 50%,#8a5426);animation-delay:.3s}
+.hf-final{margin:auto;width:100%;max-width:420px;padding:0 16px;text-align:center;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.hf-final.on{opacity:1;transform:none}
+.hf-final small{font:700 .8rem 'Barlow',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#9fb0d6}
+.hf-final>b{display:block;font-weight:900;font-style:italic;font-size:min(10vw,44px);color:#e9c76a;margin:2px 0 14px}
+.hf-flist{display:flex;flex-direction:column;gap:10px}
+.hf-fitem{display:flex;align-items:center;gap:12px;background:rgba(8,18,48,.72);border:1px solid rgba(233,199,106,.45);border-radius:14px;padding:8px 12px;text-align:left}
+.hf-fitem .hf-card{flex:none;width:64px!important}
+.hf-fitem .hf-mname{text-align:left;font-size:1.1rem}
+.hf-close{margin-top:16px;width:100%;border:0;border-radius:12px;padding:12px;background:#e9c76a;color:#0c1a3d;font:800 1.1rem 'Barlow Condensed',sans-serif;cursor:pointer}
+@keyframes hfIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes hfUp{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+@media (prefers-reduced-motion:reduce){.hf-card{transition:none}}
+
 @media (prefers-reduced-motion:reduce){.mx-flame,.mx-float{animation:none}}
 /* ---------- organisateurs : joueurs identifiés ---------- */
 .idrow{display:flex;align-items:center;gap:10px;width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--tile-line);background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit}
@@ -818,6 +882,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
     <div class="mecard" id="meCard" hidden>
       <div class="fete" id="meFete" hidden></div>
+      <div class="fete hofhome" id="meHof" hidden></div>
       <div class="me-news" id="meNews" hidden></div>
       <button type="button" class="me-main" id="meOpen">
         <canvas id="meCv" role="img" aria-label="Ma carte"></canvas>
@@ -1092,6 +1157,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <button type="button" class="back" data-go="home" aria-label="Retour à l'accueil">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
       <h2>Statistiques</h2>
+      <button type="button" class="hof-open" id="hofOpen" hidden>🏛️ Hall of Fame</button>
     </div>
     <div class="sfilters">
       <input type="search" id="sSearch" placeholder="Chercher un joueur" autocomplete="off" aria-label="Chercher un joueur">
@@ -1242,6 +1308,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   };
   const home=document.getElementById("home"), screen=document.getElementById("screen"), carte=document.getElementById("carte");
   function show(route){
+    /* lien d'une notif Hall of Fame : on lance la cérémonie par-dessus l'accueil */
+    if(/^hof-\d{4}-\d{2}$/.test(route)){ const k=route.slice(4); history.replaceState(null,"",location.pathname+location.search); route="";
+      if(started){ const h=computeHof(k); if(h)setTimeout(()=>playHof(h),300); } else pendingHof=k; }
     if(!isAdmin()&&(route==="carte"||route==="match")){ if(location.hash)history.replaceState(null,"",location.pathname+location.search); route=""; }
     carte.hidden=route!=="carte";
     const matchSec=document.getElementById("match"); matchSec.hidden=route!=="match";
@@ -1352,10 +1421,33 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ---------- fonds de carte ---------- */
   const THEMES={
     or:{title:"Or",shadow:"#caa24c",ink:"#21180a",name:"#120d04",lab:"#3d2e0c",val:"#1a1307",sep:"rgba(95,68,18,.32)",q:"rgba(92,92,98,.5)",shieldStroke:"#4a3810",heartStroke:"#5a0a14",starStroke:"#6b4e0a"},
+    hof:{title:"Hall of Fame",shadow:"#071a5c",ink:"#ffffff",name:"#fff3c4",lab:"#e9c76a",val:"#ffffff",sep:"rgba(233,199,106,.45)",q:"rgba(190,205,255,.45)",shieldStroke:"#fff3c4",heartStroke:"#ffffff",starStroke:"#fff3c4"},
     forme:{title:"En forme",shadow:"#1a1b1f",ink:"#ffffff",name:"#ffffff",lab:"#d3d8de",val:"#ffffff",sep:"rgba(255,255,255,.3)",q:"rgba(205,210,218,.45)",shieldStroke:"#e8ebef",heartStroke:"#ffffff",starStroke:"#fff3c4"}
   };
   const themeOf=p=>THEMES[p&&p.fond]||THEMES.or;
   function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  /* fond « Hall of Fame » : bleu roi, faisceaux de lumière, bande dorée, étincelles */
+  function paintHof(c){
+    const g=c.createLinearGradient(0,0,360,510); g.addColorStop(0,"#1d47d6"); g.addColorStop(.45,"#0e2aa0"); g.addColorStop(1,"#06135a");
+    c.fillStyle=g; c.fillRect(0,0,360,510);
+    const rnd=mulberry(27);
+    [[150,70,.16],[230,44,.11],[300,90,.14],[60,30,.08]].forEach(([bx,bw,a])=>{ const lg=c.createLinearGradient(0,0,0,460);
+      lg.addColorStop(0,"rgba(120,170,255,"+a+")"); lg.addColorStop(1,"rgba(120,170,255,0)"); c.fillStyle=lg;
+      c.beginPath(); c.moveTo(bx,0); c.lineTo(bx+bw,0); c.lineTo(bx+bw-260,460); c.lineTo(bx-260,460); c.closePath(); c.fill(); });
+    /* motif discret */
+    c.strokeStyle="rgba(150,185,255,.10)"; c.lineWidth=1;
+    for(let i=0;i<9;i++){ c.beginPath(); c.arc(300,60+i*4,30+i*18,Math.PI*.5,Math.PI*1.3); c.stroke(); }
+    /* bande dorée en diagonale */
+    const gd=c.createLinearGradient(0,150,360,330); gd.addColorStop(0,"rgba(233,199,106,0)"); gd.addColorStop(.45,"rgba(255,226,140,.9)"); gd.addColorStop(.55,"rgba(201,150,46,.9)"); gd.addColorStop(1,"rgba(233,199,106,0)");
+    c.fillStyle=gd; c.beginPath(); c.moveTo(-20,330); c.lineTo(380,170); c.lineTo(380,184); c.lineTo(-20,344); c.closePath(); c.fill();
+    c.strokeStyle="rgba(255,236,170,.5)"; c.lineWidth=1.2; c.beginPath(); c.moveTo(-20,352); c.lineTo(380,192); c.stroke();
+    /* étincelles dorées à 4 branches */
+    const spark=(x,y,r)=>{ c.beginPath(); c.moveTo(x,y-r); c.quadraticCurveTo(x,y,x+r,y); c.quadraticCurveTo(x,y,x,y+r); c.quadraticCurveTo(x,y,x-r,y); c.quadraticCurveTo(x,y,x,y-r); c.fill(); };
+    const sg=c.createLinearGradient(0,0,360,200); sg.addColorStop(0,"#fff3c4"); sg.addColorStop(1,"#d4a22f"); c.fillStyle=sg;
+    spark(255,70,22); spark(300,118,13); spark(212,112,9);
+    for(let i=0;i<60;i++){ c.fillStyle="rgba(255,"+(220+rnd()*35|0)+","+(150+rnd()*90|0)+","+(rnd()*.6).toFixed(2)+")"; c.beginPath(); c.arc(rnd()*360,rnd()*420,.4+rnd()*1.5,0,Math.PI*2); c.fill(); }
+    const v=c.createLinearGradient(0,330,0,510); v.addColorStop(0,"rgba(4,10,50,0)"); v.addColorStop(1,"rgba(4,10,50,.7)"); c.fillStyle=v; c.fillRect(0,330,360,180);
+  }
   function paintGold(c){
     const g=c.createLinearGradient(0,0,360,510);
     g.addColorStop(0,"#f7e6a6"); g.addColorStop(.35,"#eed383");
@@ -1469,13 +1561,18 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     c.fillStyle=T.shadow; c.fill(); c.restore();
 
     c.save(); cardPath(c); c.clip();
-    if(p.fond==="forme")paintForme(c); else paintGold(c);
+    if(p.fond==="forme")paintForme(c); else if(p.fond==="hof")paintHof(c); else paintGold(c);
     drawPhoto(c,p,s);
     c.strokeStyle=T.sep; c.lineWidth=1;
     c.beginPath(); c.moveTo(60,383); c.lineTo(300,383); c.stroke();
     c.restore();
 
-    if(p.fond==="forme"){
+    if(p.fond==="hof"){
+      const fg=c.createLinearGradient(0,0,360,510); fg.addColorStop(0,"#fff3c4"); fg.addColorStop(.35,"#e9c76a"); fg.addColorStop(.6,"#b8862a"); fg.addColorStop(.8,"#f7df95"); fg.addColorStop(1,"#c99a2e");
+      cardPath(c); c.lineWidth=9; c.strokeStyle=fg; c.stroke();
+      c.save(); c.translate(180,258); c.scale(.94,.952); c.translate(-180,-258); cardPath(c); c.restore();
+      c.lineWidth=1.6; c.strokeStyle="rgba(255,236,170,.75)"; c.stroke();
+    } else if(p.fond==="forme"){
       c.save(); c.translate(180,258); c.scale(.955,.965); c.translate(-180,-258);
       cardPath(c); c.restore();
       c.lineWidth=1.2; c.strokeStyle="rgba(255,255,255,.35)"; c.stroke();
@@ -2673,7 +2770,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     notes:[["note","Note",r=>overall(r.p),"rt"],...STATS.map(([k,code])=>[k,code,r=>clamp(r.p.stats[k]),"rt"])]
   };
   function renderStatsTable(rows){
-    const cols=TCOLS[SG.cat]; if(!cols.some(c=>c[0]===SG.tsort)){SG.tsort=cols[0][0];SG.tdir=-1;}
+    const HT=hofTitles(), hofOn=Object.keys(HT).length>0;
+    rows.forEach(r=>r.h=HT[r.p.id]||{});
+    const cols=TCOLS[SG.cat].concat(hofOn?[["hf","🏃<br>Fidèle",r=>r.h.fidele||0],["hc","🎯<br>Caviars",r=>r.h.caviar||0],["hb","⚽<br>Buteur",r=>r.h.buteur||0]]:[]);
+    if(!cols.some(c=>c[0]===SG.tsort)){SG.tsort=cols[0][0];SG.tdir=-1;}
     const col=cols.find(c=>c[0]===SG.tsort);
     /* colonnes « minutes par but » : plus petit = meilleur, les joueurs sans valeur toujours en bas */
     const v=r=>col[2](r);
@@ -2699,6 +2799,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     $("#stNote").textContent=(SG.cat==="notes"?"Notes actuelles des cartes. ":"")+"Touchez un titre de colonne pour trier, un joueur pour ouvrir sa fiche.";
   }
   $("#sScope [data-scope=season]").textContent="Saison "+seasonLabel(CUR_SEASON);
+  $("#hofOpen").addEventListener("click",openHofHistory);
   document.querySelectorAll("#sSort .chip").forEach(b=>b.addEventListener("click",()=>{SG.sort=b.dataset.sort;renderStatsGrid()}));
   document.querySelectorAll("#sScope .chip").forEach(b=>b.addEventListener("click",()=>{SG.scope=b.dataset.scope;renderStatsGrid()}));
   $("#sSearch").addEventListener("input",e=>{SG.q=e.target.value;renderStatsGrid()});
@@ -2711,10 +2812,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     document.querySelectorAll("#sView button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===SG.view)));
     document.querySelectorAll("#sCat .chip").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.cat===SG.cat)));
     $("#sCat").hidden=!tbl; $("#sSort").hidden=tbl; $("#stwrap").hidden=!tbl; $("#stNote").hidden=!tbl; $("#cgrid").hidden=tbl;
+    renderHofEntry();
     if(tbl){ if(rows.length)renderStatsTable(rows); else {$("#stable").innerHTML='<tbody><tr><td>Aucun joueur ne correspond.</td></tr></tbody>';} return; }
     const val=r=>SG.sort==="buts"?r.s.g:SG.sort==="passes"?r.s.a:SG.sort==="mvp"?r.s.mvp:SG.sort==="matchs"?r.s.mp:avgStats(r.p);
     rows.sort((x,y)=>SG.sort==="nom"?x.p.name.localeCompare(y.p.name,"fr"):(val(y)-val(x))||avgStats(y.p)-avgStats(x.p));
-    const grid=$("#cgrid"); grid.innerHTML="";
+    const grid=$("#cgrid"); grid.innerHTML=""; const HT=hofTitles(); renderHofEntry();
     if(!rows.length){grid.innerHTML='<p class="share-msg" style="color:#cfd8ee;grid-column:1/-1">Aucun joueur ne correspond.</p>';return}
     rows.forEach(({p,s})=>{
       const b=document.createElement("button"); b.type="button"; b.className="cg"+(p.id===myId()?" me":""); b.dataset.pid=p.id;
@@ -2723,6 +2825,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const m=document.createElement("span"); m.className="m";
       m.innerHTML=SG.sort==="buts"?IC_BALL+s.g:SG.sort==="passes"?IC_BOOT+s.a:SG.sort==="mvp"?IC_STAR+s.mvp:SG.sort==="matchs"?s.mp+" match"+(s.mp>1?"s":""):"";
       if(p.id===myId()){ const t=document.createElement("span"); t.className="metag"; t.textContent="Moi"; m.prepend(t); }
+      const hb=hofBadges(p.id,HT); if(hb)m.insertAdjacentHTML("beforeend",hb);
       b.appendChild(m); grid.appendChild(b);
     });
   }
@@ -3389,6 +3492,298 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     };
   }
 
+  /* ================= HALL OF FAME (bimestres de la saison) ================= */
+  /* bimestres : sept–oct, nov–déc, janv–févr, mars–avr, mai–juin, juil–août (mois de début pair) */
+  const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  const hofKey=d=>{ const m=d.getMonth()-d.getMonth()%2; return d.getFullYear()+"-"+String(m+1).padStart(2,"0"); };
+  const hofRange=key=>{ const [y,m]=key.split("-").map(Number); return [new Date(y,m-1,1),new Date(y,m+1,1)]; };
+  const hofLabel=key=>{ const [y,m]=key.split("-").map(Number); const a=MOIS[m-1], b=MOIS[m]; return (a.charAt(0).toUpperCase()+a.slice(1)).replace(".","")+"–"+b.replace(".","")+" "+y; };
+  const HOF_SUB={fidele:"Le plus de matchs joués",caviar:"Meilleur passeur du bimestre",buteur:"Meilleur buteur du bimestre"};
+  const HOF_T={ fidele:["🏃","Le Fidèle au poste",["Toujours là. Même quand il pleut. Même quand il a mal au genou.","Le vestiaire lui a gardé un casier à son nom.","Il connaît le parking par cœur."]],
+    caviar:["🎯","Le Distributeur de caviars",["Les attaquants lui doivent tous un verre.","Il livre à domicile, sans frais de port.","Des caviars servis sur plateau d'argent."]],
+    buteur:["⚽","Le Serial Buteur",["Les gardiens ont déposé une main courante.","Les filets demandent un arrêt de travail.","Il voit le but même les yeux fermés."]] };
+  /* classement d'un bimestre : null s'il y a moins de 2 matchs terminés */
+  function computeHof(key){
+    const [a,b]=hofRange(key), ms=matches.filter(m=>m.date>=a&&m.date<b&&m.present&&m.present.length);
+    if(ms.length<2)return null;
+    const st={}; const S=id=>st[id]||(st[id]={id,mp:0,g:0,a:0});
+    ms.forEach(m=>{ m.present.forEach(id=>S(id).mp++); m.goals.forEach(x=>{ if(x.pid&&!x.own)S(x.pid).g++; if(x.ast)S(x.ast).a++; }); });
+    const rows=Object.values(st).filter(r=>byId(r.id)), min=Math.ceil(ms.length/2), ov=r=>overall(byId(r.id));
+    const fidele=rows.slice().sort((x,y)=>y.mp-x.mp||(y.g+y.a)-(x.g+x.a)||ov(y)-ov(x));
+    const buteur=rows.filter(r=>r.mp>=min&&r.g>0).sort((x,y)=>y.g-x.g||x.mp-y.mp||y.a-x.a||ov(y)-ov(x));
+    const caviar=rows.filter(r=>r.mp>=min&&r.a>0).sort((x,y)=>y.a-x.a||x.mp-y.mp||y.g-x.g||ov(y)-ov(x));
+    return {key,label:hofLabel(key),n:ms.length,fidele:fidele.slice(0,1),caviar:caviar.slice(0,3),buteur:buteur.slice(0,3)};
+  }
+  /* sons du Hall of Fame : déclenchés au fil de l'animation */
+  function hofAudio(){
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null;
+    const ctx=new AC(), sr=ctx.sampleRate, out=ctx.createGain(), lim=ctx.createDynamicsCompressor();
+    lim.threshold.value=-6; lim.ratio.value=12; out.gain.value=soundOn()?0.6:0; out.connect(lim); lim.connect(ctx.destination);
+    const ir=ctx.createBuffer(2,Math.floor(sr*2.6),sr); for(let ch=0;ch<2;ch++){ const d=ir.getChannelData(ch); let lp=0; for(let i=0;i<d.length;i++){ const t=i/sr; lp+=(Math.random()*2-1-lp)*.35; d[i]=lp*Math.pow(1-t/2.6,2.2); } }
+    const rev=ctx.createConvolver(); rev.buffer=ir; const wet=ctx.createGain(); wet.gain.value=.45; rev.connect(wet); wet.connect(out);
+    const bus=ctx.createGain(); bus.connect(out); bus.connect(rev);
+    const nb=ctx.createBuffer(1,sr*2,sr), nd=nb.getChannelData(0); for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+    const now=()=>ctx.currentTime+.02;
+    const noise=(t0,dur)=>{ const s=ctx.createBufferSource(); s.buffer=nb; s.loop=true; s.start(t0); s.stop(t0+dur); return s; };
+    const filt=(type,f,q)=>{ const x=ctx.createBiquadFilter(); x.type=type; x.frequency.value=f; x.Q.value=q||.7; return x; };
+    const env=(g,t0,pts)=>{ g.gain.setValueAtTime(.0001,t0); pts.forEach(([t,v])=>g.gain.exponentialRampToValueAtTime(Math.max(.0001,v),t0+t)); };
+    return { ctx,
+      mute(m){ out.gain.setTargetAtTime(m?0:.6,ctx.currentTime,.03); },
+      stop(){ try{ out.gain.setTargetAtTime(0,ctx.currentTime,.1); setTimeout(()=>ctx.close().catch(()=>{}),700); }catch(e){} },
+      /* comète qui descend : souffle filtré qui monte */
+      whoosh(big){ const t=now(), d=big?1.3:.8, n=noise(t,d+.1), f=filt("bandpass",400,1.2), g=ctx.createGain();
+        f.frequency.setValueAtTime(300,t); f.frequency.exponentialRampToValueAtTime(big?5200:3500,t+d); env(g,t,[[d*.8,big?.5:.32],[d+.05,.0001]]); n.connect(f); f.connect(g); g.connect(bus); },
+      /* impact : coup grave + éclat */
+      boom(big){ const t=now(), o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(big?95:120,t); o.frequency.exponentialRampToValueAtTime(big?34:55,t+.6);
+        env(g,t,[[.01,big?1:.6],[big?1.2:.7,.0001]]); o.connect(g); g.connect(bus); o.start(t); o.stop(t+1.3);
+        const n=noise(t,.5), f=filt("lowpass",big?2400:1600), g2=ctx.createGain(); env(g2,t,[[.005,big?.7:.4],[.45,.0001]]); n.connect(f); f.connect(g2); g2.connect(bus); },
+      /* roulement de tambour qui monte */
+      /* roulement de caisse claire : coups serrés (timbre + peau), crescendo, accélération, puis coup final */
+      drumroll(dur){ const t=now(); let x=0, k=0;
+        while(x<dur){ const u=x/dur, vel=(.16+.7*u*u)*(k%2?.86:1), tt=t+x;
+          const n=noise(tt,.09), hp=filt("highpass",1800,.7), bp=filt("peaking",4200,1); bp.gain.value=6; const g=ctx.createGain();
+          env(g,tt,[[.002,vel*.55],[.075,.0001]]); n.connect(hp); hp.connect(bp); bp.connect(g); g.connect(bus);
+          const o=ctx.createOscillator(), og=ctx.createGain(); o.type="triangle"; o.frequency.setValueAtTime(205,tt); o.frequency.exponentialRampToValueAtTime(160,tt+.05);
+          env(og,tt,[[.002,vel*.4],[.06,.0001]]); o.connect(og); og.connect(bus); o.start(tt); o.stop(tt+.08);
+          x+=1/(17+11*u); k++; }
+        /* timbale grave sous le roulement */
+        const tm=ctx.createOscillator(), tg=ctx.createGain(); tm.frequency.value=62; env(tg,t,[[dur*.9,.35],[dur+.1,.0001]]); tm.connect(tg); tg.connect(bus); tm.start(t); tm.stop(t+dur+.2); },
+      /* cymbale qui éclate au moment de la révélation */
+      crash(){ const t=now(), n=noise(t,2.2), hp=filt("highpass",5200,.6), g=ctx.createGain(); env(g,t,[[.004,.55],[2.1,.0001]]); n.connect(hp); hp.connect(g); g.connect(bus); },
+      /* clameur + applaudissements */
+      cheer(dur,big){ const t=now(), b=ctx.createBuffer(2,Math.floor(sr*dur),sr), L=b.getChannelData(0), R=b.getChannelData(1);
+        for(let k=0;k<(big?1500:500);k++){ const tt=Math.random()*dur, e=tt<.3?tt/.3:tt>dur-1.5?Math.max(0,(dur-tt)/1.5):1, a=(.25+Math.random()*.75)*e*.32, st=Math.floor(tt*sr), len=Math.floor(sr*(.006+Math.random()*.014)), pan=Math.random(); let prev=0;
+          for(let i=0;i<len&&st+i<L.length;i++){ const x=(Math.random()*2-1)*Math.exp(-i/(len*.35)), y=x-prev*.4; prev=x; L[st+i]+=y*a*(1-pan*.7); R[st+i]+=y*a*(.3+pan*.7); } }
+        const s=ctx.createBufferSource(); s.buffer=b; const g=ctx.createGain(); g.gain.value=big?1:.6; s.connect(g); g.connect(bus); s.start(t);
+        const n=noise(t,dur), f=filt("bandpass",700,.8), g2=ctx.createGain(); env(g2,t,[[.3,big?.22:.1],[dur-.8,big?.16:.07],[dur,.0001]]); n.connect(f); f.connect(g2); g2.connect(bus); },
+      /* feu d'artifice : petites détonations */
+      pop(){ const t=now(), n=noise(t,.25), f=filt("highpass",900), g=ctx.createGain(); env(g,t,[[.004,.35],[.22,.0001]]); n.connect(f); f.connect(g); g.connect(bus); }
+    };
+  }
+  async function playHof(hof){
+    if(!hof||document.querySelector(".mx"))return;
+    const ov=document.createElement("div"); ov.className="mx hf"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label","Hall of Fame "+hof.label);
+    ov.innerHTML='<div class="mx-bg"><div class="mx-stands"></div><div class="mx-lights"></div><div class="mx-floor"></div></div>'+
+      '<canvas class="mx-fx mx-fxb"></canvas><div class="hf-scene"></div><canvas class="mx-fx mx-fxf"></canvas><div class="mx-flash"></div>'+
+      '<button type="button" class="mx-btn mx-sound" aria-label="Son"></button><button type="button" class="mx-btn mx-skip">Passer ⏭</button>';
+    const lights=ov.querySelector(".mx-lights"); for(let i=0;i<9;i++){ const e=document.createElement("i"), u=i/8; e.style.left=(6+u*88)+"%"; e.style.top=(Math.pow(u-.5,2)*120)+"%"; e.style.transitionDelay=(i%3)*.12+"s"; lights.appendChild(e); }
+    document.body.appendChild(ov); document.body.style.overflow="hidden";
+    requestAnimationFrame(()=>ov.classList.add("on")); setTimeout(()=>ov.classList.add("p-lights"),200);
+    const scene=ov.querySelector(".hf-scene");
+    let audio=null; try{ audio=hofAudio(); }catch(e){}
+    /* musique d'habillage (une des musiques FUT 5V5), baissée pendant le roulement de tambour */
+    const mus=new Audio(window.FUT5V5_HOF_MUSIC||"hall-of-fame-musique.mp3"); mus.loop=true; mus.volume=0; mus.muted=!soundOn();
+    let musT=0; const fadeTo=(v,ms)=>{ clearInterval(musT); const v0=mus.volume, t0=performance.now();
+      musT=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/ms); try{mus.volume=Math.max(0,Math.min(1,v0+(v-v0)*k));}catch(e){} if(k>=1)clearInterval(musT); },40); };
+    const musStart=()=>{ mus.play().then(()=>fadeTo(.42,1200)).catch(()=>{}); };
+    mus.play().then(()=>fadeTo(.42,1200)).catch(()=>{ ov.addEventListener("pointerdown",musStart,{once:true}); });
+    const sb=ov.querySelector(".mx-sound"), paint=()=>{ sb.textContent=soundOn()?"🔊":"🔇"; }; paint();
+    sb.addEventListener("click",()=>{ const on=!soundOn(); try{localStorage.setItem(MVP_SOUND_KEY,on?"1":"0")}catch(e){} paint(); mus.muted=!on; if(on&&mus.paused)musStart();
+      if(audio){ if(audio.ctx.state==="suspended")audio.ctx.resume().catch(()=>{}); audio.mute(!on); } });
+    if(audio){ try{ await audio.ctx.resume(); }catch(e){} }
+    const A=(fn,...x)=>{ try{ if(audio&&audio.ctx.state==="running")audio[fn](...x); }catch(e){} };
+    const fxB=mvpFx(ov.querySelector(".mx-fxb")), fxF=mvpFx(ov.querySelector(".mx-fxf"));
+    let done=false, raf=0, last=performance.now(), fw=0, conf=0;
+    const TEAL=["#6ff5dc","#3fe0c5","#b9fff0"], GOLD=["#fff3c4","#ffd35c","#e9c76a","#ffae2b"], pick=a=>a[Math.floor(Math.random()*a.length)];
+    const comets=[];
+    const loop=now=>{ if(done)return; const dt=Math.min(.05,(now-last)/1000); last=now; const W=fxF.W, H=fxF.H;
+      comets.forEach(c=>{ const k=Math.min(1,(now-c.t0)/c.dur), e=k*k*(3-2*k), x=c.x0+(c.x1-c.x0)*e+Math.sin(k*5)*6, y=c.y0+(c.y1-c.y0)*e;
+        if(k<1){ for(let i=0;i<(c.big?10:6);i++) fxF.spark(x+(Math.random()-.5)*10,y-Math.random()*14,(Math.random()-.5)*40,-20-Math.random()*60,.6+Math.random()*.5,(c.big?2:1.4)+Math.random()*1.8,pick(c.big?GOLD:TEAL),40);
+          fxF.spark(x,y,0,0,.12,c.big?10:7,"#ffffff"); } });
+      for(let i=comets.length-1;i>=0;i--) if(now-comets[i].t0>comets[i].dur)comets.splice(i,1);
+      if(fw>0){ fw-=dt; if(Math.random()<.09) { fxF.burst(W*(.12+Math.random()*.76),H*(.08+Math.random()*.3),pick(["#fff3c4","#ffffff","#ffd35c","#9fe8ff","#ff9bd2"]),60); A("pop"); } }
+      if(conf>0){ conf-=dt; if(Math.random()<.6) fxF.confetti(Math.random()*W,-10); }
+      fxB.step(dt); fxF.step(dt); raf=requestAnimationFrame(loop); };
+    raf=requestAnimationFrame(loop);
+    const onResize=()=>{ fxB.size(); fxF.size(); }; window.addEventListener("resize",onResize);
+    let skipRes; const skipP=new Promise(r=>skipRes=r);
+    const sleep=ms=>Promise.race([new Promise(r=>setTimeout(r,ms)),skipP]);
+    const close=()=>{ if(done)return; done=true; skipRes(); cancelAnimationFrame(raf); window.removeEventListener("resize",onResize); if(audio)audio.stop(); ov.classList.add("out");
+      fadeTo(0,300); setTimeout(()=>{ try{mus.pause()}catch(e){} ov.remove(); document.body.style.overflow=""; if(typeof onHofClosed==="function")onHofClosed(hof); },320); };
+    ov.querySelector(".mx-skip").addEventListener("click",close);
+    const el=(tag,cls,html)=>{ const e=document.createElement(tag); e.className=cls; if(html!=null)e.innerHTML=html; return e; };
+    const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+    /* une carte qui arrive avec la comète, tourne et se retourne */
+    const mkCard=(pid,size)=>{ const p=byId(pid), w=el("div","hf-card"); w.style.width=size+"px";
+      w.innerHTML='<div class="hf-face hf-back">FUT<small>5V5</small></div>'; const cv=el("canvas","hf-face hf-front"); w.appendChild(cv);
+      drawCard(cv,Object.assign({},p,{fond:"hof"}),.8); return w; };
+    const comet=(target,big)=>{ const r=target.getBoundingClientRect(), x1=r.left+r.width/2, y1=r.top+r.height/2, dur=big?1300:800;
+      comets.push({t0:performance.now(),dur,x0:x1+(Math.random()-.5)*40,y0:-40,x1,y1,big}); A("whoosh",big); return sleep(dur); };
+    const reveal=async(card,big)=>{ card.style.opacity="1";
+      card.animate([{transform:"rotateY(180deg) scale(.6)"},{transform:"rotateY(900deg) scale(1.05)"}],{duration:big?1500:900,easing:"cubic-bezier(.2,.65,.25,1)",fill:"forwards"});
+      await sleep(big?1500:900); if(done)return;
+      card.animate([{transform:"rotateY(900deg) scale(1.05)"},{transform:"rotateY(1080deg) scale(1)"}],{duration:380,easing:"ease-out",fill:"forwards"});
+      await sleep(260); if(done)return;
+      const r=card.getBoundingClientRect(), f=ov.querySelector(".mx-flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
+      fxF.burst(r.left+r.width/2,r.top+r.height/2,big?"#fff3c4":"#b9fff0",big?140:60); A("boom",big); };
+    const header=(k)=>{ const [ic,t,q]=HOF_T[k], h=el("div","hf-head",'<small>'+esc(hof.label)+'</small><b>'+ic+' '+esc(t)+'</b><em>'+esc(HOF_SUB[k])+'</em><i>« '+esc(q[(hof.key.length+t.length)%q.length])+' »</i>'); scene.appendChild(h); requestAnimationFrame(()=>h.classList.add("on")); return h; };
+    const chips=list=>{ const c=el("div","hf-stats"); list.forEach(([v,l])=>c.appendChild(el("div","mx-st",'<b>'+esc(v)+'</b><small>'+esc(l)+'</small>'))); return c; };
+    const nameOf=pid=>(byId(pid)||{}).name||"?";
+    const clear=async()=>{ scene.classList.add("fade"); await sleep(450); scene.innerHTML=""; scene.classList.remove("fade"); };
+    try{
+      /* intro */
+      const intro=el("div","hf-intro",'<span>🏛️</span><b>HALL OF FAME</b><small>'+esc(hof.label)+' · '+hof.n+' matchs</small>'); scene.appendChild(intro);
+      requestAnimationFrame(()=>intro.classList.add("on")); A("cheer",2.6,false); await sleep(2800); if(done)return; await clear(); if(done)return;
+      /* 1. le fidèle au poste */
+      if(hof.fidele[0]){ const r=hof.fidele[0]; header("fidele");
+        const slot=el("div","hf-solo"), card=mkCard(r.id,Math.min(innerWidth*.42,200)); slot.appendChild(card); scene.appendChild(slot); await sleep(700); if(done)return;
+        await comet(card,false); if(done)return; await reveal(card,false); if(done)return;
+        slot.appendChild(el("div","hf-name",esc(nameOf(r.id))));
+        slot.appendChild(chips([[r.mp+"/"+hof.n,"matchs"],[Math.round(r.mp/hof.n*100)+" %","présence"],[String(r.g),r.g>1?"buts":"but"],[String(r.a),r.a>1?"passes":"passe"]]));
+        A("cheer",2.4,false); await sleep(3200); if(done)return; await clear(); if(done)return; }
+      /* 2. le distributeur de caviars : le n°1 en grand, n°2 et n°3 à côté */
+      if(hof.caviar[0]){ header("caviar"); const row=el("div","hf-trio"); scene.appendChild(row);
+        const side=(r,cls)=>{ const w=el("div","hf-mini "+cls); if(r){ const c=mkCard(r.id,Math.min(innerWidth*.22,104)); c.style.opacity="1"; c.style.transform="rotateY(0)"; w.appendChild(c);
+          w.appendChild(el("div","hf-mname",esc(nameOf(r.id))+'<small>'+r.a+' passe'+(r.a>1?"s":"")+'</small>')); } return w; };
+        const L=side(hof.caviar[1],"l"), R=side(hof.caviar[2],"r"), mid=el("div","hf-solo"), card=mkCard(hof.caviar[0].id,Math.min(innerWidth*.4,190));
+        mid.appendChild(card); row.appendChild(L); row.appendChild(mid); row.appendChild(R); await sleep(700); if(done)return;
+        await comet(card,false); if(done)return; await reveal(card,false); if(done)return;
+        const r=hof.caviar[0]; mid.appendChild(el("div","hf-name",esc(nameOf(r.id)))); mid.appendChild(chips([[String(r.a),"caviars"],[r.mp+"/"+hof.n,"matchs"]]));
+        A("cheer",2.2,false); await sleep(900); if(done)return; L.classList.add("on"); await sleep(450); if(done)return; R.classList.add("on");
+        await sleep(3000); if(done)return; await clear(); if(done)return; }
+      /* 3. le serial buteur : podium 3e, 2e, puis roulement de tambour et le 1er */
+      if(hof.buteur[0]){ header("buteur"); const pod=el("div","hf-podium"); scene.appendChild(pod);
+        const steps={}; [["2","silver"],["1","gold"],["3","bronze"]].forEach(([n,c])=>{ const s=el("div","hf-step "+c,'<div class="hf-spot"></div><div class="hf-block"><b>'+n+'</b></div>'); pod.appendChild(s); steps[n]=s; });
+        await sleep(800); if(done)return;
+        for(const n of ["3","2"]){ const r=hof.buteur[+n-1]; if(!r)continue; const spot=steps[n].querySelector(".hf-spot"), c=mkCard(r.id,Math.min(innerWidth*.24,112)); spot.appendChild(c);
+          await comet(c,false); if(done)return; await reveal(c,false); if(done)return;
+          spot.appendChild(el("div","hf-mname",esc(nameOf(r.id))+'<small>'+r.g+' buts</small>')); await sleep(1200); if(done)return; }
+        const r=hof.buteur[0], spot=steps["1"].querySelector(".hf-spot"), c=mkCard(r.id,Math.min(innerWidth*.3,140)); spot.appendChild(c);
+        ov.classList.add("hf-dim"); fadeTo(.06,500); A("drumroll",5.3); await sleep(2500); if(done)return; ov.classList.remove("hf-dim");
+        await comet(c,true); if(done)return; await reveal(c,true); if(done)return; A("crash"); fadeTo(.55,700);
+        fw=5; conf=4.5; for(let i=0;i<90;i++) fxF.confetti(Math.random()*fxF.W,-10-Math.random()*80); A("cheer",6,true);
+        spot.appendChild(el("div","hf-mname big",esc(nameOf(r.id))+'<small>'+r.g+' buts · '+r.mp+' matchs</small>')); await sleep(5200); if(done)return; await clear(); if(done)return; }
+      /* récap */
+      const fin=el("div","hf-final",'<small>'+esc(hof.label)+'</small><b>🏛️ Hall of Fame</b>'), list=el("div","hf-flist");
+      [["fidele",hof.fidele[0],r=>r.mp+" matchs"],["caviar",hof.caviar[0],r=>r.a+" passes"],["buteur",hof.buteur[0],r=>r.g+" buts"]].forEach(([k,r,f])=>{ if(!r)return;
+        const it=el("div","hf-fitem"), c=mkCard(r.id,Math.min(innerWidth*.24,104)); c.style.opacity="1"; c.style.transform="rotateY(0)"; it.appendChild(c);
+        it.appendChild(el("div","hf-mname",HOF_T[k][0]+' '+esc(nameOf(r.id))+'<small>'+esc(HOF_SUB[k])+' · '+f(r)+'</small>')); list.appendChild(it); });
+      fin.appendChild(list); const ok=el("button","hf-close","Fermer"); ok.type="button"; ok.addEventListener("click",close); fin.appendChild(ok); scene.appendChild(fin);
+      requestAnimationFrame(()=>fin.classList.add("on"));
+    }catch(e){ close(); }
+  }
+  var pendingHof=null;
+  const HOF_SEEN="fut5v5:hof-vus";
+  const hofNow=()=>window.FUT5V5_HOF_NOW?new Date(window.FUT5V5_HOF_NOW):new Date();
+  /* bimestres terminés depuis le premier match, du plus récent au plus ancien, avec leurs lauréats */
+  function hofDone(){
+    if(!matches.length)return [];
+    const first=matches.reduce((a,m)=>m.date<a?m.date:a,matches[0].date), out=[], now=hofNow();
+    let k=hofKey(first);
+    for(let i=0;i<60;i++){ const [a,b]=hofRange(k); if(b>now)break; const h=computeHof(k); if(h)out.unshift(h); k=hofKey(b); }
+    return out;
+  }
+  /* distinctions par joueur : nombre de titres (1re place) */
+  function hofTitles(){ const t={}; hofDone().forEach(h=>[["fidele",h.fidele],["caviar",h.caviar],["buteur",h.buteur]].forEach(([k,l])=>{ if(l[0]){ const x=t[l[0].id]||(t[l[0].id]={fidele:0,caviar:0,buteur:0}); x[k]++; } })); return t; }
+  function hofBadges(pid,T){ const x=T[pid]; if(!x)return ""; let h="";
+    [["fidele","🏃"],["caviar","🎯"],["buteur","⚽"]].forEach(([k,ic])=>{ if(x[k])h+='<span class="hofb" title="'+HOF_T[k][1]+'">'+ic+(x[k]>1?'<small>×'+x[k]+'</small>':'')+'</span>'; });
+    return h?'<span class="hofbs">'+h+'</span>':""; }
+  function onHofClosed(h){ try{ const id=myId(); if(id)renderHofHome(id); }catch(e){} try{ const a=JSON.parse(localStorage.getItem(HOF_SEEN)||"[]"); if(a.indexOf(h.key)<0){ a.push(h.key); localStorage.setItem(HOF_SEEN,JSON.stringify(a)); } }catch(e){} renderHofEntry(); }
+  /* première ouverture après la fin d'un bimestre : l'animation se lance toute seule (une fois) */
+  function autoHof(){ const d=hofDone(); if(!d.length||document.querySelector(".mx"))return; let seen=[]; try{seen=JSON.parse(localStorage.getItem(HOF_SEEN)||"[]")}catch(e){}
+    if(seen.indexOf(d[0].key)<0&&!/^#?m-/.test(location.hash))setTimeout(()=>playHof(d[0]),900); }
+  function renderHofEntry(){ const b=$("#hofOpen"); if(b)b.hidden=!hofDone().length; }
+  function openHofHistory(){
+    openSheet("🏛️ Hall of Fame","Touche un bimestre pour revoir sa cérémonie.",body=>{
+      hofDone().forEach(h=>{ const b=document.createElement("button"); b.type="button"; b.className="hofrow";
+        const nm=r=>r?((byId(r.id)||{}).name||"?"):"–";
+        b.innerHTML='<b>'+h.label+'</b><span>⚽ '+nm(h.buteur[0])+' · 🎯 '+nm(h.caviar[0])+' · 🏃 '+nm(h.fidele[0])+'</span>';
+        b.addEventListener("click",()=>{ closeSheet(); setTimeout(()=>playHof(h),150); }); body.appendChild(b); });
+    });
+  }
+  /* ---- accueil : le lauréat retrouve son entrée au Hall of Fame (21 jours après la fin du bimestre) ---- */
+  const HOFH_KEY="fut5v5:hof-accueil-vus";
+  const hofHomeSeen=()=>{ try{return JSON.parse(localStorage.getItem(HOFH_KEY)||"[]")}catch(e){return []} };
+  function myHofTitles(h,id){ const t=[]; [["buteur",h.buteur],["caviar",h.caviar],["fidele",h.fidele]].forEach(([k,l])=>{ if(l[0]&&l[0].id===id)t.push([k,l[0]]); }); return t; }
+  function hofStat(k,r,h){ return k==="buteur"?[r.g,r.g>1?"buts":"but"]:k==="caviar"?[r.a,r.a>1?"caviars":"caviar"]:[r.mp+"/"+h.n,"matchs"]; }
+  let hofBragVariant=0;
+  function hofBragText(h0,t){
+    const h=Object.assign({},h0,{label:h0.label.toLowerCase()}), V=[];
+    t.forEach(([k,r])=>{
+      if(k==="buteur")V.push("⚽ Serial Buteur du bimestre ("+h.label+") : "+r.g+" buts. Les gardiens peuvent souffler… jusqu'au prochain match.",
+        "🏆 Meilleur buteur de "+h.label+", c'est bibi. "+r.g+" pions. Je prends les félicitations en espèces.",
+        "📰 La rédac l'a officialisé : "+r.g+" buts et une place au Hall of Fame. Les autres, au boulot 😏");
+      if(k==="caviar")V.push("🎯 Distributeur de caviars officiel ("+h.label+") : "+r.a+" passes dé. Vous avez marqué, vous me devez tous un verre 🍻",
+        "🍽️ "+r.a+" caviars servis en "+h.label+". Le chef vous remercie de votre fidélité.",
+        "🎯 Meilleur passeur du bimestre. Sans moi, vos stats ressembleraient à un 0-0 un soir de pluie.");
+      if(k==="fidele")V.push("🏃 Fidèle au poste : "+r.mp+" matchs sur "+h.n+" en "+h.label+". Même la pluie n'a pas eu raison de moi ☔",
+        "📅 "+r.mp+"/"+h.n+" matchs. Le plus assidu du bimestre. Le parking me connaît par mon prénom.",
+        "🏃 Entré au Hall of Fame pour présence exemplaire. Le talent, c'est bien. Être là, c'est mieux 😇");
+    });
+    if(t.length>1)V.unshift("🏛️ Double entrée au Hall of Fame ("+h.label+") : "+t.map(([k])=>HOF_T[k][1]).join(" + ")+". Je signe les autographes à la buvette.");
+    return V[hofBragVariant%V.length]+"\n👉 "+location.href.split("#")[0];
+  }
+  async function buildHofImage(h,id,t){
+    if(document.fonts){try{await document.fonts.ready}catch(e){}}
+    const p=byId(id); await getImg(p.photo).promise;
+    const Wd=1080, Hd=1350, cv=document.createElement("canvas"); cv.width=Wd; cv.height=Hd; const c=cv.getContext("2d");
+    const BC="'Barlow Condensed','Arial Narrow',sans-serif", BA="'Barlow',system-ui,sans-serif", GOLD="#e9c76a";
+    let g=c.createRadialGradient(Wd*.5,Hd*.3,0,Wd*.5,Hd*.3,Wd*1.1); g.addColorStop(0,"#1d47d6"); g.addColorStop(.5,"#0b1f7a"); g.addColorStop(1,"#040b36"); c.fillStyle=g; c.fillRect(0,0,Wd,Hd);
+    c.fillStyle="rgba(120,170,255,.08)"; c.beginPath(); c.moveTo(Wd*.55,0); c.lineTo(Wd*.75,0); c.lineTo(Wd*.25,Hd); c.lineTo(Wd*.05,Hd); c.closePath(); c.fill();
+    c.strokeStyle=GOLD; c.lineWidth=4; c.beginPath(); c.roundRect?c.roundRect(24,24,Wd-48,Hd-48,40):c.rect(24,24,Wd-48,Hd-48); c.stroke();
+    c.textAlign="center"; c.font="800 36px "+BA; c.fillStyle="#9fb0d6"; try{c.letterSpacing="6px"}catch(e){} c.fillText(h.label.toUpperCase(),Wd/2,110); try{c.letterSpacing="0px"}catch(e){}
+    c.font="italic 900 110px "+BC; const gt=c.createLinearGradient(0,130,0,240); gt.addColorStop(0,"#fff7d6"); gt.addColorStop(.6,GOLD); gt.addColorStop(1,"#b8862a"); c.fillStyle=gt; c.fillText("🏛️ HALL OF FAME",Wd/2,230);
+    const cc=document.createElement("canvas"); drawCard(cc,Object.assign({},p,{fond:"hof"}),1.15);
+    c.save(); c.shadowColor="rgba(233,199,106,.6)"; c.shadowBlur=60; c.drawImage(cc,Wd/2-cc.width/2,270); c.restore();
+    let y=270+cc.height+40;
+    t.forEach(([k,r])=>{ const [v,l]=hofStat(k,r,h);
+      c.beginPath(); c.roundRect?c.roundRect(90,y,Wd-180,120,26):c.rect(90,y,Wd-180,120); c.fillStyle="rgba(4,12,60,.75)"; c.fill(); c.strokeStyle="rgba(233,199,106,.6)"; c.lineWidth=2.5; c.stroke();
+      c.textAlign="left"; c.font="italic 900 52px "+BC; c.fillStyle=GOLD; c.fillText(HOF_T[k][0]+" "+HOF_T[k][1].toUpperCase(),120,y+60);
+      c.font="600 30px "+BA; c.fillStyle="#c9d4f2"; c.fillText(HOF_SUB[k],120,y+100);
+      c.textAlign="right"; c.font="700 26px "+BA; c.fillStyle=GOLD; c.fillText(l.toUpperCase(),Wd-120,y+82); const lw=c.measureText(l.toUpperCase()).width;
+      c.font="italic 900 72px "+BC; c.fillStyle="#fff"; c.fillText(String(v),Wd-120-lw-14,y+82);
+      y+=140; });
+    c.textAlign="left"; c.font="italic 900 58px "+BC; c.fillStyle="#fff"; c.fillText("FUT",70,Hd-66); const fw=c.measureText("FUT ").width; c.fillStyle="#6f8cff"; c.fillText("5V5",70+fw,Hd-66);
+    c.font="600 30px "+BA; c.fillStyle="#9fb0d6"; c.textAlign="right"; c.fillText(location.host?location.host+location.pathname.replace(/index\.html$/,""):"FUT 5V5",Wd-70,Hd-76);
+    return new Promise(res=>cv.toBlob(res,"image/png"));
+  }
+  function openHofBrag(h,id,t){
+    let blob=null;
+    openSheet("Chambrer le groupe","Ton entrée au Hall of Fame + un petit mot. Modifie-le si tu veux, ou 🎲 pour une autre version.",body=>{
+      const im=document.createElement("img"); im.className="brag-img"; im.alt="Image Hall of Fame"; body.appendChild(im);
+      const ta=document.createElement("textarea"); ta.className="wamsg brag-msg"; ta.value=hofBragText(h,t); body.appendChild(ta);
+      const go=document.createElement("button"); go.type="button"; go.className="wa wa-go brag-go"; go.textContent="📲 Partager l'image + le texte"; go.disabled=true; body.appendChild(go);
+      const msg=document.createElement("p"); msg.className="brag-note"; body.appendChild(msg);
+      const row=document.createElement("div"); row.style.cssText="display:flex;gap:8px";
+      const cp=document.createElement("button"); cp.type="button"; cp.className="sheet-cancel"; cp.textContent="Copier le texte";
+      cp.addEventListener("click",()=>{ try{ navigator.clipboard.writeText(ta.value).then(()=>toast("Message copié."),()=>ta.select()); }catch(e){ ta.select(); } });
+      const nx=document.createElement("button"); nx.type="button"; nx.className="sheet-cancel brag-next"; nx.textContent="🎲 Autre version";
+      nx.addEventListener("click",()=>{ hofBragVariant++; ta.value=hofBragText(h,t); });
+      row.appendChild(cp); row.appendChild(nx); body.appendChild(row);
+      buildHofImage(h,id,t).then(b=>{ blob=b; if(!b)return; im.src=URL.createObjectURL(b); go.disabled=false; }).catch(()=>{ msg.textContent="Image indisponible : le texte peut quand même partir."; go.disabled=false; });
+      go.addEventListener("click",()=>{ if(!blob){ window.open("https://wa.me/?text="+encodeURIComponent(ta.value),"_blank"); return; }
+        try{ navigator.clipboard&&navigator.clipboard.writeText(ta.value).then(()=>toast("Texte copié : si WhatsApp ne l'affiche pas, colle-le sous l'image."),()=>{}); }catch(e){}
+        closeSheet(); shareImage(blob,"hall-of-fame-fut5v5.png",ta.value,msg); });
+    });
+  }
+  function renderHofHome(id){
+    const box=$("#meHof"); if(!box)return;
+    const d=hofDone(), seen=hofHomeSeen(), now=hofNow();
+    const h=d.find(x=>myHofTitles(x,id).length&&now-hofRange(x.key)[1]<21*86400000);
+    box.classList.remove("fete-mini");
+    if(!h){ box.hidden=true; box.innerHTML=""; return; }
+    const t=myHofTitles(h,id), p=byId(id);
+    if(seen.indexOf(h.key)>=0){ box.classList.add("fete-mini");
+      box.innerHTML='<button type="button" class="fete-again"><span class="ic">🏛️</span><span><b>Allez, encore une fois…</b><small>Réaffiche ton entrée au Hall of Fame.</small></span><span class="go-ar" aria-hidden="true">›</span></button>';
+      box.querySelector(".fete-again").addEventListener("click",()=>{ try{localStorage.setItem(HOFH_KEY,JSON.stringify(hofHomeSeen().filter(x=>x!==h.key)))}catch(e){} renderHofHome(id); });
+      box.hidden=false; return; }
+    box.innerHTML='<div class="fete-lab"><span>🏛️ Hall of Fame</span><span></span></div>'+
+      '<div class="fete-row"><div class="fete-cw"><canvas aria-label="Ta carte Hall of Fame"></canvas></div><div class="fete-txt"><h3></h3><q><span></span><small>— La rédac</small></q></div></div>'+
+      '<div class="fete-tiles"></div>'+
+      '<div class="fete-acts"><button type="button" class="fete-b replay">▶ Revoir la cérémonie</button><button type="button" class="fete-b brag">📲 Chambrer le groupe</button>'+
+      '<button type="button" class="fete-ok">OK, je reste humble 😇</button></div>';
+    box.querySelector(".fete-lab span:last-child").textContent=h.label;
+    box.querySelector("h3").innerHTML=t.length>1?'Double entrée au <em>Hall of Fame</em> 🏛️':'Tu entres au <em>Hall of Fame</em> 🏛️';
+    box.querySelector("q span").textContent="« "+t.map(([k])=>HOF_T[k][1]).join(" et ")+" du bimestre. Le vestiaire s'incline. »";
+    const tiles=box.querySelector(".fete-tiles");
+    t.forEach(([k,r])=>{ const [v,l]=hofStat(k,r,h); const e=document.createElement("div"); e.className="fete-t"; e.innerHTML="<b></b><small></small>"; e.querySelector("b").textContent=HOF_T[k][0]+" "+v; e.querySelector("small").textContent=HOF_SUB[k].replace(" du bimestre",""); tiles.appendChild(e); });
+    drawCard(box.querySelector("canvas"),Object.assign({},p,{fond:"hof"}),.5);
+    box.querySelector(".replay").addEventListener("click",()=>playHof(h));
+    box.querySelector(".brag").addEventListener("click",()=>openHofBrag(h,id,t));
+    box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=hofHomeSeen(); a.push(h.key); try{localStorage.setItem(HOFH_KEY,JSON.stringify(a.slice(-30)))}catch(e){} renderHofHome(id); });
+    box.hidden=false;
+  }
+  window.FUT5V5_HOF={ key:hofKey, compute:computeHof, done:hofDone, play:k=>playHof(computeHof(k||hofKey(new Date()))) };
   let lastReveal={id:"",t:0};
   async function playMvpReveal(rec){
     const p=rec&&rec.mvp&&byId(rec.mvp); if(!p)return;
@@ -3651,7 +4046,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     box.hidden=!id; if(!id)return;
     const p=byId(id), s=pstats(id,inSeason(CUR_SEASON));
     drawCard($("#meCv"),p,.34); $("#meName").textContent=p.name;
-    renderFete(id);
+    renderFete(id); try{ renderHofHome(id); }catch(e){}
     /* compteur MVP : seulement les MVP déjà révélés sur ce téléphone (pas de spoil avant l'animation) */
     const mvpShown=s.mvp-matches.filter(m=>m.mvp===id&&inSeason(CUR_SEASON)(m)&&!mvpRevealed(m.id)).length;
     $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+mvpShown+'</b></span>';
@@ -3776,7 +4171,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function startUI(){
     applyRole(); $("#splash").hidden=true;
     quiet=true; syncForm(); renderHome(); renderMatch(); quiet=false;
-    started=true; show(location.hash.slice(1));
+    started=true; show(location.hash.slice(1)); try{ if(pendingHof){ const h=computeHof(pendingHof); pendingHof=null; if(h)setTimeout(()=>playHof(h),400); } else autoHof(); }catch(e){}
   }
   async function refreshData(){
     const data=await api("getData"); lastLoad=Date.now();
