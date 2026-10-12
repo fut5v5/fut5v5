@@ -340,6 +340,29 @@ button{font:inherit;color:inherit}
 .timeline small{color:var(--muted);display:block;font-size:.8rem}
 .timeline .sc{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.05rem;font-variant-numeric:tabular-nums}
 .dmvp{display:flex;align-items:center;gap:14px;background:var(--tile);border:1px solid var(--tile-line);border-radius:16px;padding:12px}
+/* vote du MVP */
+.dmvp.vote{flex-direction:column;align-items:stretch;gap:8px}
+.vote-h{display:flex;align-items:center;gap:10px}
+.vote-h .urn{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--gold);color:#0c1a3d;font-size:1.3rem}
+.vote-h b{display:block;font:800 1.25rem/1.1 'Barlow Condensed',sans-serif}
+.vote-h small{display:block;color:var(--muted);font-size:.85rem}
+.vote-bar{height:8px;border-radius:99px;background:var(--bg);overflow:hidden}
+.vote-bar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.vote-who{font-size:.82rem;color:var(--muted);margin:0}
+.vote-acts{display:flex;flex-wrap:wrap;gap:8px}
+.vote-acts button{flex:1 1 auto;border-radius:12px;padding:10px 12px;font:800 1rem 'Barlow Condensed',sans-serif;cursor:pointer;border:1px solid var(--tile-line);background:var(--bg);color:var(--ink)}
+.vote-acts button.go{background:var(--gold);color:#0c1a3d;border-color:var(--gold)}
+.vote-acts button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.votebar{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 14px;padding:12px;border-radius:18px;border:1.5px solid var(--gold);background:linear-gradient(135deg,#1b2c63,#0c1a3d);color:#fff;cursor:pointer;text-align:left;font:600 .88rem/1.25 'Barlow',sans-serif}
+.votebar .urn{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--gold);color:#0c1a3d;font-size:1.2rem}
+.votebar b{display:block;font:800 italic 1.1rem/1.05 'Barlow Condensed',sans-serif;text-transform:uppercase;color:var(--gold)}
+.votebar small{display:block;color:#c9d4f2;font-size:.78rem;margin-top:2px}
+.votebar .go-ar{margin-left:auto;color:var(--gold);font-size:1.3rem}
+.votebar:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.vote-other{margin:4px 0 14px;padding:12px 14px;border-radius:14px;border:1.5px dashed var(--gold);background:linear-gradient(135deg,rgba(233,199,106,.16),rgba(233,199,106,.04))}
+.vote-other b{display:block;font:800 italic 1.15rem/1.1 'Barlow Condensed',sans-serif;text-transform:uppercase;color:var(--gold-deep)}
+.vote-other small{display:block;margin-top:4px;font-size:.84rem;line-height:1.35;color:var(--muted)}
+.vote-sel{width:100%;margin-top:6px;padding:9px 10px;border-radius:10px;border:1px solid var(--tile-line);background:var(--bg);color:var(--ink);font:600 .95rem 'Barlow',sans-serif}
 .dmvp canvas{width:112px;height:auto;flex:none}
 .mvp-replay{display:inline-flex;align-items:center;margin:8px 8px 0 0;border:1px solid var(--gold);background:transparent;color:var(--gold-deep);border-radius:999px;padding:6px 12px;font:700 .85rem 'Barlow',sans-serif;cursor:pointer}
 .mvp-replay:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -896,6 +919,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     </div>
 
     <div class="mecard" id="meCard" hidden>
+      <button type="button" class="votebar" id="meVote" hidden></button>
       <div class="fete" id="meFete" hidden></div>
       <div class="fete hofhome" id="meHof" hidden></div>
       <div class="me-news" id="meNews" hidden></div>
@@ -1160,6 +1184,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <button type="button" class="wa" id="idWa" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>Relancer sur WhatsApp</button>
       <div id="idList"></div>
     </div>
+    <div class="pcardbox admin-only" id="voteBox" hidden>
+      <h3>Vote du MVP</h3>
+      <p class="rg-status">À la fin du match, les joueurs de la compo identifiés dans l'appli votent (pas pour eux-mêmes). Le MVP est désigné dès que tout le monde a voté, ou à la fin du délai avec les votes reçus. Égalité : buts + passes du match, puis victoire.</p>
+      <label for="voteDelay" class="rg-status" style="display:block;margin:0">Durée maximale du vote</label>
+      <select id="voteDelay" class="vote-sel">
+        <option value="0">Pas de vote : l'organisateur choisit</option><option value="10">10 minutes</option><option value="15">15 minutes</option>
+        <option value="30">30 minutes</option><option value="45">45 minutes</option><option value="60">1 heure</option>
+        <option value="120">2 heures</option><option value="720">12 heures</option><option value="1440">24 heures</option></select>
+    </div>
     <div class="pcardbox">
       <h3>Affichage</h3>
       <div class="rg-row"><span>Mode sombre</span><label class="sw"><input type="checkbox" id="rgDark"><i></i></label></div>
@@ -1326,6 +1359,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* lien d'une notif Hall of Fame : on lance la cérémonie par-dessus l'accueil */
     if(/^hof-\d{4}-\d{2}$/.test(route)){ const k=route.slice(4); history.replaceState(null,"",location.pathname+location.search); route="";
       if(started){ const h=computeHof(k); if(h)setTimeout(()=>playHof(h),300); } else pendingHof=k; }
+    if(/^vote-/.test(route)){ const vid=route.slice(5); history.replaceState(null,"",location.pathname+location.search+"#m-"+vid); route="m-"+vid;
+      if(started)setTimeout(()=>openVote(vid),200); else pendingVote=vid; }
     if(!isAdmin()&&(route==="carte"||route==="match")){ if(location.hash)history.replaceState(null,"",location.pathname+location.search); route=""; }
     carte.hidden=route!=="carte";
     const matchSec=document.getElementById("match"); matchSec.hidden=route!=="match";
@@ -2161,6 +2196,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       if(!rec||!isAdmin()||!wasLive){ if(rec)toast("Match terminé sur la montre : BLANC "+sc(rec,"blanc")+" – "+sc(rec,"rouge")+" COULEURS."); return; }
       const show=()=>{ renderHome(); refreshReport(rec).then(()=>{ uploadReport(rec); $("#shareMsg").textContent=""; $("#report").hidden=false; document.body.style.overflow="hidden"; }); };
       if(rec.mvp){ show(); return; }
+      if(voteOpen(rec)){ toast("🗳️ Vote du MVP lancé : "+rec.vote.total+" joueurs, clôture à "+hhmm(rec.vote.until)+"."); show(); setTimeout(()=>{$("#reportMvp").hidden=true},400); return; }
       openMvpSheet(rec,"Match terminé sur la montre : "+sc(rec,"blanc")+" – "+sc(rec,"rouge"),pid=>{
         rec.mvp=pid; markMvpRevealed(rec.id); api("setMvp",ADMIN.code,rec.id,pid).catch(e=>toast("MVP non enregistré : "+errMsg(e))); show();
       },{later:show});
@@ -2269,8 +2305,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
   function openMvpSheet(rec,title,onPick,opts){
     opts=opts||{};
-    openSheet(title,"Choisis le MVP. Sa carte passera sur le fond sombre dans le compte rendu.",body=>{
-      const sug=mvpSuggestions(rec);
+    openSheet(title,opts.sub||"Choisis le MVP. Sa carte passera sur le fond sombre dans le compte rendu.",body=>{
+      const sug=mvpSuggestions(rec).filter(x=>x.id!==opts.exclude);
       if(sug.length){
         const h=document.createElement("p"); h.className="sgroup"; h.textContent="Suggestions d'après le match"; body.appendChild(h);
         const box=document.createElement("div"); box.className="sugg";
@@ -2284,12 +2320,16 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         const n=document.createElement("p"); n.className="sug-note"; n.textContent="Calcul : but 3 pts, passe décisive 2 pts, but de la victoire +2, équipe gagnante +2 (nul +1), contre son camp -2.";
         body.appendChild(n);
       }
+      /* vote des joueurs : on rappelle que tout le monde est éligible, pas seulement les suggestions */
+      if(opts.vote){ const v=document.createElement("div"); v.className="vote-other";
+        v.innerHTML='<b>🗳️ Ou vote pour quelqu\'un d\'autre</b><small>Les stats ne disent pas tout : un mur en défense, des arrêts de folie au goal, le patron du vestiaire… Choisis celui qui le mérite vraiment.</small>';
+        body.appendChild(v); }
       if(opts.later){ const l=document.createElement("button"); l.type="button"; l.className="later"; l.textContent="Choisir le MVP plus tard"; l.addEventListener("click",()=>{closeSheet();opts.later()}); body.appendChild(l); }
       if(opts.none){ const l=document.createElement("button"); l.type="button"; l.className="later"; l.textContent="Retirer le MVP"; l.addEventListener("click",()=>{closeSheet();opts.none()}); body.appendChild(l); }
       ["blanc","rouge"].forEach(side=>{
         const h=document.createElement("p"); h.className="sgroup"; h.innerHTML='<span class="dot '+side+'"></span>'+TEAMNAME[side]; body.appendChild(h);
         const grid=document.createElement("div"); grid.className="sgrid";
-        rec.present.map(byId).filter(p=>p&&rec.team[p.id]===side).forEach(p=>grid.appendChild(sheetOpt(p,()=>{closeSheet();onPick(p.id)})));
+        rec.present.map(byId).filter(p=>p&&rec.team[p.id]===side&&p.id!==opts.exclude).forEach(p=>grid.appendChild(sheetOpt(p,()=>{closeSheet();onPick(p.id)})));
         body.appendChild(grid);
       });
     });
@@ -2298,7 +2338,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(onWatch()){ try{ const r=await api("watchState",ADMIN.code,M.id); applyWatchState(r&&r.match); if(r&&r.match&&r.match.statut==="termine")return; }
       catch(e){ toast("Buts de la montre non récupérés ("+errMsg(e)+") : le Google Sheet garde ceux de la montre."); } }
     const tmp={goals:M.goals,team:M.team,present:[...M.present]};
-    openMvpSheet(tmp,"Fin du match : "+scoreOf("blanc")+" – "+scoreOf("rouge"),id=>{M.mvp=id;finishMatch();},{later:()=>{M.mvp=null;finishMatch();}});
+    const pick=()=>openMvpSheet(tmp,"Fin du match : "+scoreOf("blanc")+" – "+scoreOf("rouge"),id=>{M.mvp=id;finishMatch();},{later:()=>{M.mvp=null;finishMatch(true);}});
+    if(!voteOn()){ pick(); return; }
+    openSheet("Fin du match : "+scoreOf("blanc")+" – "+scoreOf("rouge"),"Les joueurs de la compo identifiés dans l'appli votent pour le MVP ("+SETTINGS.mvpVoteMin+" min max). Pas de vote pour soi-même.",body=>{
+      const go=document.createElement("button"); go.type="button"; go.className="notify-btn"; go.id="endVote"; go.textContent="🗳️ Terminer et lancer le vote";
+      go.addEventListener("click",()=>{ closeSheet(); M.mvp=null; finishMatch(); }); body.appendChild(go);
+      const me=document.createElement("button"); me.type="button"; me.className="later"; me.textContent="★ Choisir le MVP moi-même";
+      me.addEventListener("click",()=>{ closeSheet(); setTimeout(pick,250); }); body.appendChild(me);
+    });
   });
   async function uploadReport(rec){
     if(!isAdmin()||!reportBlob)return;
@@ -2313,7 +2360,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   async function refreshReport(rec){
     reportBlob=await buildReport(Object.assign({},rec,{mvp:null}));   /* le MVP se découvre dans l'appli (animation), pas sur l'image */
     if(reportUrl)URL.revokeObjectURL(reportUrl); reportUrl=URL.createObjectURL(reportBlob);
-    $("#reportImg").src=reportUrl; $("#reportMvp").hidden=!!rec.mvp;
+    $("#reportImg").src=reportUrl; $("#reportMvp").hidden=!!rec.mvp||voteOpen(rec);
   }
   $("#reportMvp").addEventListener("click",()=>{
     const rec=matches[0]; if(!rec)return;
@@ -2321,7 +2368,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       api("setMvp",ADMIN.code,rec.id,id).catch(e=>toast("MVP non enregistré : "+errMsg(e)));});
   });
   let reportBlob=null, reportUrl=null;
-  async function finishMatch(){
+  async function finishMatch(noVote){
     closeLive();
     clearTimeout(syncTimer);
     const rec={id:M.id||("m"+Date.now().toString(36)),date:parseDate(M.date),goals:M.goals.map(g=>Object.assign({},g)),mvp:M.mvp,
@@ -2329,8 +2376,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(rec.mvp)markMvpRevealed(rec.id);   /* l'organisateur qui choisit le MVP le connaît déjà */
     matches.unshift(rec); renderHome();
     const payload={id:rec.id,date:rec.date.toISOString(),present:rec.present,team:rec.team,layout:rec.layout,goals:rec.goals,start:M.start,mvp:rec.mvp};
+    if(noVote===true)payload.noVote=true;
     M.liveMode="";
-    api("finishMatch",ADMIN.code,payload).then(()=>{ try{localStorage.removeItem(SAVE_KEY)}catch(e){} })
+    api("finishMatch",ADMIN.code,payload).then(r=>{ try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+        if(r&&r.vote){ rec.vote=r.vote; $("#reportMvp").hidden=true; toast("🗳️ Vote du MVP lancé : "+r.vote.total+" joueurs, clôture à "+hhmm(r.vote.until)+"."); renderHome(); }
+        else if(!rec.mvp&&voteOn()&&noVote!==true) toast("Pas assez de joueurs identifiés pour voter : choisis le MVP.");
+      })
       .catch(e=>toast("Résultat non enregistré dans le Google Sheet : "+errMsg(e)));
     await refreshReport(rec); $("#shareMsg").textContent="";
     uploadReport(rec);
@@ -2680,10 +2731,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* MVP */
     const mv=rec.mvp&&byId(rec.mvp); $("#dMvpBox").hidden=false;
     const saveMvp=id=>api("setMvp",ADMIN.code,rec.id,id||"").catch(e=>toast("MVP non enregistré : "+errMsg(e)));
-    const setMvp=()=>openMvpSheet(rec,"MVP du match",id=>{rec.mvp=id; markMvpRevealed(rec.id); saveMvp(id); renderHome(); renderDetail(rec);},rec.mvp?{none:()=>{rec.mvp=null; saveMvp(null); renderHome(); renderDetail(rec);}}:{});
-    if(!mv){
+    const setMvp=()=>openMvpSheet(rec,"MVP du match",id=>{rec.mvp=id; if(rec.vote)rec.vote.closed=true; markMvpRevealed(rec.id); saveMvp(id); renderHome(); renderDetail(rec);},rec.mvp?{none:()=>{rec.mvp=null; saveMvp(null); renderHome(); renderDetail(rec);}}:{});
+    if(!mv&&voteOpen(rec)){
+      const box=$("#dMvp"); voteBox(rec,box);
+      if(isAdmin()){ const b=document.createElement("button"); b.type="button"; b.className="mvp-set admin-only"; b.textContent="★ Désigner directement"; b.addEventListener("click",setMvp); box.querySelector(".vote-acts").appendChild(b); }
+    }
+    else if(!mv){
       const box=$("#dMvp"); box.innerHTML=""; box.className="dmvp empty";
-      const t=document.createElement("p"); t.textContent="Le MVP de ce match n'a pas encore été désigné.";
+      const t=document.createElement("p"); t.textContent=rec.vote&&rec.vote.none?"Personne n'a voté : le MVP de ce match n'est pas encore désigné.":"Le MVP de ce match n'a pas encore été désigné.";
       const b=document.createElement("button"); b.type="button"; b.className="mvp-set admin-only"; b.textContent="★ Désigner le MVP"; b.addEventListener("click",setMvp);
       box.appendChild(t); box.appendChild(b);
     }
@@ -3328,6 +3383,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(!started)return;
     const r=location.hash.slice(1);
     renderHome();
+    if(r==="reglages"){ try{ renderVoteSetting(); }catch(e){} }
     if(r==="stats")renderStatsGrid();
     else if(r.startsWith("p-")){ if(byId(r.slice(2)))renderPlayer(r.slice(2)); }
     else if(r==="historique")renderHistory();
@@ -3724,6 +3780,75 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     }catch(e){ close(); }
   }
   var pendingHof=null;
+  /* ================= VOTE DU MVP PAR LES JOUEURS ================= */
+  var SETTINGS=null, pendingVote=null;
+  const voteOn=()=>!!(SETTINGS&&SETTINGS.mvpVoteMin>0);
+  const hhmm=iso=>{ const d=new Date(iso); return d.getHours()+"h"+String(d.getMinutes()).padStart(2,"0"); };
+  const voteOpen=rec=>!!(rec&&!rec.mvp&&rec.vote&&!rec.vote.closed&&new Date(rec.vote.until).getTime()>Date.now());
+  const iVoted=(rec,id)=>!!(rec&&rec.vote&&id&&(rec.vote.voters||[]).indexOf(id)>=0);
+  function myVoteMatch(){ const id=myId(); if(!id)return null; return matches.find(m=>voteOpen(m)&&m.present.includes(id)&&!iVoted(m,id))||null; }
+  function renderVoteBar(){
+    const b=$("#meVote"); if(!b)return; const rec=myVoteMatch();
+    if(!rec){ b.hidden=true; return; }
+    b.innerHTML='<span class="urn">🗳️</span><span><b>Vote pour le MVP</b><small>Match du '+rec.date.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"short"})+' · clôture à '+hhmm(rec.vote.until)+'</small></span><span class="go-ar" aria-hidden="true">›</span>';
+    b.onclick=()=>openVote(rec.id); b.hidden=false;
+  }
+  /* lien de la notif #vote-<id> ou bandeau de l'accueil */
+  async function openVote(id){
+    let rec=matches.find(m=>m.id===id);
+    if(!rec||!rec.vote||!rec.vote.closed){ try{ await refreshData(); renderHome(); }catch(e){} rec=matches.find(m=>m.id===id); }
+    if(!rec){ toast("Match introuvable."); return; }
+    if(location.hash!=="#m-"+id)location.hash="m-"+id;
+    const me=myId();
+    if(rec.mvp||!rec.vote||rec.vote.closed){ toast(rec.mvp?"Le vote est clos : découvre le MVP 👀":"Le vote est clos."); return; }
+    if(!me){ openSheet("🗳️ Vote du MVP","Pour voter, identifie-toi d'abord : ouvre ta carte dans Statistiques et touche « C'est moi ».",body=>{
+      const b=document.createElement("button"); b.type="button"; b.className="later"; b.textContent="Aller aux Statistiques"; b.addEventListener("click",()=>{closeSheet(); location.hash="stats";}); body.appendChild(b); }); return; }
+    if(!rec.present.includes(me)){ toast("Seuls les joueurs du match votent."); return; }
+    setTimeout(()=>openVoteSheet(rec),350);
+  }
+  function openVoteSheet(rec){
+    const me=myId(), again=iVoted(rec,me);
+    openMvpSheet(rec,"🗳️ Vote du MVP · "+sc(rec,"blanc")+" – "+sc(rec,"rouge"),pid=>sendVote(rec,pid),
+      {exclude:me,vote:true,sub:(again?"Tu as déjà voté : tu peux changer d'avis. ":"Qui a porté le match ? Pas toi, petit malin 😏 ")+"Clôture à "+hhmm(rec.vote.until)+"."});
+  }
+  async function sendVote(rec,pid){
+    const me=myId();
+    try{
+      const r=await api("voteMvp",rec.id,me,pid);
+      if(r&&r.closed&&r.ok===false){ toast("Trop tard, le vote est clos."); await refreshData(); renderHome(); show(location.hash.slice(1)); return; }
+      toast("🗳️ A voté ! "+(r.closed?"Tout le monde a voté : le MVP est tombé 👀":r.n+" / "+r.total+" votes."));
+      if(rec.vote&&rec.vote.voters.indexOf(me)<0){ rec.vote.voters.push(me); rec.vote.n=rec.vote.voters.length; }
+      if(r.closed){ await refreshData(); }
+      renderHome(); const cur=location.hash.slice(1); if(cur==="m-"+rec.id){ lastReveal={id:"",t:0}; show(cur); }
+    }catch(e){ toast("Vote non enregistré : "+errMsg(e)); }
+  }
+  /* bloc « vote en cours » dans la page du match */
+  function voteBox(rec,box){
+    const v=rec.vote, me=myId(), n=(v.voters||[]).length, tot=Math.max(v.total||0,n);
+    box.className="dmvp vote"; box.innerHTML="";
+    const h=document.createElement("div"); h.className="vote-h";
+    h.innerHTML='<span class="urn">🗳️</span><span><b>Vote du MVP en cours</b><small>'+n+' / '+tot+' vote'+(tot>1?"s":"")+' · clôture à '+hhmm(v.until)+'</small></span>';
+    box.appendChild(h);
+    const bar=document.createElement("div"); bar.className="vote-bar"; bar.innerHTML='<i style="width:'+(tot?Math.round(n/tot*100):0)+'%"></i>'; box.appendChild(bar);
+    if(n){ const w=document.createElement("p"); w.className="vote-who"; w.textContent="Ont voté : "+v.voters.map(id=>(byId(id)||{}).name||"?").join(", ")+"."; box.appendChild(w); }
+    const acts=document.createElement("div"); acts.className="vote-acts";
+    if(me&&rec.present.includes(me)){ const b=document.createElement("button"); b.type="button"; b.className=iVoted(rec,me)?"":"go"; b.textContent=iVoted(rec,me)?"✓ Changer mon vote":"🗳️ Voter"; b.addEventListener("click",()=>openVoteSheet(rec)); acts.appendChild(b); }
+    if(isAdmin()){
+      const c=document.createElement("button"); c.type="button"; c.textContent="⏹ Clôturer le vote";
+      c.addEventListener("click",async()=>{ c.disabled=true; try{ const r=await api("closeVote",ADMIN.code,rec.id); toast(r.mvp?"Vote clos : le MVP est désigné.":"Vote clos : aucun vote, à toi de désigner le MVP."); await refreshData(); renderHome(); lastReveal={id:"",t:0}; show(location.hash.slice(1)); }catch(e){ toast("Impossible de clore le vote : "+errMsg(e)); c.disabled=false; } });
+      acts.appendChild(c);
+    }
+    if(acts.children.length)box.appendChild(acts);
+    /* suivi en direct : on rafraîchit toutes les 20 s tant qu'on regarde ce match */
+    clearTimeout(voteTimer);
+    voteTimer=setTimeout(async()=>{
+      if(location.hash!=="#m-"+rec.id||document.visibilityState!=="visible")return;
+      try{ await refreshData(); }catch(e){ return; }
+      const r2=matches.find(m=>m.id===rec.id); if(!r2||location.hash!=="#m-"+rec.id)return;
+      renderHome(); renderDetail(r2); playMvpReveal(r2);
+    },20000);
+  }
+  let voteTimer=0;
   const HOF_SEEN="fut5v5:hof-vus";
   const hofNow=()=>window.FUT5V5_HOF_NOW?new Date(window.FUT5V5_HOF_NOW):new Date();
   /* bimestres terminés depuis le premier match, du plus récent au plus ancien, avec leurs lauréats */
@@ -4109,7 +4234,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     box.hidden=!id; if(!id)return;
     const p=byId(id), s=pstats(id,inSeason(CUR_SEASON));
     drawCard($("#meCv"),p,.34); $("#meName").textContent=p.name;
-    renderFete(id); try{ renderHofHome(id); }catch(e){}
+    renderFete(id); try{ renderHofHome(id); }catch(e){} try{ renderVoteBar(); }catch(e){}
     /* compteur MVP : seulement les MVP déjà révélés sur ce téléphone (pas de spoil avant l'animation) */
     const mvpShown=s.mvp-matches.filter(m=>m.mvp===id&&inSeason(CUR_SEASON)(m)&&!mvpRevealed(m.id)).length;
     $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+mvpShown+'</b></span>';
@@ -4214,7 +4339,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     roster.splice(0,roster.length,...data.players.map(p=>{ const o=old.get(p.id);
       return Object.assign(p,(o&&o.photo&&o._phid===p.photoId)?{photo:o.photo,_phid:o._phid}:{photo:null}); }));
     matches.splice(0,matches.length,...data.matches.map(m=>Object.assign(m,{date:new Date(m.date)})));
-    PENDING=data.pending||0; PENDING_IDS=data.pendingPlayers||[];
+    PENDING=data.pending||0; PENDING_IDS=data.pendingPlayers||[]; SETTINGS=data.settings||null;
     /* le match prévu n'est pas remplacé pendant qu'on l'organise ou qu'on saisit le score */
     const busy=started&&(location.hash==="#match"||!$("#live").hidden||M.pending||syncBusy);
     if(!busy){
@@ -4234,7 +4359,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function startUI(){
     applyRole(); $("#splash").hidden=true;
     quiet=true; syncForm(); renderHome(); renderMatch(); quiet=false;
-    started=true; show(location.hash.slice(1)); try{ if(pendingHof){ const h=computeHof(pendingHof); pendingHof=null; if(h)setTimeout(()=>playHof(h),400); } else autoHof(); }catch(e){}
+    started=true; show(location.hash.slice(1)); if(pendingVote){ const v=pendingVote; pendingVote=null; setTimeout(()=>openVote(v),600); } try{ if(pendingHof){ const h=computeHof(pendingHof); pendingHof=null; if(h)setTimeout(()=>playHof(h),400); } else autoHof(); }catch(e){}
   }
   async function refreshData(){
     const data=await api("getData"); lastLoad=Date.now();
@@ -4278,6 +4403,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     ["annule","Match annulé","Si le match prévu est supprimé.",true,false],
     ["compte_rendu","Compte rendu","Le score de chaque match (le MVP reste secret 🤫).",true,false],
     ["mon_match","Mon match","Tes buts, passes et le résultat, rien que pour toi.",true,false],
+    ["mvp_vote","Vote du MVP","À la fin de ton match : vote pour l'homme du match.",true,false],
     ["mvp","Révélation du MVP","Quand le MVP d'un match est désigné : à découvrir dans l'appli.",true,false],
     ["notes","Mes notes","Quand un organisateur modifie ta carte.",true,false],
     ["photo_reponse","Ma photo","Réponse à la photo que tu as proposée.",true,false],
@@ -4286,7 +4412,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     ["a_photo","Photo proposée","Un joueur propose une photo à valider.",true,true],
     ["a_cestmoi","Nouveau joueur identifié","Un joueur touche « C'est moi ».",true,true],
     ["a_convoc","Joueurs pas prévenus","La veille à 18h, si personne n'a été convoqué.",true,true],
-    ["a_mvp","MVP à désigner","Le lendemain midi d'un match sans MVP.",true,true]];
+    ["a_vote","Votes du MVP","Chaque joueur qui vote, et quand tout le monde a voté.",true,true],
+    ["a_mvp","MVP à désigner","Si personne n'a voté, ou le lendemain midi d'un match sans MVP.",true,true]];
   const PUSH_CFG=window.FUT5V5_CONFIG||{};
   const FB=PUSH_CFG.firebase||{}, VAPID=PUSH_CFG.vapidKey||"";
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -4330,7 +4457,20 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{localStorage.removeItem("fut5v5:push-token")}catch(e){}
     toast("Notifications désactivées.");
   }
+  function renderVoteSetting(){
+    const box=$("#voteBox"), sel=$("#voteDelay"); if(!box)return;
+    box.hidden=!isAdmin()||!SETTINGS||SETTINGS.mvpVoteMin==null; if(box.hidden)return;
+    const v=String(SETTINGS.mvpVoteMin); if(![...sel.options].some(o=>o.value===v)){ const o=document.createElement("option"); o.value=v; o.textContent=v+" minutes"; sel.appendChild(o); }
+    sel.value=v;
+  }
+  $("#voteDelay").addEventListener("change",async e=>{
+    const n=+e.target.value, sel=e.target; sel.disabled=true;
+    try{ const r=await api("setVoteDelay",ADMIN.code,n); SETTINGS=Object.assign({},SETTINGS,{mvpVoteMin:r.mvpVoteMin}); toast(n?"Vote du MVP : "+sel.options[sel.selectedIndex].text+" maximum.":"Vote désactivé : l'organisateur choisit le MVP."); }
+    catch(err){ toast("Réglage non enregistré : "+errMsg(err)); renderVoteSetting(); }
+    sel.disabled=false;
+  });
   function renderReglages(){
+    renderVoteSetting();
     const on=!!pushToken()&&("Notification" in window)&&Notification.permission==="granted";
     const st=$("#pushStatus"), bt=$("#pushToggle");
     if(!pushConfigured()){ st.textContent="Les notifications ne sont pas encore configurées pour cette application."; bt.hidden=true; }
