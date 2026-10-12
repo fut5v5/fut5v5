@@ -1,5 +1,5 @@
 /* FUT 5V5 : service worker (installation, ouverture hors connexion, mises à jour) */
-const VERSION = 'fut5v5-2026-10-12-37-themes-saison';
+const VERSION = 'fut5v5-2026-10-12-38-saisons-sons';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/badge-96.png'];
 

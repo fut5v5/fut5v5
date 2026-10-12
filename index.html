@@ -961,6 +961,20 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .mx.s-tots .mx-bg{filter:hue-rotate(15deg) saturate(1.2)}
 .mx.s-nouvelan .mx-bg{filter:saturate(.4) brightness(.8)}
 .mx.s-poisson .mx-bg{filter:hue-rotate(-25deg)}
+.farce{position:fixed;inset:0;z-index:80;display:grid;place-items:center;text-align:center;padding:24px 16px;color:#fff;background:radial-gradient(80% 60% at 50% 35%,#3a2a08,#120c02 60%,#050301);overflow:hidden}
+.farce .fz{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:360px;transition:opacity .3s,transform .3s}
+.farce .fz small{font:800 .9rem 'Barlow',sans-serif;letter-spacing:.16em;color:#e9c76a}
+.farce .fz b{font:900 italic 2.4rem/1 'Barlow Condensed',sans-serif;text-transform:uppercase;color:#fff3c4;text-shadow:0 0 22px rgba(233,199,106,.6)}
+.farce .fz canvas{width:min(52vw,220px);height:auto;filter:drop-shadow(0 0 26px rgba(233,199,106,.7));animation:fzFloat 2.4s ease-in-out infinite alternate}
+@keyframes fzFloat{from{transform:translateY(-6px) rotate(-2deg)}to{transform:translateY(6px) rotate(2deg)}}
+.farce .fz button{border:0;border-radius:14px;padding:13px 18px;background:#e9c76a;color:#0c1a3d;font:800 1.15rem 'Barlow Condensed',sans-serif;cursor:pointer}
+.farce .fz button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.farce .fish{position:absolute;left:50%;top:50%;font-size:8rem;transform:translate(-50%,-50%) translateX(-120vw) rotate(-30deg);transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
+.farce.slap .fish{transform:translate(-50%,-160%) rotate(10deg)}
+.farce .reveal{opacity:0;transform:scale(.6)}
+.farce.slap .reveal{opacity:1;transform:scale(1)}
+.farce.slap .gold{display:none}
+.farce p{margin:0;color:#dfe6f7;font:600 1rem/1.4 'Barlow',sans-serif}
 .mx .ms-fish{left:50%;top:40%;transform:translate(-50%,-50%) scale(.4);opacity:0;z-index:7;text-align:center;color:#fff;font:900 italic 2.4rem/1 'Barlow Condensed',sans-serif;text-shadow:0 4px 18px rgba(0,0,0,.6);transition:transform .35s cubic-bezier(.2,1.4,.4,1),opacity .3s}
 .mx .ms-fish span{display:block;font-size:6rem;margin-bottom:6px}
 .mx .ms-fish.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -1446,6 +1460,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* lien d'une notif Hall of Fame : on lance la cérémonie par-dessus l'accueil */
     if(/^hof-\d{4}-\d{2}$/.test(route)){ const k=route.slice(4); history.replaceState(null,"",location.pathname+location.search); route="";
       if(started){ const h=computeHof(k); if(h)setTimeout(()=>playHof(h),300); } else pendingHof=k; }
+    if(route==="farce"){ history.replaceState(null,"",location.pathname+location.search); route=""; setTimeout(()=>playPrank(),started?200:900); }
     if(/^vote-/.test(route)){ const vid=route.slice(5); history.replaceState(null,"",location.pathname+location.search+"#m-"+vid); route="m-"+vid;
       if(started)setTimeout(()=>openVote(vid),200); else pendingVote=vid; }
     if(!isAdmin()&&(route==="carte"||route==="match")){ if(location.hash)history.replaceState(null,"",location.pathname+location.search); route=""; }
@@ -3421,9 +3436,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* --- visionneuse d'image (quand le partage direct est bloqué) --- */
   let viewerUrl=null;
   let viewerHits=null;
-  function showImage(blob,title,text,hits){
+  let viewerOnHit=null;
+  function showImage(blob,title,text,hits,onHit){
     if(viewerUrl)URL.revokeObjectURL(viewerUrl); viewerUrl=URL.createObjectURL(blob);
-    viewerHits=hits||null; $("#ivImg").classList.toggle("tap",!!viewerHits);
+    viewerHits=hits||null; viewerOnHit=onHit||null; $("#ivImg").classList.toggle("tap",!!viewerHits);
     $("#ivTitle").textContent=title||"Image"; $("#ivImg").src=viewerUrl; $("#ivMsg").textContent=viewerHits?"Touche une carte pour voir les stats du joueur.":"";
     $("#imgViewer").hidden=false; document.body.style.overflow="hidden";
     $("#ivShare").onclick=async()=>{
@@ -3437,6 +3453,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(!viewerHits)return; const r=e.currentTarget.getBoundingClientRect();
     const x=(e.clientX-r.left)*viewerHits.W/r.width, y=(e.clientY-r.top)*viewerHits.H/r.height;
     const h=viewerHits.find(k=>x>=k.x&&x<=k.x+k.w&&y>=k.y&&y<=k.y+k.h); if(!h)return;
+    if(viewerOnHit){ viewerOnHit(h.pid); return; }
     $("#imgViewer").hidden=true; document.body.style.overflow=""; openPlayer(h.pid);
   });
 
@@ -3646,7 +3663,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       o.connect(g); g.connect(bus); o.start(T(t)); v.start(T(t)); o.stop(T(t+0.85)); v.stop(T(t+0.85)); };
     return { ctx,
       mute(m){ out.gain.setTargetAtTime(m?0:0.66,ctx.currentTime,0.03); },
-      play(){
+      /* son de saison (fichier mp3) joué dans le même contexte audio */
+      sample(buf,at,gain){ try{ const s=ctx.createBufferSource(); s.buffer=buf; const g=ctx.createGain(); g.gain.value=gain==null?1:gain; s.connect(g); g.connect(comp); s.start(Math.max(ctx.currentTime+0.02,at)); }catch(e){} },
+      play(sk){
         /* 1. le stade gronde, l'attente monte… puis silence juste avant la révélation */
         crowd([[0,0.0001],[1.2,0.04],[3.6,0.07],[4.75,0.1],[5.05,0.025],[5.2,0.025],[5.35,0.6],[6.4,0.42],[8.6,0.32],[10.6,0.26],[12.2,0.0001]],0,12.3);
         /* 2. nappe de cordes graves (tension) */
@@ -3694,7 +3713,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         /* applaudissements, sifflets, pétards au loin */
         { const s=ctx.createBufferSource(); s.buffer=applause(6.8); const g=ctx.createGain(); g.gain.value=0.9; s.connect(g); g.connect(bus); s.start(T(5.3)); }
         [[5.9,2400],[6.6,2150],[7.4,2600]].forEach(([t,f])=>whistle(t,f));
-        for(let i=0;i<7;i++){ const t=5.8+Math.random()*2.6; hit(t,0.22,55+Math.random()*20);
+        if(!sk) for(let i=0;i<7;i++){ const t=5.8+Math.random()*2.6; hit(t,0.22,55+Math.random()*20);
           const n=src(t+0.05,t+0.6), hp=filt("highpass",3000), g=ctx.createGain(); g.gain.setValueAtTime(0.0001,T(t+0.05)); g.gain.exponentialRampToValueAtTime(0.08,T(t+0.07)); g.gain.exponentialRampToValueAtTime(0.0001,T(t+0.55)); n.connect(hp); hp.connect(g); g.connect(bus); }
       },
       stop(){ try{ out.gain.setTargetAtTime(0,ctx.currentTime,0.12); setTimeout(()=>ctx.close().catch(()=>{}),800); }catch(e){} }
@@ -4064,15 +4083,78 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const min=Math.max(1,Math.ceil(n/4));
     return roster.map(p=>{ const s=pstats(p.id,inS); return {p,s,score:s.g*3+s.a*2+s.mvp*4+s.mp}; }).filter(x=>x.s.mp>=min).sort((a,b)=>b.score-a.score).slice(0,5);
   }
-  function openTots(){
-    openSheet("🏆 Team of the Season "+seasonLabel(CUR_SEASON),"Les 5 meilleurs de la saison : but 3 pts, passe 2 pts, MVP 4 pts, +1 par match joué.",body=>{
-      const t=totsTeam(); if(!t.length){ const p=document.createElement("p"); p.className="rg-status"; p.textContent="Pas encore assez de matchs cette saison."; body.appendChild(p); return; }
-      const box=document.createElement("div"); box.className="tots-list";
-      t.forEach((x,i)=>{ const r=document.createElement("button"); r.type="button"; r.className="tots-row"; const cv=document.createElement("canvas"); drawCard(cv,Object.assign({},x.p,{fond:"or"}),.3);
-        r.innerHTML='<span class="rk">'+(i+1)+'</span>'; r.appendChild(cv); const sp=document.createElement("span"); sp.innerHTML="<b></b><small></small>";
-        sp.querySelector("b").textContent=x.p.name; sp.querySelector("small").textContent=x.s.mp+" matchs · "+x.s.g+" buts · "+x.s.a+" passes · "+x.s.mvp+" MVP · "+x.score+" pts"; r.appendChild(sp);
-        r.addEventListener("click",()=>{ closeSheet(); location.hash="p-"+x.p.id; }); box.appendChild(r); });
-      body.appendChild(box); });
+  async function openTots(){
+    const team=totsTen(); if(!team.length){ toast("Pas encore assez de matchs cette saison pour la Team of the Season."); return; }
+    toast("Création de la Team of the Season…");
+    const {blob,hits}=await buildTotsImage(team);
+    const txt="🏆 TEAM OF THE SEASON "+seasonLabel(CUR_SEASON)+" 🏆\nLa rédac FUT 5V5 a rendu son verdict : "+team.slice(0,3).map(x=>x.p.name).join(", ")+" en tête. Les autres, on vous attend la saison prochaine 😏";
+    showImage(blob,"Team of the Season "+seasonLabel(CUR_SEASON),txt,hits,pid=>{ const x=team.find(t=>t.p.id===pid); if(x)totsWhy(x); });
+    $("#ivMsg").textContent="Touche une carte pour voir pourquoi il est dans l'équipe. « Partager » pour chambrer le groupe 😏";
+  }
+
+
+  /* ---- Poisson d'avril : la fausse notif « élu Joueur de la saison » ouvre la farce (#farce) ---- */
+  function playPrank(){
+    if(document.querySelector(".farce"))return;
+    const me=myId()&&byId(myId()), ov=document.createElement("div"); ov.className="farce"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label","Poisson d'avril");
+    ov.innerHTML='<div class="fz gold"><small>OFFICIEL · LA RÉDAC</small><b>Joueur de la saison</b><canvas aria-hidden="true"></canvas><p></p><button type="button">🏆 Découvrir ma récompense</button></div>'+
+      '<div class="fish" aria-hidden="true">🐟</div><div class="fz reveal"><b>Poisson d\'avril !</b><p>Tout le groupe a reçu la même notif 😂<br>Mais aujourd\'hui, les cartes sont quand même à 99.</p><button type="button" class="ok">Je me suis fait avoir 🐟</button></div>';
+    ov.querySelector(".gold p").textContent=me?me.name+", la rédac t'a élu à l'unanimité.":"La rédac a tranché à l'unanimité.";
+    if(me)drawCard(ov.querySelector("canvas"),Object.assign({},me,{fond:"or",mvp:true}),.7); else ov.querySelector("canvas").remove();
+    document.body.appendChild(ov); document.body.style.overflow="hidden";
+    const close=()=>{ ov.remove(); document.body.style.overflow=""; };
+    ov.querySelector(".gold button").addEventListener("click",async()=>{
+      const AC=window.AudioContext||window.webkitAudioContext; let ctx=null; try{ ctx=AC?new AC():null; }catch(e){}
+      ov.classList.add("slap");
+      if(ctx&&soundOn()){ const buf=await loadSfx(ctx,"poisson"); if(buf){ const src=ctx.createBufferSource(); src.buffer=buf; src.connect(ctx.destination); src.start(); src.onended=()=>ctx.close().catch(()=>{}); } }
+      setTimeout(()=>{ const b=ov.querySelector(".reveal .ok"); if(b)b.focus(); },500);
+    });
+    ov.querySelector(".reveal .ok").addEventListener("click",close);
+  }
+
+  /* ---- Team of the Season : les 10 meilleurs de la saison sur le terrain (image à partager, toucher une carte = pourquoi) ---- */
+  function totsTen(){
+    const inS=inSeason(CUR_SEASON), n=matches.filter(inS).length; if(!n)return [];
+    const min=Math.max(1,Math.ceil(n/4));
+    return roster.map(p=>{ const s=pstats(p.id,inS); return {p,s,score:s.g*3+s.a*2+s.mvp*4+s.mp}; }).filter(x=>x.s.mp>=min)
+      .sort((a,b)=>b.score-a.score||b.s.g-a.s.g||overall(b.p)-overall(a.p)).slice(0,10).map((x,i)=>Object.assign(x,{rank:i+1}));
+  }
+  async function buildTotsImage(team){
+    if(document.fonts){try{await document.fonts.ready}catch(e){}}
+    await Promise.all(team.map(x=>getImg(x.p.photo).promise));
+    /* gardiens : les deux meilleurs GAR des dix ; les autres de haut en bas du classement, en alternant les deux moitiés */
+    const gks=team.slice().sort((a,b)=>((clamp(b.p.stats.gar)>=65)-(clamp(a.p.stats.gar)>=65))||(clamp(b.p.stats.gar)-clamp(a.p.stats.gar))||(b.rank-a.rank)).slice(0,Math.min(2,Math.max(0,team.length-1))), field=team.filter(x=>gks.indexOf(x)<0);
+    const order=["r-front","b-front","r-l","b-l","r-r","b-r","r-back","b-back"], place={}; field.forEach((x,i)=>{ if(order[i])place[order[i]]=x; });
+    if(gks[0])place["r-gk"]=gks[0]; if(gks[1])place["b-gk"]=gks[1];
+    const Wd=1080, PW=1000, PH=1900, headH=300, footH=150, Hd=headH+PH+footH;
+    const cv=document.createElement("canvas"); cv.width=Wd; cv.height=Hd; const c=cv.getContext("2d");
+    const bg=c.createLinearGradient(0,0,0,Hd); bg.addColorStop(0,"#0a2a5c"); bg.addColorStop(1,"#06193d"); c.fillStyle=bg; c.fillRect(0,0,Wd,Hd);
+    c.fillStyle="rgba(143,208,255,.10)"; c.beginPath(); c.moveTo(Wd*.4,0); c.lineTo(Wd*.62,0); c.lineTo(Wd*.08,Hd); c.lineTo(-Wd*.15,Hd); c.closePath(); c.fill();
+    c.textBaseline="alphabetic"; c.textAlign="left"; c.font="italic 900 72px "+FONT; c.fillStyle="#f5f7fc"; c.fillText("FUT",60,100);
+    const wF=c.measureText("FUT ").width; c.fillStyle="#8fd0ff"; c.fillText("5V5",60+wF,100);
+    c.textAlign="right"; c.font="800 34px "+FONT; c.fillStyle="#dfe6f7"; c.fillText("Saison "+seasonLabel(CUR_SEASON),Wd-60,92);
+    c.textAlign="left"; c.font="italic 900 84px "+FONT; c.fillStyle="#fff3c4"; let ts=84; while(c.measureText("TEAM OF THE SEASON").width>Wd-120&&ts>50){ ts-=2; c.font="italic 900 "+ts+"px "+FONT; } c.fillText("TEAM OF THE SEASON",60,215);
+    c.font="500 30px 'Barlow',sans-serif"; c.fillStyle="#bfe3ff"; c.fillText("Les 10 meilleurs de la saison, choisis par la rédac",60,265);
+    const y=headH; drawPitchCanvas(c,(Wd-PW)/2,y,PW);
+    const cw=PW*.2, ch=cw*H/W, hits=[]; hits.W=Wd; hits.H=Hd;
+    SLOTS.forEach(sl=>{ const x=place[sl.id]; if(!x)return;
+      const cx=(Wd-PW)/2+PW*sl.x/100, cy=y+PH*sl.y/100; hits.push({x:cx-cw/2,y:cy-ch/2,w:cw,h:ch,pid:x.p.id});
+      const off=document.createElement("canvas"); drawCard(off,Object.assign({},x.p,{fond:"or",noSeason:false}),cw/W*1.6); c.drawImage(off,cx-cw/2,cy-ch/2,cw,ch);
+      c.beginPath(); c.arc(cx+cw*.42,cy-ch*.42,26,0,Math.PI*2); c.fillStyle="#e9c76a"; c.fill(); c.lineWidth=3; c.strokeStyle="#06193d"; c.stroke();
+      c.textAlign="center"; c.font="900 30px "+FONT; c.fillStyle="#06193d"; c.fillText(String(x.rank),cx+cw*.42,cy-ch*.42+11); });
+    c.textAlign="center"; c.font="600 30px 'Barlow',sans-serif"; c.fillStyle="#dfe6f7";
+    c.fillText("Barème : but 3 pts · passe déc. 2 pts · MVP 4 pts · match joué 1 pt",Wd/2,Hd-88);
+    c.font="500 26px 'Barlow',sans-serif"; c.fillStyle="#9fb0d6"; c.fillText("Touche une carte dans l'appli pour voir pourquoi il est là",Wd/2,Hd-44);
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png")); return {blob,hits};
+  }
+  function totsWhy(x){
+    const s=x.s, rows=[["Matchs joués",s.mp,1],["Buts",s.g,3],["Passes décisives",s.a,2],["Titres de MVP",s.mvp,4]];
+    openSheet("#"+x.rank+" · "+x.p.name,"Pourquoi il est dans la Team of the Season "+seasonLabel(CUR_SEASON),body=>{
+      const ul=document.createElement("ul"); ul.className="srows";
+      rows.forEach(([l,v,k])=>{ const li=document.createElement("li"); li.innerHTML="<span></span><b></b>"; li.querySelector("span").textContent=l+" ("+v+" × "+k+")"; li.querySelector("b").textContent=(v*k)+" pts"; ul.appendChild(li); });
+      const tot=document.createElement("li"); tot.innerHTML="<span><b>Total</b></span><b></b>"; tot.lastElementChild.textContent=x.score+" pts"; ul.appendChild(tot);
+      body.appendChild(ul);
+      const b=document.createElement("button"); b.type="button"; b.className="later"; b.textContent="Voir sa fiche"; b.addEventListener("click",()=>{ closeSheet(); location.hash="p-"+x.p.id; }); body.appendChild(b); });
   }
 
   /* ---- Réglages : interrupteur joueur + gestion organisateurs ---- */
@@ -4093,7 +4175,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       [ia,ib].forEach(i=>i.addEventListener("input",()=>{ $("#seasonSave").hidden=!(SETTINGS&&SETTINGS.seasons); }));
       const bp=d.querySelector(".pv"); if(pv===x.k){ bp.classList.add("on"); bp.textContent="👁️ Aperçu en cours"; }
       bp.addEventListener("click",()=>{ lsSet(SEASON_PREV,pv===x.k?null:x.k); seasonChanged(); });
+      if(x.k==="poisson")d.querySelector(".an").textContent="▶ La farce";
       d.querySelector(".an").addEventListener("click",()=>{ if(lsGet(SEASON_PREV)!==x.k){ lsSet(SEASON_PREV,x.k); seasonChanged(); }
+        if(x.k==="poisson"){ playPrank(); return; }
         const rec=matches.find(m=>m.mvp); if(!rec){ toast("Il faut un match avec un MVP pour tester l'animation."); return; }
         lastReveal={id:"",t:0}; playMvpReveal(rec); });
       d.querySelector(".nt").addEventListener("click",async()=>{ const t=pushToken&&pushToken(); if(!t){ toast("Active d'abord les notifications sur ce téléphone (en haut des Réglages)."); return; }
@@ -4308,6 +4392,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
   window.FUT5V5_HOF={ key:hofKey, compute:computeHof, done:hofDone, play:k=>playHof(computeHof(k||hofKey(new Date()))) };
   let lastReveal={id:"",t:0};
+  const SFX_FILE={halloween:"sons/halloween-ricanements.mp3",noel:"sons/noel-grelots.mp3",nouvelan:"sons/nouvelan-tchin.mp3",poisson:"sons/poisson-farce.mp3"};
+  const sfxCache={};
+  function loadSfx(ctx,k){
+    const url=(window.FUT5V5_SFX&&window.FUT5V5_SFX[k])||SFX_FILE[k]; if(!url)return Promise.resolve(null);
+    const raw=sfxCache[k]||(sfxCache[k]=/^data:/.test(url)?Promise.resolve().then(()=>{ const b=atob(url.split(",")[1]), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i); return u.buffer; })
+      :fetch(url).then(r=>{ if(!r.ok)throw new Error("son"); return r.arrayBuffer(); }));
+    return raw.then(b=>new Promise((res,rej)=>ctx.decodeAudioData(b.slice(0),res,rej))).catch(()=>null);
+  }
   async function playMvpReveal(rec){
     const p=rec&&rec.mvp&&byId(rec.mvp); if(!p)return;
     /* retour sur le même match juste après (ex. depuis une fiche joueur) : pas de nouvelle animation */
@@ -4333,15 +4425,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       '<button type="button" class="mx-btn mx-sound" aria-label="Son"></button><button type="button" class="mx-btn mx-skip">Passer ⏭</button>';
     ov.querySelector(".mx-name b").textContent=p.name;
     /* thème de saison : décor et mise en scène propres (le Hall of Fame, lui, garde toujours son animation de base) */
-    const SK=SEASON&&SEASON.k;
+    const SK=SEASON&&SEASON.k!=="poisson"?SEASON.k:null;   /* poisson d'avril : pas d'animation spéciale (la farce passe par la notif) */
     if(SK){ ov.classList.add("s-"+SK);
-      const sub={halloween:"Sorti de sa tombe 🎃",noel:"Le cadeau sous le sapin 🎁",nouvelan:"Bonne année, champion 🥂",poisson:"Homme du match (pour de vrai) 🐟",tots:"Team of the Season 💎"}[SK];
+      const sub={halloween:"Sorti de sa tombe 🎃",noel:"Le cadeau sous le sapin 🎁",nouvelan:"Bonne année, champion 🥂",tots:"Team of the Season 💎"}[SK];
       if(sub)ov.querySelector(".mx-name span").textContent=sub;
       const add=h=>{ const d=document.createElement("div"); d.innerHTML=h; const e=d.firstChild; ov.insertBefore(e,ov.querySelector(".mx-fxf")); return e; };
       if(SK==="halloween"){ add('<div class="ms ms-fog"></div>');
         add('<div class="ms ms-tomb"><svg viewBox="0 0 200 170" width="100%"><path d="M30 165V70Q30 12 100 12Q170 12 170 70V165z" fill="#5d5868" stroke="#2b2733" stroke-width="5"/><path d="M48 160V74Q48 30 100 30Q152 30 152 74V160z" fill="#6d6878"/><text x="100" y="92" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="36" fill="#2b2733">R.I.P.</text><text x="100" y="122" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="18" fill="#3a3542">LES DÉFENSES</text><path d="M120 40l-8 18 10 8-6 14" stroke="#2b2733" stroke-width="3" fill="none"/><path d="M0 165h200v5H0z" fill="#1b3a12"/><path d="M8 165q4-14 8 0q4-12 8 0q4-14 8 0M160 165q4-14 8 0q4-12 8 0q4-14 8 0" fill="#2d5a1d"/></svg></div>'); }
       else if(SK==="noel") add('<div class="ms ms-snow"><svg viewBox="0 0 160 220"><circle cx="80" cy="160" r="52" fill="#f7fbff" stroke="#bcd3e8" stroke-width="3"/><circle cx="80" cy="82" r="38" fill="#f7fbff" stroke="#bcd3e8" stroke-width="3"/><path d="M44 104q36 16 72 0v12q-36 16-72 0z" fill="#d6322b"/><path d="M98 110l14 34-10 4-12-32z" fill="#b8262a"/><circle cx="66" cy="74" r="4.5" fill="#1b1b1b"/><circle cx="94" cy="74" r="4.5" fill="#1b1b1b"/><path d="M80 82l26 6-26 5z" fill="#ff8a1f"/><path d="M64 94q16 8 32 0" stroke="#1b1b1b" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="1 6"/><rect x="52" y="22" width="56" height="10" rx="3" fill="#1b1b1b"/><rect x="60" y="0" width="40" height="26" rx="4" fill="#1b1b1b"/><rect x="60" y="18" width="40" height="5" fill="#d6322b"/><circle cx="80" cy="146" r="4" fill="#1b1b1b"/><circle cx="80" cy="166" r="4" fill="#1b1b1b"/><circle cx="80" cy="186" r="4" fill="#1b1b1b"/><path d="M30 140L4 118M130 140l26-22" stroke="#7a4b23" stroke-width="5" stroke-linecap="round"/></svg></div>');
-      else if(SK==="poisson") add('<div class="ms ms-fish"><span>🐟</span>Le MVP est… un poisson !</div>');
     }
     /* statistiques du MVP sur ce match, affichées à la fin */
     { const my=side==="rouge"?sc(rec,"rouge"):sc(rec,"blanc"), op=side==="rouge"?sc(rec,"blanc"):sc(rec,"rouge"), o=rec.goals.filter(x=>x.pid===p.id&&x.own).length;
@@ -4367,9 +4458,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* le navigateur n'autorise le son qu'après un toucher : ouvert depuis l'historique, c'est bon ;
        ouvert depuis une notification, le son part si on touche l'écran dans la première seconde */
     const tStart=performance.now();
+    /* son du thème à la révélation : ricanements de sorcières, grelots de Noël, tchin des flûtes de champagne */
+    const SFX_AT={halloween:5.25,noel:5.25,nouvelan:5.3}, sfxP=SK&&SFX_AT[SK]&&audio?loadSfx(audio.ctx,SK):null;
+    const startSound=()=>{ audio.play(SK&&SFX_AT[SK]?SK:null);
+      if(sfxP)sfxP.then(buf=>{ if(buf&&!done)audio.sample(buf,audio.ctx.currentTime+Math.max(0,SFX_AT[SK]-(performance.now()-tStart)/1000),SK==="halloween"?1.1:0.9); }).catch(()=>{}); };
     if(audio){ try{ await audio.ctx.resume(); }catch(e){}
-      if(audio.ctx.state==="running")audio.play();
-      else ov.addEventListener("pointerdown",()=>{ if(performance.now()-tStart<1200)audio.ctx.resume().then(()=>audio.play()).catch(()=>{}); },{once:true}); }
+      if(audio.ctx.state==="running")startSound();
+      else ov.addEventListener("pointerdown",()=>{ if(performance.now()-tStart<1200)audio.ctx.resume().then(startSound).catch(()=>{}); },{once:true}); }
 
     /* particules */
     const fxB=mvpFx(ov.querySelector(".mx-fxb")), fxF=mvpFx(ov.querySelector(".mx-fxf"));
@@ -4385,7 +4480,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(SK==="noel") setTimeout(()=>{ if(done)return; const r=ov.querySelector(".ms-snow").getBoundingClientRect(), x=r.left+r.width/2, y=r.top+r.height/2;
       const f=ov.querySelector(".mx-flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); fxF.burst(x,y,"#ffffff",180); fxF.burst(x,y-40,"#d6f0ff",90);
       for(let i=0;i<120;i++){ const a=Math.random()*6.283, v=120+Math.random()*420; fxF.spark(x,y,Math.cos(a)*v,Math.sin(a)*v-80,1+Math.random()*.8,2+Math.random()*3,"#ffffff",260); } },4100);
-    if(SK==="poisson"){ setTimeout(()=>{ if(!done)ov.querySelector(".ms-fish").classList.add("on"); },4300); setTimeout(()=>{ if(!done)ov.querySelector(".ms-fish").classList.remove("on"); },5150); }
+
     const phase=(cls,at)=>setTimeout(()=>{ if(!done)ov.classList.add(cls); },at*1000);
     const clue=(n,at)=>setTimeout(()=>{ if(done)return; ov.querySelectorAll(".mx-clue").forEach(e=>e.classList.toggle("on",e.classList.contains("c"+n))); },at*1000);
     phase("p-lights",0.2); phase("p-door",1.35); phase("p-panels",1.6); phase("p-card",1.85);
