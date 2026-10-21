@@ -1517,7 +1517,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     stats:{title:"Statistiques",items:[
       "Toutes les cartes des joueurs, à la façon de FIFA, avec leur indicateur de forme.",
       "Un appui sur une carte ouvre la fiche du joueur : buts marqués, matchs joués, nombre de fois MVP.",
-      "L'évolution de ses notes (vitesse, technique, etc.) à chaque modification de sa carte, en petites courbes."]}
+      "L'évolution de ses notes (physique, technique, etc.) à chaque modification de sa carte, en petites courbes."]}
   };
   const home=document.getElementById("home"), screen=document.getElementById("screen"), carte=document.getElementById("carte");
   function show(route){
@@ -1556,7 +1556,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     home.hidden=true; screen.hidden=false; window.scrollTo(0,0);
   }
   /* ---------- moteur de dessin des cartes FUT ---------- */
-  const STATS=[["vit","VIT","Vitesse"],["tir","TIR","Tir"],["pas","PAS","Passe"],["dri","TEC","Technique"],["car","CAR","Cardio"],["phy","DEF","Défense"],["gar","GAR","Gardien"]];
+  const STATS=[["vit","PHY","Physique"],["tir","TIR","Tir"],["pas","PAS","Passe"],["dri","TEC","Technique"],["car","CAR","Cardio"],["phy","DEF","Défense"],["gar","GAR","Gardien"]];
   const W=380, H=534, OX=10, OY=8;
   const PHOTO={x:80,y:30,w:250,h:330};
   const FONT='"Barlow Condensed","Arial Narrow",sans-serif';
@@ -1949,7 +1949,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const list=$("#statsList");
   /* aide pour noter : deux questions à se poser + repères (bouton ⓘ à côté de chaque note) */
   const STAT_HELP={
-    vit:[["Sur 10 m, qui le bat à la course ?","Est-ce qu'il revient en défense aussi vite qu'il monte ?"],"60 = on le rattrape · 75 = rapide · 85+ = personne ne le suit"],
+    vit:[["Dans un duel d'épaule, qui le fait reculer ?","Est-ce qu'il garde le ballon quand on le bouscule ?"],"60 = on le bouge facilement · 75 = solide · 85+ = un roc"],
     tir:[["Quand il frappe, est-ce que le gardien est inquiété ?","Il marque de loin, ou seulement de près ?"],"60 = rarement cadré · 75 = régulier · 85+ = chaque frappe est un danger"],
     pas:[["Ses passes arrivent-elles dans les pieds, au bon moment ?","Il voit le partenaire démarqué avant les autres ?"],"60 = simple, parfois imprécis · 75 = propre · 85+ = il fait jouer toute l'équipe"],
     dri:[["Il garde le ballon sous pression sans le perdre ?","Contrôle, dribble, crochet : il élimine en 1 contre 1 ?"],"60 = se débarrasse vite du ballon · 75 = à l'aise · 85+ = on ne lui prend pas le ballon"],
@@ -2201,7 +2201,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#foldPres").addEventListener("click",()=>{M.folded=true;renderMatch();});
   $("#unfoldPres").addEventListener("click",()=>{M.folded=false;renderMatch();});
 
-  /* --- équilibrage : niveau terrain (sans gardien) d'abord, puis cardio > défense > vitesse > autres ;
+  /* --- équilibrage : niveau terrain (sans gardien) d'abord, puis cardio > défense > physique (ex-vitesse) > autres ;
      bons gardiens (GAR ≥ 65) : les deux meilleurs séparés et répartition équitable (écart max 1), la note gardien n'a sinon aucun poids --- */
   const SEC_W={car:.5,phy:.3,vit:.2,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W), GK_MIN=65;
   function balance(){
