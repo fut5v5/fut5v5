@@ -1,5 +1,5 @@
 /* FUT 5V5 : service worker (installation, ouverture hors connexion, mises à jour) */
-const VERSION = 'fut5v5-2026-10-12-41-anim-saisons';
+const VERSION = 'fut5v5-2026-10-21-43-momentum-cr';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/badge-96.png'];
 
@@ -43,8 +43,9 @@ self.addEventListener('push', e => {
   e.waitUntil(self.registration.showNotification(title, {
     body: m.body || '', icon: se ? 'icons/saison-' + se + '.png' : 'icons/icon-192.png', badge: 'icons/badge-96.png',
     vibrate: se ? S[se] : undefined,
-    tag: m.tag || undefined, renotify: !!m.tag, data: { url: m.url || '#' }
-  }));
+    tag: m.tag || undefined, renotify: !!m.tag, data: { url: m.tag === 'live' ? '#direct' : (m.url || '#') }
+  }).then(() => self.clients.matchAll({ type: 'window', includeUncontrolled: true }))
+    .then(list => { list.forEach(c => { try { c.postMessage({ type: 'fut5v5-push', tag: m.tag || '' }); } catch (err) {} }); }));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
