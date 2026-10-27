@@ -5084,6 +5084,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     return data;
   }
   async function boot(){
+    /* ouverture directe sur une page (lien d'une notif, ex. #p-…, #direct, #m-…) : on glisse l'accueil dessous dans l'historique,
+       pour que la flèche retour (et le bouton retour du téléphone) ramène à l'accueil au lieu de ne rien faire */
+    try{ if(location.hash&&location.hash!=="#"&&location.hash!=="#home"&&!(history.state&&(history.state.fut5v5Base||history.state.fut5v5Deep))){
+      const h=location.hash; history.replaceState({fut5v5Base:1},"",location.pathname+location.search); history.pushState({fut5v5Deep:1},"",location.pathname+location.search+h); } }catch(e){}
     try{ ADMIN.name=ADMIN.code?(localStorage.getItem("fut5v5:admin-name")||""):""; }catch(e){}
     let cached=null; try{cached=JSON.parse(localStorage.getItem("fut5v5:data")||"null")}catch(e){}
     if(cached&&cached.players){ applyData(cached); startUI(); loadPhotos(); }
