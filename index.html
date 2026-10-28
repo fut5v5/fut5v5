@@ -3420,7 +3420,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const draw=()=>{
       const e=h[PV.hi], cmp=PV.cmp&&byId(PV.cmp);
       $("#radarBox").innerHTML=radarSVG(e.stats,cmp?statsAt(cmp,e.date):null);
-      const ov=Math.round(STATS.reduce((a,[k])=>a+clamp(e.stats[k]),0)/STATS.length);
+      const ov=overall({stats:e.stats});
       $("#tlBox").innerHTML=(h.length>1?'<input type="range" min="0" max="'+(h.length-1)+'" step="1" value="'+PV.hi+'" id="tlRange" aria-label="Date des notes">'+
         '<div class="tl-labels">'+h.map((x,i)=>'<span class="'+(i===PV.hi?"on":"")+'">'+monthLbl(x.date)+'</span>').join("")+'</div>':'')+
         '<p class="tl-when">'+(PV.hi===h.length-1?"Notes actuelles":"Notes de "+monthLbl(e.date))+' : note générale '+ov+'</p>';
@@ -3549,7 +3549,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const ph=cmp?1000:940; panel(c,X,y,PWd,ph,"Aperçu des attributs");
       radarCanvas(c,Wd/2,y+470,250,e.stats,cmp?statsAt(cmp,e.date):null);
       c.textAlign="center"; c.font="600 30px 'Barlow',sans-serif"; c.fillStyle="#cfd8ee";
-      const ov=Math.round(STATS.reduce((a,[k])=>a+clamp(e.stats[k]),0)/STATS.length);
+      const ov=overall({stats:e.stats});
       c.fillText((e===h[h.length-1]?"Notes actuelles":"Notes de "+monthLbl(e.date))+" : note générale "+ov,Wd/2,y+870);
       if(cmp){ c.font="600 30px 'Barlow',sans-serif"; c.textAlign="left";
         const t1=p.name, t2=cmp.name; const w1=c.measureText(t1).width, w2=c.measureText(t2).width, tot=w1+w2+140; let x=(Wd-tot)/2;
@@ -4837,7 +4837,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const changes=STATS.map(([k,code])=>({code,a:clamp(seen.stats[k]),b:clamp(p.stats[k])})).filter(x=>x.a!==x.b);
     const newMvp=[];   /* le MVP a désormais son propre bloc festif (renderFete) */
     if(!changes.length&&!newMvp.length)return null;
-    const ovA=Math.round(STATS.reduce((t,[k])=>t+clamp(seen.stats[k]),0)/STATS.length), ovB=overall(p);
+    const ovA=overall({stats:seen.stats}), ovB=overall(p);
     return {changes,newMvp,ovA,ovB};
   }
   /* ================= BLOC « ÉLU MVP » FESTIF ================= */
