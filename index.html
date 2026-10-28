@@ -456,6 +456,23 @@ button{font:inherit;color:inherit}
 .pbody{padding:16px 18px 30px}
 .pcardbox{background:var(--tile);border:1px solid var(--tile-line);border-radius:18px;padding:14px;margin:0 0 14px}
 .pcardbox h3{margin:0 0 10px;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.3rem;display:flex;justify-content:space-between;align-items:baseline}
+#reglages .pcardbox{padding:0}
+#reglages .pcardbox h3{margin:0}
+.rg-head{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:inherit;font:inherit;text-align:left;padding:14px;cursor:pointer;border-radius:18px}
+.rg-head:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.rg-head .rg-t{flex:1;min-width:0}
+.rg-head .rg-sum{font-family:'Barlow',sans-serif;font-weight:500;font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+.rg-head .chev{width:18px;height:18px;flex:none;transition:transform .2s;color:var(--muted)}
+.rg-head[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.rg-body{padding:0 14px 14px}
+.rg-sect{margin:20px 4px 8px;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.bal-r{display:grid;grid-template-columns:42px 1fr 64px;align-items:center;gap:10px;margin:8px 0}
+.bal-r b{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.05rem}
+.bal-r input[type=range]{width:100%;accent-color:var(--gold)}
+.bal-r output{text-align:center;border:1px solid var(--tile-line);border-radius:8px;padding:4px 0;font-weight:800;background:var(--bg)}
+.bal-tot{display:flex;justify-content:space-between;border-top:1px solid var(--tile-line);margin-top:8px;padding:10px 0;font-weight:800}
+.bal-tot b.ok{color:#1ea85a}.bal-tot b.ko{color:var(--red-team)}
+.bal-reset{display:block;margin:8px auto 0;border:0;background:transparent;color:var(--muted);font:inherit;font-size:.88rem;cursor:pointer;padding:6px}
 .pcardbox h3 small{font-family:'Barlow',sans-serif;font-weight:500;font-size:.82rem;color:var(--muted)}
 .ktiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .phof{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
@@ -1329,24 +1346,27 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
       <h2>Réglages</h2>
     </div>
-    <div class="pcardbox">
+    <div class="pcardbox" id="rgAff" data-open="1">
+      <h3>Affichage</h3>
+      <div class="rg-row"><span>Mode sombre</span><label class="sw"><input type="checkbox" id="rgDark"><i></i></label></div>
+      <div class="rg-row" id="rgSeasonRow" hidden><span><b id="rgSeasonLab">Thème de saison</b><small>Seulement pour l'événement en cours : il reviendra au prochain.</small></span><label class="sw"><input type="checkbox" id="rgSeason"><i></i></label></div>
+    </div>
+    <div class="pcardbox" id="rgNotif">
       <h3>Notifications</h3>
       <p class="rg-status" id="pushStatus"></p>
       <button type="button" class="notify-btn" id="pushToggle"></button>
       <div id="pushPrefs"></div>
     </div>
-    <div class="pcardbox admin-only" id="idBox">
-      <h3>Joueurs identifiés <small id="idCount"></small></h3>
-      <p class="rg-status">Qui a touché « C'est moi » sur sa carte, et qui reçoit les notifications (🔔).</p>
-      <button type="button" class="notify-btn" id="idLoad">👤 Voir la liste</button>
-      <button type="button" class="wa" id="idWa" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>Relancer sur WhatsApp</button>
-      <div id="idList"></div>
-    </div>
-    <div class="pcardbox admin-only" id="seasonBox">
-      <h3>🎨 Thèmes de saison</h3>
-      <p class="rg-status">Chaque thème s'active tout seul pour tout le monde à sa date de début (format JJ/MM) et disparaît à sa date de fin. Les joueurs peuvent le couper dans leurs réglages, seulement pour l'événement en cours. « Aperçu » ne change que ton téléphone.</p>
-      <div id="seasonList"></div>
-      <button type="button" class="notify-btn sz-save" id="seasonSave" hidden>💾 Enregistrer les dates</button>
+    <p class="rg-sect admin-only">Organisateurs</p>
+    <div class="pcardbox admin-only" id="balBox">
+      <h3>⚖️ Pondération des stats</h3>
+      <p class="rg-status">Poids de chaque stat dans la note générale des cartes et dans l'équilibrage des équipes. Le total doit faire 100 %.</p>
+      <div id="balList"></div>
+      <div class="bal-tot"><span>Total</span><b id="balTot"></b></div>
+      <div class="rg-row"><span><b>Répartir les gros physiques</b><small>Jamais plus d'un costaud d'écart entre les deux équipes.</small></span><label class="sw"><input type="checkbox" id="balPhyOn"><i></i></label></div>
+      <div class="rg-row"><span>Gros physique à partir de</span><select id="balPhyMin" class="vote-sel" style="width:auto;margin:0"></select></div>
+      <button type="button" class="notify-btn sz-save" id="balSave">💾 Enregistrer</button>
+      <button type="button" class="bal-reset" id="balReset">↺ Revenir aux valeurs par défaut</button>
     </div>
     <div class="pcardbox admin-only" id="voteBox" hidden>
       <h3>Vote du MVP</h3>
@@ -1357,10 +1377,18 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         <option value="30">30 minutes</option><option value="45">45 minutes</option><option value="60">1 heure</option>
         <option value="120">2 heures</option><option value="720">12 heures</option><option value="1440">24 heures</option></select>
     </div>
-    <div class="pcardbox">
-      <h3>Affichage</h3>
-      <div class="rg-row"><span>Mode sombre</span><label class="sw"><input type="checkbox" id="rgDark"><i></i></label></div>
-      <div class="rg-row" id="rgSeasonRow" hidden><span><b id="rgSeasonLab">Thème de saison</b><small>Seulement pour l'événement en cours : il reviendra au prochain.</small></span><label class="sw"><input type="checkbox" id="rgSeason"><i></i></label></div>
+    <div class="pcardbox admin-only" id="seasonBox">
+      <h3>🎨 Thèmes de saison</h3>
+      <p class="rg-status">Chaque thème s'active tout seul pour tout le monde à sa date de début (format JJ/MM) et disparaît à sa date de fin. Les joueurs peuvent le couper dans leurs réglages, seulement pour l'événement en cours. « Aperçu » ne change que ton téléphone.</p>
+      <div id="seasonList"></div>
+      <button type="button" class="notify-btn sz-save" id="seasonSave" hidden>💾 Enregistrer les dates</button>
+    </div>
+    <div class="pcardbox admin-only" id="idBox">
+      <h3>Joueurs identifiés <small id="idCount"></small></h3>
+      <p class="rg-status">Qui a touché « C'est moi » sur sa carte, et qui reçoit les notifications (🔔).</p>
+      <button type="button" class="notify-btn" id="idLoad">👤 Voir la liste</button>
+      <button type="button" class="wa" id="idWa" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>Relancer sur WhatsApp</button>
+      <div id="idList"></div>
     </div>
   </section>
 
@@ -1561,8 +1589,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const PHOTO={x:80,y:30,w:250,h:330};
   const FONT='"Barlow Condensed","Arial Narrow",sans-serif';
   const clamp=v=>{v=Math.round(Number(v));return isFinite(v)?Math.max(0,Math.min(99,v)):0};
-  const avgStats=p=>STATS.reduce((a,[k])=>a+clamp(p.stats[k]),0)/STATS.length;
-  const overall=p=>Math.round(avgStats(p));
+  /* pondération des stats (réglée par les organisateurs, % qui font 100) : note générale = moyenne pondérée arrondie au supérieur,
+     comme la colonne « Note générale » du tableau de Thomas. Clés : vit = PHY, phy = DEF, dri = TEC */
+  const BAL_DEF={w:{vit:11,tir:15,pas:17,dri:17,car:16,phy:15,gar:9},phyMin:85,phyOn:true};
+  const balCfg=()=>{ const b=(typeof SETTINGS!=="undefined"&&SETTINGS&&SETTINGS.balance)||null; if(!b||!b.w)return BAL_DEF;
+    const w={}; let t=0; Object.keys(BAL_DEF.w).forEach(k=>{ const v=Number(b.w[k]); w[k]=isFinite(v)&&v>=0?v:BAL_DEF.w[k]; t+=w[k]; });
+    return {w:t>0?w:BAL_DEF.w,phyMin:b.phyMin||85,phyOn:b.phyOn!==false}; };
+  const avgStats=p=>{ const w=balCfg().w; let a=0,t=0; STATS.forEach(([k])=>{ a+=(w[k]||0)*clamp(p.stats[k]); t+=(w[k]||0); }); return t?a/t:0; };
+  const overall=p=>Math.ceil(avgStats(p)-1e-9);
+  window.FUT5V5_OVERALL=names=>{ const o={}; (names||[]).forEach(n=>{ const p=roster.find(x=>x.name===n); if(p)o[n]=overall(p); }); return o; };
   /* niveau « terrain » : moyenne des notes sans le gardien (sert à l'équilibrage, la note gardien n'y pèse pas) */
   const fieldAvg=p=>STATS.filter(([k])=>k!=="gar").reduce((a,[k])=>a+clamp(p.stats[k]),0)/(STATS.length-1);
   let onImageReady=()=>{};
@@ -2203,12 +2238,18 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
   /* --- équilibrage : niveau terrain (sans gardien) d'abord, puis cardio > défense > physique (ex-vitesse) > autres ;
      bons gardiens (GAR ≥ 65) : les deux meilleurs séparés et répartition équitable (écart max 1), la note gardien n'a sinon aucun poids --- */
-  const SEC_W={car:.5,phy:.3,vit:.2,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W), GK_MIN=65;
-  function balance(){
-    if(M.present.size>=2)matchUndo.record();
+  /* v46 : niveau = note pondérée (réglages) ; gros physiques (PHY ≥ seuil) répartis à un près ; PHY moyen le plus proche (poids fort) */
+  const SEC_W={vit:1,car:.5,phy:.3,tir:.05,pas:.05,dri:.05}, SEC_K=Object.keys(SEC_W), GK_MIN=65;
+  let balRelaxed=false;
+  function balanceRetry(){ balRelaxed=true; try{ balance(true); } finally{ balRelaxed=false; } }
+  function balance(noUndo){
+    if(M.present.size>=2&&noUndo!==true)matchUndo.record();
     const pool=roster.filter(p=>M.present.has(p.id)), n=pool.length;
     if(n<2)return;
-    const vec=pool.map(p=>{const v={ov:fieldAvg(p),gar:clamp(p.stats.gar)};SEC_K.forEach(k=>v[k]=clamp(p.stats[k]));return v});
+    const vec=pool.map(p=>{const v={ov:avgStats(p),gar:clamp(p.stats.gar)};SEC_K.forEach(k=>v[k]=clamp(p.stats[k]));return v});
+    const BC=balCfg(), bigs=BC.phyOn?vec.map((v,i)=>[v.vit,i]).filter(x=>x[0]>=BC.phyMin).map(x=>x[1]):[];
+    let relax=balRelaxed;
+    const phyOk=()=>{ if(relax||bigs.length<2)return true; let a=0; bigs.forEach(i=>{if(inA[i])a++}); return Math.abs(a-(bigs.length-a))<=1; };
     /* bons gardiens (GAR ≥ 65) : les deux meilleurs séparés, puis jamais plus d'un bon gardien d'écart entre les équipes */
     const gks=vec.map((v,i)=>[v.gar,i]).filter(x=>x[0]>=GK_MIN).sort((x,y)=>y[0]-x[0]).map(x=>x[1]);
     const gkOk=()=>{ if(gks.length<2)return true; if(inA[gks[0]]===inA[gks[1]])return false;
@@ -2224,17 +2265,18 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(n<=20){
       let mask=(1<<k)-1; const lim=1<<n;
       while(mask<lim){
-        if(!(n%2===0&&!(mask&1))){for(let i=0;i<n;i++)inA[i]=(mask>>i)&1;if(gkOk()){const [a,b]=score();res.push([Array.from(inA).join(""),a,b]);}}
+        if(!(n%2===0&&!(mask&1))){for(let i=0;i<n;i++)inA[i]=(mask>>i)&1;if(gkOk()&&phyOk()){const [a,b]=score();res.push([Array.from(inA).join(""),a,b]);}}
         const c=mask&-mask,r=mask+c; mask=(((r^mask)>>>2)/c)|r;
       }
     } else {
       for(let rep=0;rep<200;rep++){
         const idx=[...Array(n).keys()].sort(()=>Math.random()-.5); inA.fill(0); idx.slice(0,k).forEach(i=>inA[i]=1);
-        const cost=()=>{const [a,b]=score();return a*10+b+(gkOk()?0:1e6)}; let best=cost(),imp=true;
+        const cost=()=>{const [a,b]=score();return a*10+b+(gkOk()?0:1e6)+(phyOk()?0:1e5)}; let best=cost(),imp=true;
         while(imp){imp=false;for(let i=0;i<n&&!imp;i++)for(let j=0;j<n&&!imp;j++)if(inA[i]&&!inA[j]){inA[i]=0;inA[j]=1;const c=cost();if(c<best-1e-9){best=c;imp=true}else{inA[i]=1;inA[j]=0}}}
-        if(gkOk()){const [a,b]=score(); res.push([Array.from(inA).join(""),a,b]);}
+        if(gkOk()&&phyOk()){const [a,b]=score(); res.push([Array.from(inA).join(""),a,b]);}
       }
     }
+    if(!res.length&&bigs.length&&!relax){ relax=true; return balanceRetry(); }
     if(!res.length)return;
     const bestOv=Math.min(...res.map(r=>r[1])), near=res.filter(r=>r[1]<=bestOv+.25);
     const bestSec=Math.min(...near.map(r=>r[2]));
@@ -2261,7 +2303,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function teamAgg(list){
     if(!list.length)return null; const n=list.length, m=k=>list.reduce((a,p)=>a+clamp(p.stats[k]),0)/n;
     const gkp=list.slice().sort((x,y)=>clamp(y.stats.gar)-clamp(x.stats.gar))[0];
-    return {n,ov:list.reduce((a,p)=>a+fieldAvg(p),0)/n,car:m("car"),phy:m("phy"),vit:m("vit"),gk:clamp(gkp.stats.gar),gkName:gkp.name};
+    const BC=balCfg();
+    return {n,ov:list.reduce((a,p)=>a+avgStats(p),0)/n,car:m("car"),phy:m("phy"),vit:m("vit"),big:BC.phyOn?list.filter(p=>clamp(p.stats.vit)>=BC.phyMin).length:null,gk:clamp(gkp.stats.gar),gkName:gkp.name};
   }
   function verdict(a,b){
     const d=Math.abs(a.ov-b.ov), dc=Math.abs(a.car-b.car), dp=Math.abs(a.phy-b.phy), dv=Math.abs(a.vit-b.vit), ath=Math.max(dc,dp,dv);
@@ -2274,7 +2317,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function renderBoard(){
     const a=teamAgg(inTeam("blanc")), b=teamAgg(inTeam("rouge"));
     $("#avB").textContent=a?fmt1(a.ov):"–"; $("#avR").textContent=b?fmt1(b.ov):"–";
-    const inf=t=>t.n+" joueurs, cardio "+Math.round(t.car)+"\n🧤 "+t.gkName+" "+t.gk;
+    const inf=t=>t.n+" joueurs, cardio "+Math.round(t.car)+"\n💪 PHY "+Math.round(t.vit)+(t.big?" · "+t.big+" costaud"+(t.big>1?"s":""):"")+"\n🧤 "+t.gkName+" "+t.gk;
     $("#infB").textContent=a?inf(a):""; $("#infR").textContent=b?inf(b):"";
     const mid=$("#sbMid"); mid.classList.remove("ok","warn"); let pos=50;
     if(a&&b){const v=verdict(a,b); $("#sbLab").textContent=v.label; mid.classList.add(v.cls); $("#sbGap").textContent="Écart "+fmt1(v.d)+" pt"; pos=v.pos;}
@@ -3781,7 +3824,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const r=location.hash.slice(1);
     try{ applySeason(); }catch(e){}
     renderHome();
-    if(r==="reglages"){ try{ renderVoteSetting(); }catch(e){} try{ renderSeasonSettings(); }catch(e){} }
+    if(r==="reglages"){ try{ renderVoteSetting(); }catch(e){} try{ renderSeasonSettings(); }catch(e){} try{ if(isAdmin())renderBalance(); }catch(e){} }
     if(r==="stats")renderStatsGrid();
     else if(r.startsWith("p-")){ if(byId(r.slice(2)))renderPlayer(r.slice(2)); }
     else if(r==="historique")renderHistory();
@@ -5178,6 +5221,54 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{localStorage.removeItem("fut5v5:push-token")}catch(e){}
     toast("Notifications désactivées.");
   }
+  /* ---- Réglages : sections repliables (état retenu sur le téléphone) ---- */
+  const RG_OPEN="fut5v5:rg-ouvert";
+  (function setupRgSections(){
+    let st={}; try{st=JSON.parse(localStorage.getItem(RG_OPEN)||"{}")||{}}catch(e){}
+    document.querySelectorAll("#reglages .pcardbox").forEach((box,i)=>{
+      const h=box.querySelector("h3"); if(!h)return; const id=box.id||("rg"+i);
+      const body=document.createElement("div"); body.className="rg-body"; body.id=id+"-corps";
+      while(h.nextSibling)body.appendChild(h.nextSibling); box.appendChild(body);
+      const bt=document.createElement("button"); bt.type="button"; bt.className="rg-head"; bt.setAttribute("aria-controls",body.id);
+      const t=document.createElement("span"); t.className="rg-t"; while(h.firstChild)t.appendChild(h.firstChild);
+      bt.appendChild(t); bt.insertAdjacentHTML("beforeend",'<small class="rg-sum"></small><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
+      h.appendChild(bt);
+      const open=st[id]!==undefined?!!st[id]:box.dataset.open==="1";
+      const set=o=>{ bt.setAttribute("aria-expanded",o?"true":"false"); body.hidden=!o; };
+      set(open);
+      bt.addEventListener("click",()=>{ const o=bt.getAttribute("aria-expanded")!=="true"; set(o); try{ const s2=JSON.parse(localStorage.getItem(RG_OPEN)||"{}")||{}; s2[id]=o; localStorage.setItem(RG_OPEN,JSON.stringify(s2)); }catch(e){} });
+    });
+  })();
+  const rgSum=(id,t)=>{ const e=document.querySelector("#"+id+" .rg-sum"); if(e)e.textContent=t||""; };
+  /* ---- Pondération des stats (organisateurs) ---- */
+  let balDraft=null, balDirty=false;
+  function renderBalance(){
+    const box=$("#balBox"); if(!box)return; const cfg=balCfg();
+    if(!balDraft||!balDirty)balDraft=JSON.parse(JSON.stringify(cfg));
+    const L=$("#balList"); L.innerHTML="";
+    STATS.forEach(([k,lab,nm])=>{ const r=document.createElement("div"); r.className="bal-r";
+      r.innerHTML='<b title="'+nm+'">'+lab+'</b><input type="range" min="0" max="50" step="1" aria-label="Pondération '+nm+'"><output></output>';
+      const inp=r.querySelector("input"), out=r.querySelector("output"); inp.value=balDraft.w[k]; out.textContent=balDraft.w[k]+" %";
+      inp.addEventListener("input",()=>{ balDirty=true; balDraft.w[k]=+inp.value; out.textContent=inp.value+" %"; balTotal(); });
+      L.appendChild(r); });
+    $("#balPhyOn").checked=balDraft.phyOn!==false;
+    const sel=$("#balPhyMin"); if(!sel.options.length)for(let v=70;v<=95;v++){ const o=document.createElement("option"); o.value=v; o.textContent="PHY "+v; sel.appendChild(o); }
+    sel.value=String(balDraft.phyMin||85); balTotal();
+    const def=JSON.stringify(cfg.w)===JSON.stringify(BAL_DEF.w);
+    rgSum("balBox",def?"Par défaut":STATS.map(([k,l])=>l+" "+cfg.w[k]).join(" · "));
+  }
+  function balTotal(){ const t=Object.values(balDraft.w).reduce((a,b)=>a+b,0), e=$("#balTot"), srv=!!(SETTINGS&&SETTINGS.balance);
+    e.textContent=t+" %"+(t===100?" ✓":t>100?" (retire "+(t-100)+")":" (ajoute "+(100-t)+")"); e.className=t===100?"ok":"ko"; $("#balSave").disabled=t!==100||!srv;
+    $("#balSave").textContent=srv?"💾 Enregistrer":"⏳ Script à redéployer pour enregistrer"; }
+  $("#balPhyOn").addEventListener("change",e=>{ if(balDraft){balDraft.phyOn=e.target.checked; balDirty=true;} });
+  $("#balPhyMin").addEventListener("change",e=>{ if(balDraft){balDraft.phyMin=+e.target.value; balDirty=true;} });
+  $("#balReset").addEventListener("click",()=>{ balDraft=JSON.parse(JSON.stringify(BAL_DEF)); balDirty=true; renderBalance(); toast("Valeurs par défaut remises : touche « Enregistrer » pour les appliquer."); });
+  $("#balSave").addEventListener("click",async()=>{
+    const b=$("#balSave"); b.disabled=true;
+    try{ const r=await api("setBalance",ADMIN.code,balDraft); SETTINGS=Object.assign({},SETTINGS,{balance:r.balance}); balDraft=null; balDirty=false; renderBalance(); redrawSoon();
+      toast("Pondération enregistrée : notes des cartes et équilibrage mis à jour pour tout le monde ✅"); }
+    catch(e){ toast("Non enregistré : "+errMsg(e)); b.disabled=false; }
+  });
   function renderVoteSetting(){
     const box=$("#voteBox"), sel=$("#voteDelay"); if(!box)return;
     box.hidden=!isAdmin()||!SETTINGS||SETTINGS.mvpVoteMin==null; if(box.hidden)return;
@@ -5191,7 +5282,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     sel.disabled=false;
   });
   function renderReglages(){
-    renderVoteSetting(); try{ renderSeasonSettings(); }catch(e){}
+    renderVoteSetting(); try{ renderSeasonSettings(); }catch(e){} try{ if(isAdmin())renderBalance(); }catch(e){}
+    try{ rgSum("voteBox",SETTINGS&&SETTINGS.mvpVoteMin!=null?(SETTINGS.mvpVoteMin?"Vote : "+($("#voteDelay").selectedOptions[0]||{}).textContent:"Pas de vote"):""); }catch(e){}
+    try{ rgSum("seasonBox",SEASON_RAW?"En cours : "+(((SEASONS.find(x=>x.k===SEASON_RAW.k))||{}).ic||"")+" "+(((SEASONS.find(x=>x.k===SEASON_RAW.k))||{}).name||SEASON_RAW.k):""); }catch(e){}
+    try{ rgSum("rgAff",document.documentElement.dataset.theme==="light"?"Mode clair":"Mode sombre"); }catch(e){}
     const on=!!pushToken()&&("Notification" in window)&&Notification.permission==="granted";
     const st=$("#pushStatus"), bt=$("#pushToggle");
     if(!pushConfigured()){ st.textContent="Les notifications ne sont pas encore configurées pour cette application."; bt.hidden=true; }
