@@ -5306,6 +5306,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
+    ["v50","1er nov. 2026","🔁","Le retour depuis le carnet du coach ne tourne plus en rond dans les Réglages."],
     ["v49","1er nov. 2026","📖","Le carnet du coach ouvre ses pages aux orgas. Tu es dedans."],
     ["v48","1er nov. 2026","📸","Fini les cartes sans visage au Hall of Fame et à la révélation du MVP quand on arrive par une notif."],
     ["v47","28 oct. 2026","🎚️","La note sous le curseur de la fiche passe enfin à la note pondérée."],
@@ -5331,7 +5332,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     ["","Les débuts","🔔","Les notifs : convocation, rappels J-1 et H-2, compte rendu, alertes orgas, au ton de la rédac."],
     ["","Les débuts","⚽","Cartes FUT avec photo, équipes équilibrées, Live Score, historique et stats, installable sur le téléphone."]
   ];
-  let carnetOpen="";
+  let carnetOpen="", cnFromRg=false;
   function carnetVersion(){
     return (window.caches?caches.keys():Promise.resolve([])).then(ks=>{ const m=ks.map(k=>/^fut5v5-\d{4}-\d{2}-\d{2}-(\d+)/.exec(k)).filter(Boolean).map(x=>+x[1]).sort((a,b)=>b-a)[0]; return m?"v"+m:CARNET_NEWS[0][0]; }).catch(()=>CARNET_NEWS[0][0]);
   }
@@ -5653,7 +5654,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const b=e.target.closest("[data-go]"); if(!b)return;
     const r=b.dataset.go;
     if(r==="home"){ if(location.hash)history.back(); else show("home"); }
-    else location.hash=r;
+    /* retour du carnet du coach : on revient sur l'entrée « Réglages » de l'historique au lieu d'en empiler une nouvelle
+       (sinon le retour des Réglages renvoie au carnet, et ainsi de suite en boucle) */
+    else if(r==="reglages"&&location.hash==="#carnet"){
+      if(cnFromRg){ cnFromRg=false; history.back(); }
+      else { history.replaceState(history.state,"",location.pathname+location.search+"#reglages"); show("reglages"); } }
+    else { if(r==="carnet")cnFromRg=location.hash==="#reglages"; location.hash=r; }
   });
   window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
   boot();
