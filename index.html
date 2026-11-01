@@ -465,6 +465,45 @@ button{font:inherit;color:inherit}
 .rg-head .chev{width:18px;height:18px;flex:none;transition:transform .2s;color:var(--muted)}
 .rg-head[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .rg-body{padding:0 14px 14px}
+.carnet-cta{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.04));color:inherit;font:inherit;border-radius:18px;padding:14px;margin:0 0 14px;cursor:pointer}
+.carnet-cta .ci{font-size:1.9rem;line-height:1}
+.carnet-cta b{display:block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.3rem}
+.carnet-cta small{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
+.cn-intro{background:var(--tile);border:1px solid var(--tile-line);border-left:4px solid var(--gold);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:.92rem;line-height:1.45}
+.cn-intro b{color:var(--gold)}
+.cn-intro small{display:block;color:var(--muted);margin-top:6px;font-size:.78rem}
+.cn-ask{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:4px 4px 8px}
+.cn-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 18px}
+@media (min-width:520px){.cn-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.cn-tile{display:flex;align-items:center;gap:8px;border:1px solid var(--tile-line);background:var(--tile);color:inherit;font:inherit;border-radius:14px;padding:10px;cursor:pointer;text-align:left;min-height:52px}
+.cn-tile i{font-style:normal;font-size:1.35rem;line-height:1}
+.cn-tile span{font-weight:700;font-size:.88rem;line-height:1.2}
+.cn-tile[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.cn-panel{background:var(--tile);border:1px solid var(--gold);border-radius:18px;margin:0 0 14px;overflow:hidden;scroll-margin-top:12px}
+.cn-ph{display:flex;align-items:center;gap:10px;padding:13px 14px}
+.cn-ph i{font-style:normal;font-size:1.4rem;line-height:1}
+.cn-ph b{display:block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.2rem}
+.cn-ph small{display:block;color:var(--muted);font-size:.8rem}
+.cn-x{margin-left:auto;flex:none;width:34px;height:34px;border-radius:10px;border:1px solid var(--tile-line);background:transparent;color:var(--muted);font:inherit;font-size:1rem;cursor:pointer}
+.cn-b{padding:0 14px 14px;font-size:.9rem;line-height:1.45}
+.cn-b p{margin:0 0 10px}
+.cn-b ol,.cn-b ul{margin:0 0 10px;padding-left:20px}
+.cn-b li{margin:0 0 5px}
+.cn-rd{font-style:italic;color:var(--muted);border-left:3px solid var(--gold);padding-left:10px}
+.cn-t{width:100%;border-collapse:collapse;margin:0 0 10px;font-size:.84rem}
+.cn-t th,.cn-t td{text-align:left;padding:6px 6px;border-bottom:1px solid var(--tile-line);vertical-align:top}
+.cn-t th{color:var(--muted);font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em}
+.cn-k{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.cn-k span{border:1px solid var(--tile-line);border-radius:999px;padding:4px 10px;font-size:.82rem}
+.cn-k span b{color:var(--gold)}
+.cn-f{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:1.05rem;background:rgba(212,175,55,.1);border-radius:10px;padding:8px 10px;margin:0 0 10px;text-align:center}
+.cn-news{list-style:none;padding:0!important;margin:0 0 10px}
+.cn-news li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--tile-line);margin:0}
+.cn-news li:last-child{border-bottom:0}
+.cn-news li>i{font-style:normal;font-size:1.25rem;line-height:1.2;flex:none;width:26px;text-align:center}
+.cn-news li b{display:block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:.95rem;color:var(--gold)}
+.cn-more{width:100%;border:1px dashed var(--gold);background:transparent;color:var(--ink);font:inherit;font-weight:700;border-radius:12px;padding:10px;cursor:pointer}
+.cn-live{font-size:.74rem;color:var(--gold);font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin:0 0 6px}
 .rg-sect{margin:20px 4px 8px;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
 .bal-r{display:grid;grid-template-columns:42px 1fr 64px;align-items:center;gap:10px;margin:8px 0}
 .bal-r b{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;font-size:1.05rem}
@@ -1358,6 +1397,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <div id="pushPrefs"></div>
     </div>
     <p class="rg-sect admin-only">Organisateurs</p>
+    <button type="button" class="carnet-cta admin-only" data-go="carnet"><span class="ci">📖</span><span><b>Le carnet du coach</b><small>Toutes les règles et les calculs de l'appli, avec tes réglages actuels. Mis à jour à chaque version.</small></span></button>
     <div class="pcardbox admin-only" id="balBox">
       <h3>⚖️ Pondération des stats</h3>
       <p class="rg-status">Poids de chaque stat dans la note générale des cartes et dans l'équilibrage des équipes. Le total doit faire 100 %.</p>
@@ -1390,6 +1430,16 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <button type="button" class="wa" id="idWa" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3z"/></svg>Relancer sur WhatsApp</button>
       <div id="idList"></div>
     </div>
+  </section>
+
+  <!-- ===== carnet du coach (organisateurs) ===== -->
+  <section id="carnet" hidden>
+    <div class="bar">
+      <button type="button" class="back" data-go="reglages" aria-label="Retour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <h2>Le carnet du coach</h2>
+    </div>
+    <div id="carnetBody"></div>
   </section>
 
   <!-- ===== statistiques : toutes les cartes ===== -->
@@ -1556,7 +1606,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(route==="farce"){ history.replaceState(null,"",location.pathname+location.search); route=""; setTimeout(()=>playPrank(),started?200:900); }
     if(/^vote-/.test(route)){ const vid=route.slice(5); history.replaceState(null,"",location.pathname+location.search+"#m-"+vid); route="m-"+vid;
       if(started)setTimeout(()=>openVote(vid),200); else pendingVote=vid; }
-    if(!isAdmin()&&(route==="carte"||route==="match")){ if(location.hash)history.replaceState(null,"",location.pathname+location.search); route=""; }
+    if(!isAdmin()&&(route==="carte"||route==="match"||route==="carnet")){ if(location.hash)history.replaceState(null,"",location.pathname+location.search); route=""; }
     carte.hidden=route!=="carte";
     const matchSec=document.getElementById("match"); matchSec.hidden=route!=="match";
     const hist=document.getElementById("historique"), det=document.getElementById("detail");
@@ -1567,6 +1617,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const statsSec=document.getElementById("stats"), playerSec=document.getElementById("player");
     statsSec.hidden=route!=="stats"; playerSec.hidden=!route.startsWith("p-");
     const rgSec=document.getElementById("reglages"); rgSec.hidden=route!=="reglages";
+    const cnSec=document.getElementById("carnet"); cnSec.hidden=route!=="carnet";
+    if(route==="carnet"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderCarnet(); return; }
     if(route==="reglages"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); $("#rgDark").checked=document.documentElement.dataset.theme!=="light"; renderReglages(); return; }
     if(route==="stats"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderStatsGrid(); return; }
     if(route.startsWith("p-")){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!renderPlayer(route.slice(2))){playerSec.hidden=true;home.hidden=false;} return; }
@@ -3832,6 +3884,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     renderHome();
     if(r==="reglages"){ try{ renderVoteSetting(); }catch(e){} try{ renderSeasonSettings(); }catch(e){} try{ if(isAdmin())renderBalance(); }catch(e){} }
     if(r==="stats")renderStatsGrid();
+    else if(r==="carnet"){ try{ renderCarnet(); }catch(e){} }
     else if(r.startsWith("p-")){ if(byId(r.slice(2)))renderPlayer(r.slice(2)); }
     else if(r==="historique")renderHistory();
     else if(r==="match-detail"||r.startsWith("m-")){ const rec=r==="match-detail"?matches[0]:matches.find(m=>m.id===r.slice(2)); if(rec)renderDetail(rec); }
@@ -5250,6 +5303,134 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     });
   })();
   const rgSum=(id,t)=>{ const e=document.querySelector("#"+id+" .rg-sum"); if(e)e.textContent=t||""; };
+  /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
+     À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
+  const CARNET_NEWS=[
+    ["v49","1er nov. 2026","📖","Le carnet du coach ouvre ses pages aux orgas. Tu es dedans."],
+    ["v48","1er nov. 2026","📸","Fini les cartes sans visage au Hall of Fame et à la révélation du MVP quand on arrive par une notif."],
+    ["v47","28 oct. 2026","🎚️","La note sous le curseur de la fiche passe enfin à la note pondérée."],
+    ["v46","28 oct. 2026","⚖️","Pondération des stats, costauds répartis équitablement, Réglages rangés en sections."],
+    ["v45","27 oct. 2026","↩️","La flèche retour marche aussi quand on arrive par une notif."],
+    ["v44","21 oct. 2026","💪","VIT devient PHY. Les jambes restent, les épaules entrent en jeu."],
+    ["v43","21 oct. 2026","📈","Le momentum s'invite dans l'image du compte rendu."],
+    ["v42","20 oct. 2026","🔴","Le direct façon SofaScore : score, buteurs, momentum, rafraîchi tout seul."],
+    ["v41","12 oct. 2026","🦇","Révélations MVP de saison : citrouilles, chauves-souris et sorcière pour Halloween, flocons et traîneau pour Noël."],
+    ["v40","12 oct. 2026","📣","Une notif mystère annonce chaque thème, avec son icône de saison."],
+    ["v39","12 oct. 2026","🏟️","Le terrain de la compo se déguise avec le thème ; les images partagées restent d'origine."],
+    ["v38","12 oct. 2026","🐟","Sons de saison, Team of the Season et la farce du poisson d'avril."],
+    ["v37","12 oct. 2026","🎨","Les thèmes de saison : Halloween, Noël, Bonne année, poisson d'avril, fin de saison."],
+    ["v36","12 oct. 2026","🗳️","Bandeau « Vote pour le MVP » sur l'accueil tant que tu n'as pas voté."],
+    ["v35","12 oct. 2026","🙋","Dans le vote, on peut choisir quelqu'un d'autre que les suggestions."],
+    ["v34","12 oct. 2026","🗳️","Le MVP est voté par les joueurs de la compo."],
+    ["","12 oct. 2026","🎉","Bloc festif « MVP du match » sur l'accueil, avec « Chambrer le groupe »."],
+    ["","5 oct. 2026","🏛️","Premier Hall of Fame : Fidèle au poste, Distributeur de caviars, Serial Buteur."],
+    ["","2 oct. 2026","📝","Compo en brouillon après la convocation, prévenir seulement les concernés."],
+    ["","1er oct. 2026","🧤","DEF et TEC, équilibrage des gardiens, compteur de titres MVP sur les cartes, compo cliquable."],
+    ["","30 sept. 2026","🤫","MVP secret et révélation animée façon walkout FIFA."],
+    ["","Les débuts","⌚","Le Live sur la montre connectée : buteur, passeur et fin du match au poignet."],
+    ["","Les débuts","🔔","Les notifs : convocation, rappels J-1 et H-2, compte rendu, alertes orgas, au ton de la rédac."],
+    ["","Les débuts","⚽","Cartes FUT avec photo, équipes équilibrées, Live Score, historique et stats, installable sur le téléphone."]
+  ];
+  let carnetOpen="";
+  function carnetVersion(){
+    return (window.caches?caches.keys():Promise.resolve([])).then(ks=>{ const m=ks.map(k=>/^fut5v5-\d{4}-\d{2}-\d{2}-(\d+)/.exec(k)).filter(Boolean).map(x=>+x[1]).sort((a,b)=>b-a)[0]; return m?"v"+m:CARNET_NEWS[0][0]; }).catch(()=>CARNET_NEWS[0][0]);
+  }
+  /* prochaine cérémonie du Hall of Fame : le 1er d'un mois impair, 11 h */
+  function nextHofDate(now){
+    const d=new Date(now||Date.now());
+    for(let i=0;i<14;i++){ const t=new Date(d.getFullYear(),d.getMonth()+i,1,11); if((t.getMonth()+1)%2===1&&t>d)return t; }
+    return null;
+  }
+  function renderCarnet(){
+    const B=$("#carnetBody"); if(!B)return;
+    const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+    const cfg=balCfg(), w=cfg.w, MO=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+    const jm=md=>{ const [m,d]=String(md).split("-").map(Number); return d+(d===1?"er":"")+" "+MO[m-1]; };
+    const ex={vit:70,tir:80,pas:75,dri:78,car:82,phy:65,gar:50};
+    const exRaw=STATS.reduce((a,[k])=>a+ex[k]*(w[k]||0),0)/100, exNote=overall({stats:ex});
+    const vm=SETTINGS&&SETTINGS.mvpVoteMin!=null?+SETTINGS.mvpVoteMin:30;
+    const vTxt=vm===0?"pas de vote : c'est l'orga qui choisit":vm<60?vm+" min":(vm/60)+" h";
+    const nh=nextHofDate(); const nhTxt=nh?nh.getDate()+"er "+MO[nh.getMonth()]+" "+nh.getFullYear():"";
+    const sc=seasonCfg();
+    const row=cells=>"<tr>"+cells.map(c=>"<td>"+c+"</td>").join("")+"</tr>";
+    const table=(head,rows)=>'<table class="cn-t"><thead><tr>'+head.map(h=>"<th>"+h+"</th>").join("")+"</tr></thead><tbody>"+rows.map(row).join("")+"</tbody></table>";
+    const live='<p class="cn-live">● Tes réglages actuels</p>';
+    const D=[
+      ["role","🧢","Le brassard d'orga","Ce que tu peux faire de plus qu'un joueur",
+        '<p class="cn-rd">« Le brassard ne fait pas le capitaine, mais il donne accès aux boutons. » La rédac</p>'+
+        '<ul><li>Créer et modifier les cartes, valider les photos proposées par les joueurs.</li><li>Organiser un match, saisir le Live, désigner le MVP.</li><li>Régler la pondération, la durée du vote, les dates des thèmes.</li><li>Voir qui a fait « C\'est moi » et relancer les retardataires sur WhatsApp.</li></ul>'+
+        "<p>Ton code d'orga est dans l'onglet Admins du Google Sheet. Il se tape une seule fois dans les Réglages.</p>"],
+      ["match","📋","Monter un match","Convocation, brouillon, rappels",
+        "<ol><li>Date, heure, joueurs présents.</li><li>« Proposer les équipes » : l'appli équilibre toute seule.</li><li>Appui long pour glisser une carte, simple toucher pour ouvrir la fiche.</li><li>Envoyer la convocation : chacun reçoit son équipe.</li><li>Après envoi, tout changement reste en <b>brouillon</b> sur ton téléphone jusqu'à « Valider et prévenir ».</li></ol>"+
+        "<p>À la validation, seuls les concernés sont prévenus : transfert, ajout, retrait, ou « Mercato dans ton vestiaire ».</p>"+
+        '<div class="cn-k"><span>⏰ Rappel <b>J-1</b></span><span>🔥 Rappel <b>H-2</b></span><span>⚠️ Alerte orga si personne n\'est convoqué la veille</span></div>'],
+      ["note","🧮","La note générale","Comment on passe de 7 stats à un chiffre",
+        live+'<div class="cn-k">'+STATS.map(([k,lab])=>"<span>"+lab+" <b>"+(w[k]||0)+" %</b></span>").join("")+"</div>"+
+        '<p class="cn-f">Note = moyenne pondérée des 7 stats, arrondie au supérieur</p>'+
+        "<p>Exemple : PHY 70, TIR 80, PAS 75, TEC 78, CAR 82, DEF 65, GAR 50 → "+exRaw.toFixed(2).replace(".",",")+" → <b>"+exNote+"</b>.</p>"+
+        "<p>Les poids se changent dans Réglages › Pondération des stats (total 100 %). L'enregistrement recalcule aussi la colonne « Note générale » du Sheet.</p>"+
+        "<p>Pour noter, le bouton ⓘ de chaque stat donne des repères : 60 / 75 / 85+. GAR reste à 50 sauf pour les vrais gardiens.</p>"],
+      ["equilibre","⚖️","L'équilibrage","Les 4 règles, dans l'ordre",
+        live+"<ol><li><b>Les gardiens</b> (GAR ≥ "+GK_MIN+") : les deux meilleurs toujours séparés, jamais plus d'un bon gardien d'écart.</li>"+
+        "<li><b>Les costauds</b> (PHY ≥ "+cfg.phyMin+") : "+(cfg.phyOn?"répartis à un près entre les deux équipes.":"<i>règle coupée dans tes réglages.</i>")+"</li>"+
+        "<li><b>Le niveau</b> : moyenne des notes pondérées la plus proche possible.</li>"+
+        "<li><b>Les départages</b> : PHY moyen, puis cardio, puis défense, puis le reste.</li></ol>"+
+        "<p>Une règle n'est jamais sacrifiée pour la suivante. L'écran de compo affiche par équipe le niveau, le meilleur gardien et « 💪 PHY · costauds ».</p>"],
+      ["direct","🔴","Le direct","Live, momentum, rafraîchissement",
+        "<p>Le Live se lance au coup d'envoi, depuis ton téléphone ou la montre connectée. Chaque but : buteur, passeur, CSC possible, VAR pour annuler.</p>"+
+        "<p>Les joueurs suivent sur l'accueil (carte EN DIRECT) et sur la page du match façon SofaScore. Rafraîchi toutes les <b>20 s</b>, et tout de suite à chaque notif de but.</p>"+
+        '<p class="cn-f">Momentum = une vague par but</p>'+
+        "<ul><li>Elle monte 3 min avant le but, culmine sur le but, retombe en ~10 min.</li><li>Série de la même équipe en moins de 12 min : vague ×1,45.</li><li>Égalisation ou prise d'avance : ×1,2.</li><li>BLANC vers le haut, COULEURS vers le bas.</li></ul>"],
+      ["mvp","🏆","Le MVP","Vote, égalités, révélation secrète",
+        live+'<div class="cn-k"><span>🗳️ Durée max du vote : <b>'+esc(vTxt)+"</b></span></div>"+
+        "<ul><li>Vote possible si au moins <b>2 joueurs identifiés</b> dans la compo. On ne vote pas pour soi, on peut changer d'avis.</li>"+
+        "<li>Clôture : tout le monde a voté, fin du délai, ou un orga clôture.</li>"+
+        "<li>Gagnant : le plus de voix. Égalité : buts + passes du match, puis victoire (ou nul), puis tirage au sort.</li>"+
+        "<li>Aucun vote : les orgas sont prévenus et désignent le MVP.</li></ul>"+
+        "<p>Le nom reste secret partout (images, textes, notifs) jusqu'à l'animation façon walkout FIFA à l'ouverture du match.</p>"+
+        '<p class="cn-f">Note du MVP /10 = 6 + 1/but + 0,5/passe + 0,5 victoire (0,25 nul) − 1/CSC</p><p>Bornée entre 5 et 10.</p><p>Le MVP garde son bloc festif sur l\'accueil jusqu\'à ce que le MVP du match suivant soit désigné, et 21 jours au maximum : le premier des deux qui arrive.</p>'],
+      ["hof","🏛️","Le Hall of Fame","Qui est sacré, et quand",
+        live+'<div class="cn-k"><span>📅 Prochaine cérémonie : <b>'+nhTxt+"</b></span></div>"+
+        table(["Titre","Critère","Minimum","Départage"],[
+          ["🏃 Le Fidèle au poste","Le plus de matchs","—","buts + passes, puis note"],
+          ["🎯 Le Distributeur de caviars (top 3)","Le plus de passes","½ des matchs","moins de matchs, buts, note"],
+          ["⚽ Le Serial Buteur (podium)","Le plus de buts","½ des matchs","moins de matchs, passes, note"]])+
+        "<p>Bimestres : sept–oct, nov–déc, janv–févr, mars–avr, mai–juin (juil–août sauté s'il y a moins de 2 matchs).</p>"+
+        "<p>La cérémonie se lance à la 1re ouverture après la fin du bimestre. Notif le 1er du mois après 11 h : une pour tous (sans noms), une perso pour les lauréats.</p>"],
+      ["saisons","🎨","Les saisons","Thèmes, Team of the Season, farce",
+        live+table(["Thème","Dates","Annonce WhatsApp"],sc.map(x=>[x.ic+" "+esc(x.name),x.start===x.end?jm(x.start):jm(x.start)+" → "+jm(x.end),
+          x.k==="poisson"?"🤫 Surtout pas":x.k==="nouvelan"?"Non, suit Noël":x.k==="tots"?"Oui":"Teaser conseillé"]))+
+        "<p>Notif mystère pour tous au début d'Halloween, Noël et Bonne année (dès 10 h). Les images partagées gardent toujours le look d'origine.</p>"+
+        '<p class="cn-f">Team of the Season : 3 pts/but · 2/passe · 4/MVP · 1/match</p>'+
+        "<p>Au moins ¼ des matchs joués. Gardiens : les deux meilleurs GAR ≥ "+GK_MIN+". Toucher une carte montre le détail des points.</p>"+
+        "<p>Poisson d'avril : le 1er avril dès 11 h, chacun reçoit « tu es élu MVP ! »… puis le poisson. Ne spoile personne.</p>"],
+      ["notifs","🔔","Les notifs","Qui reçoit quoi",
+        table(["Notif","Pour qui"],[["Convocation, transfert, match annulé","Les concernés"],["Rappels J-1 et H-2","Les convoqués"],["But en direct","Tous (coupé par défaut)"],["Compte rendu, révélation MVP, Hall of Fame, thèmes","Tous"],["Vote du MVP","Identifiés de la compo"],["Tes notes ont évolué, réponse photo","Le joueur"],["Photo à valider, « C'est moi », votes, MVP manquant","Les orgas"]])+
+        "<p>Le script passe toutes les 15 min. Une notif n'arrive que sur les téléphones qui les ont acceptées : pour toucher tout le monde, WhatsApp reste utile.</p>"],
+      ["maj","🛠️","Le vestiaire technique","Où trouver l'appli, et toutes ses versions",
+        '<div class="cn-k"><span>📱 <b>iPhone</b> · Safari › Partager › Sur l\'écran d\'accueil</span><span>🤖 <b>Android</b> · Chrome › Installer l\'application</span><span>⌚ <b>Pixel Watch</b> · le Live au poignet</span></div>'+
+        "<p>L'appli s'installe depuis le navigateur du téléphone, sans passer par un store. Elle se met à jour toute seule à chaque nouvelle version.</p>"+
+        '<p class="cn-live">● Toutes les versions</p><ul class="cn-news">'+CARNET_NEWS.map((n,i)=>'<li'+(i>=5?' class="cn-old" hidden':"")+'><i>'+n[2]+"</i><span><b>"+(n[0]?n[0]+" · ":"")+n[1]+"</b>"+esc(n[3])+"</span></li>").join("")+"</ul>"+
+        (CARNET_NEWS.length>5?'<button type="button" class="cn-more" aria-expanded="false">📜 Voir tout l\'historique ('+CARNET_NEWS.length+" étapes)</button>":"")]
+    ];
+    B.innerHTML='<div class="cn-intro">Psst, coach. Tout ce que l\'appli calcule dans ton dos est rangé ici. <b>Touche ce que tu veux voir.</b><small id="cnVer">Les chiffres marqués ● viennent de tes réglages actuels.</small></div>'+
+      '<p class="cn-ask">Tu cherches quoi ?</p><div class="cn-tiles">'+D.map(d=>'<button type="button" class="cn-tile" data-cn="'+d[0]+'" aria-pressed="false" aria-controls="cnPanel"><i>'+d[1]+"</i><span>"+d[2]+"</span></button>").join("")+"</div>"+
+      '<div class="cn-panel" id="cnPanel" hidden aria-live="polite"></div>';
+    const P=$("#cnPanel");
+    const paint=()=>{ const d=D.find(x=>x[0]===carnetOpen);
+      B.querySelectorAll(".cn-tile").forEach(t=>t.setAttribute("aria-pressed",t.dataset.cn===carnetOpen?"true":"false"));
+      if(!d){ P.hidden=true; P.innerHTML=""; return; }
+      P.innerHTML='<div class="cn-ph"><i>'+d[1]+"</i><span><b>"+d[2]+"</b><small>"+d[3]+'</small></span><button type="button" class="cn-x" aria-label="Fermer">✕</button></div><div class="cn-b">'+d[4]+"</div>";
+      P.dataset.cn=d[0]; P.hidden=false;
+      P.querySelector(".cn-x").addEventListener("click",()=>{ carnetOpen=""; paint(); });
+      const more=P.querySelector(".cn-more"); if(more)more.addEventListener("click",()=>{ const on=more.getAttribute("aria-expanded")!=="true";
+        P.querySelectorAll(".cn-old").forEach(li=>li.hidden=!on); more.setAttribute("aria-expanded",on?"true":"false");
+        more.textContent=on?"Replier l'historique":"📜 Voir tout l'historique ("+CARNET_NEWS.length+" étapes)"; }); };
+    B.querySelectorAll(".cn-tile").forEach(t=>t.addEventListener("click",()=>{ carnetOpen=carnetOpen===t.dataset.cn?"":t.dataset.cn; paint();
+      if(carnetOpen)setTimeout(()=>P.scrollIntoView({behavior:"smooth",block:"nearest"}),40); }));
+    paint();
+    carnetVersion().then(v=>{ const e=$("#cnVer"); if(e)e.textContent="Version "+v+" de l'appli · les chiffres marqués ● viennent de tes réglages actuels."; });
+  }
   /* ---- Pondération des stats (organisateurs) ---- */
   let balDraft=null, balDirty=false;
   function renderBalance(){
