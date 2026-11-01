@@ -3798,6 +3798,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       }catch(e){ parts.length=0; } } };
     await Promise.all([worker(),worker(),worker()]);
   }
+  /* attend que les photos de ces joueurs soient chargées (ouverture à froid depuis une notif), sans jamais bloquer plus de ms */
+  async function waitPhotos(ids,ms){
+    const end=Date.now()+(ms||4000), ps=()=>ids.map(byId).filter(Boolean);
+    while(Date.now()<end&&ps().some(p=>p.photoId&&!p.photo))await new Promise(r=>setTimeout(r,150));
+    await Promise.race([Promise.all(ps().map(p=>getImg(p.photo).promise)),new Promise(r=>setTimeout(r,Math.max(0,end-Date.now())))]);
+  }
   /* photos trop lourdes (anciens fichiers) : réduites à 480 px et renvoyées une fois, par un organisateur */
   const optimizeQueue=[]; let optimizing=false;
   async function runOptimize(){
@@ -4161,7 +4167,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* une carte qui arrive avec la comète, tourne et se retourne */
     const mkCard=(pid,size)=>{ const p=byId(pid), w=el("div","hf-card"); w.style.width=size+"px";
       w.innerHTML='<div class="hf-face hf-back">FUT<small>5V5</small></div>'; const cv=el("canvas","hf-face hf-front"); w.appendChild(cv);
-      drawCard(cv,Object.assign({},p,{fond:"hof"}),.8); return w; };
+      drawCard(cv,Object.assign({},p,{fond:"hof"}),.8);
+      if(p&&p.photoId)waitPhotos([pid],8000).then(()=>{ const q=byId(pid); if(cv.isConnected&&q&&q.photo)drawCard(cv,Object.assign({},q,{fond:"hof"}),.8); }).catch(()=>{});
+      return w; };
     const comet=(target,big)=>{ const r=target.getBoundingClientRect(), x1=r.left+r.width/2, y1=r.top+r.height/2, dur=big?1300:800;
       if(!big)duck(.09,250); comets.push({t0:clk(),dur,x0:x1+(Math.random()-.5)*40,y0:-40,x1,y1,big}); A("whoosh",big); return sleep(dur); };
     const reveal=async(card,big)=>{ card.style.opacity="1";
@@ -4178,7 +4186,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     try{
       /* intro */
       const intro=el("div","hf-intro",'<span>🏛️</span><b>HALL OF FAME</b><small>'+esc(hof.label)+' · '+hof.n+' matchs</small>'); scene.appendChild(intro);
-      requestAnimationFrame(()=>intro.classList.add("on")); A("cheer",2.6,false); await sleep(2800); if(done)return; await clear(); if(done)return;
+      requestAnimationFrame(()=>intro.classList.add("on")); A("cheer",2.6,false);
+      const hofIds=[].concat(hof.fidele||[],hof.caviar||[],hof.buteur||[]).filter(Boolean).map(r=>r.id);
+      await Promise.all([sleep(2800),waitPhotos(hofIds,5000)]); if(done)return; await clear(); if(done)return;
       /* 1. le fidèle au poste */
       if(hof.fidele[0]){ const r=hof.fidele[0]; header("fidele");
         const slot=el("div","hf-solo"), card=mkCard(r.id,Math.min(innerWidth*.42,200)); slot.appendChild(card); scene.appendChild(slot); await sleep(700); if(done)return;
@@ -4724,7 +4734,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
     /* carte : face du MVP (fond « forme ») dessinée dès que possible */
     const cv=ov.querySelector(".mx-front"), draw=()=>drawCard(cv,Object.assign({},p,{fond:SK&&SK!=="poisson"?"or":"forme",mvp:true,mvpN:mvpTotal(p.id,rec)}),.8); draw();
-    Promise.race([getImg(p.photo).promise,new Promise(r=>setTimeout(r,1500))]).then(()=>{ if(ov.isConnected)draw(); }).catch(()=>{});
+    waitPhotos([p.id],6000).then(()=>{ const q=byId(p.id); if(q&&q.photo&&!p.photo)p.photo=q.photo; if(ov.isConnected)draw(); }).catch(()=>{});
 
     /* son */
     let audio=null; try{ audio=mvpAudio(); }catch(e){}
