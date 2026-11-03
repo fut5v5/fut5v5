@@ -1,5 +1,5 @@
 /* FUT 5V5 : service worker (installation, ouverture hors connexion, mises à jour) */
-const VERSION = 'fut5v5-2026-11-01-50-retour-carnet';
+const VERSION = 'fut5v5-2026-11-03-52-gardiens';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/badge-96.png'];
 
@@ -38,7 +38,7 @@ self.addEventListener('push', e => {
   const m = d.data || d.notification || d;
   const title = m.title || 'FUT 5V5';
   /* thème de saison (envoyé par le serveur) : icône et rythme de vibration du thème (Android) */
-  const S = { halloween: [90, 60, 90, 60, 90, 60, 320], noel: [60, 40, 60, 40, 60, 40, 60, 160, 220], nouvelan: [120, 60, 120, 60, 420], poisson: [40, 40, 40, 40, 40], tots: [220, 90, 220] };
+  const S = { halloween: [90, 60, 90, 60, 90, 60, 320], noel: [60, 40, 60, 40, 60, 40, 60, 160, 220], nouvelan: [120, 60, 120, 60, 420], poisson: [40, 40, 40, 40, 40] };
   const se = S[m.season] ? m.season : '';
   e.waitUntil(self.registration.showNotification(title, {
     body: m.body || '', icon: se ? 'icons/saison-' + se + '.png' : 'icons/icon-192.png', badge: 'icons/badge-96.png',
