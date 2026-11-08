@@ -995,6 +995,29 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .seg.vsw button span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
 .seg.vsw button small{font-size:.72rem;font-weight:600;opacity:.75}
 .seg.vsw button[aria-pressed="true"]{color:#0c1a3d;box-shadow:0 4px 14px rgba(233,199,106,.35)}
+/* Team of the Season : cérémonie */
+.tt-scene{justify-content:center;padding:70px 16px 24px;gap:10px}
+.tt-intro{text-align:center;opacity:0;transform:scale(.85);transition:opacity .6s,transform .8s cubic-bezier(.2,1.4,.4,1)}
+.tt-intro.on{opacity:1;transform:none} .tt-intro.out{opacity:0;transform:scale(1.1)}
+.tt-intro span{display:block;font-size:4rem} .tt-intro small{display:block;letter-spacing:.3em;color:#e9c76a;font-weight:700}
+.tt-intro b{display:block;font:italic 900 3.4rem/.95 'Barlow Condensed',sans-serif;color:#fff3c4;margin:8px 0;text-shadow:0 0 30px rgba(233,199,106,.5)}
+.tt-intro em{font-style:normal;color:#cfd8ee} .tt-demo{display:inline-block;margin-bottom:14px;border:1px solid #6ff5dc;color:#6ff5dc;border-radius:999px;padding:3px 12px;font-size:.8rem;letter-spacing:.08em}
+.tt-stage{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;opacity:0;transform:translateY(40px) scale(.9);transition:opacity .45s,transform .6s cubic-bezier(.2,1.3,.4,1)}
+.tt-stage.on{opacity:1;transform:none} .tt-stage.out{opacity:0;transform:translateY(-30px)}
+.tt-rk{font:italic 900 2.4rem 'Barlow Condensed',sans-serif;color:#e9c76a} .tt-top .tt-rk{font-size:2.8rem} .tt-one .tt-rk{font-size:3.4rem;text-shadow:0 0 24px rgba(233,199,106,.7)}
+.tt-nm{font:800 1.6rem 'Barlow Condensed',sans-serif} .tt-gk{color:#6ff5dc;font-size:1rem} .tt-ln{color:#cfd8ee;font-size:1rem} .tt-ln b{color:#e9c76a}
+.tt-bench{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;justify-content:center;gap:6px;flex-wrap:wrap;padding:0 10px}
+.tt-b{display:flex;flex-direction:column;align-items:center;animation:ttb .5s ease-out} .tt-b small{color:#e9c76a;font-weight:700}
+@keyframes ttb{from{opacity:0;transform:translateY(-60px) scale(1.4)}to{opacity:1;transform:none}}
+.tt-pod{opacity:0;transition:opacity .5s} .tt-pod.on{opacity:1} .tt-pod h3{font:italic 900 3rem 'Barlow Condensed',sans-serif;color:#fff3c4;margin:0;animation:ttpulse 1s ease-in-out infinite}
+@keyframes ttpulse{50%{transform:scale(1.08)}}
+.tt-cf{position:absolute;top:-12px;width:9px;height:14px;z-index:6;border-radius:2px;animation:ttcf linear forwards;pointer-events:none}
+@keyframes ttcf{to{transform:translateY(110vh) rotate(720deg)}}
+.tt-final{text-align:center;opacity:0;transition:opacity .6s;width:100%;max-width:520px} .tt-final.on{opacity:1}
+.tt-final .tt-eb{color:#e9c76a;letter-spacing:.2em;font-weight:700;font-size:.85rem} .tt-final h2{font:italic 900 2.4rem 'Barlow Condensed',sans-serif;color:#fff3c4;margin:4px 0 12px}
+.tt-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px 4px;justify-items:center} .tt-it{display:flex;flex-direction:column;align-items:center;gap:2px} .tt-it b{font-size:.78rem;white-space:nowrap}
+.tt-btns{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.tt-cf{display:none}.tt-pod h3{animation:none}}
 .adj-btn{border:2px solid var(--gold)!important}
 .adj-btn .adj-ic{font-size:1.7rem;line-height:1}
 .adj-btn .adj-n{margin-left:auto;background:var(--gold);color:#0c1a3d;border-radius:999px;font-weight:800;padding:2px 10px;font-size:1rem}
@@ -1554,14 +1577,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       </div>
       <div class="ev">
         <h4>🏆 Team of the Season</h4>
-        <p class="rg-status">En fin de saison (juin) : les 10 meilleurs de la saison sur le terrain. Score : 3 par but, 2 par passe, 6 par titre de MVP, 1 par match ; un gardien garanti. La cérémonie animée et sa notif arriveront avec la 1re fin de saison. L'aperçu montre le classement à ce jour, sur ton téléphone seulement.</p>
-        <div class="ev-btns"><button type="button" class="mvp-replay" id="evTotsSee">👁 Aperçu (classement à ce jour)</button></div>
+        <p class="rg-status">En fin de saison (juin) : les 10 meilleurs de la saison sur le terrain. Score : 3 par but, 2 par passe, 6 par titre de MVP, 1 par match ; un gardien garanti. L'animation se joue en démo avec le classement à ce jour, sur ton téléphone seulement (la notif pour tout le groupe viendra avec la 1re fin de saison).</p>
+        <div class="ev-btns"><button type="button" class="mvp-replay" id="evTotsPlay">👁 Voir l'animation</button><button type="button" class="mvp-replay" id="evTotsSee">🖼 L'image</button></div>
       </div>
       <p class="rg-status ev-note">Les aperçus ne se jouent que sur ton téléphone et ne préviennent personne.</p>
     </div>
     <div class="pcardbox admin-only" id="seasonBox">
       <h3>🎨 Thèmes de saison</h3>
-      <p class="rg-status">Chaque thème s'active tout seul pour tout le monde à sa date de début (format JJ/MM) et disparaît à sa date de fin. Les joueurs peuvent le couper dans leurs réglages, seulement pour l'événement en cours. « Aperçu » ne change que ton téléphone.</p>
+      <p class="rg-status">Chaque thème s'active tout seul pour tout le monde à sa date de début, à 10 h, en même temps que la notif (format JJ/MM) et disparaît à sa date de fin. Les joueurs peuvent le couper dans leurs réglages, seulement pour l'événement en cours. « Aperçu » ne change que ton téléphone.</p>
       <div id="seasonList"></div>
       <button type="button" class="notify-btn sz-save" id="seasonSave" hidden>💾 Enregistrer les dates</button>
     </div>
@@ -4713,8 +4736,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const mdOf=d=>String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   const fmtMD=md=>{ const [m,d]=String(md).split("-").map(Number); return d+(d===1?"er":"")+" "+["janv.","févr.","mars","avril","mai","juin","juil.","août","sept.","oct.","nov.","déc."][m-1]; };
   const seasonNow=()=>window.FUT5V5_SEASON_NOW?new Date(window.FUT5V5_SEASON_NOW):new Date();
+  const SEASON_HOUR=10;   /* le thème change à 10 h le 1er jour, quand la notif part (script : déclencheur horaire à partir de 10 h) */
   function seasonAt(d){ const t=mdOf(d);
     for(const x of seasonCfg()){ const a=x.start, b=x.end; if(!a||!b)continue;
+      if(t===a&&d.getHours()<SEASON_HOUR)continue;
       if(a<=b?(t>=a&&t<=b):(t>=a||t<=b)) return {k:x.k,id:x.k+"-"+((a>b&&t<=b)?d.getFullYear()-1:d.getFullYear())}; }
     return null; }
   function computeSeason(){
@@ -4841,6 +4866,77 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     $("#ivMsg").textContent="Touche une carte pour voir pourquoi il est dans l'équipe. « Partager » pour chambrer le groupe 😏";
   }
 
+
+  /* ---- Team of the Season : cérémonie animée (v55). Du 10e au 1er, podium avec roulement de tambour, écran final.
+     Pause en touchant l'animation (ou ⏸). opt.demo : aperçu organisateur, classement à ce jour. ---- */
+  async function playTots(opt){
+    opt=opt||{}; if(document.querySelector(".mx"))return;
+    const team=totsTen(); if(!team.length){ toast("Pas encore assez de matchs cette saison pour la Team of the Season."); return; }
+    const ov=document.createElement("div"); ov.className="mx hf tt"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label","Team of the Season");
+    ov.innerHTML='<div class="mx-bg"><div class="mx-stands"></div><div class="mx-lights"></div><div class="mx-floor"></div></div><div class="hf-scene tt-scene"></div>'+
+      '<button type="button" class="mx-btn mx-sound" aria-label="Son"></button><button type="button" class="mx-btn mx-pause" aria-label="Pause">⏸</button><button type="button" class="mx-btn mx-skip">Passer ⏭</button>';
+    const lights=ov.querySelector(".mx-lights"); for(let i=0;i<9;i++){ const e=document.createElement("i"), u=i/8; e.style.left=(6+u*88)+"%"; e.style.top=(Math.pow(u-.5,2)*120)+"%"; lights.appendChild(e); }
+    document.body.appendChild(ov); document.body.style.overflow="hidden"; requestAnimationFrame(()=>ov.classList.add("on","p-lights"));
+    const scene=ov.querySelector(".tt-scene"), esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+    let done=false, paused=false, pauseT0=0, pauseSum=0, ptag=null; const clk=()=>(paused?pauseT0:performance.now())-pauseSum;
+    let skipR; const skipP=new Promise(r=>skipR=r);
+    const sleep=ms=>Promise.race([new Promise(r=>{ const end=clk()+ms, tick=()=>{ if(done)return r(); if(clk()>=end)r(); else setTimeout(tick,60); }; tick(); }),skipP]);
+    /* son : musique du Hall of Fame + roulement avant le podium */
+    const mus=new Audio(window.FUT5V5_HOF_MUSIC||"hall-of-fame-musique.mp3"), roll=new Audio(window.FUT5V5_HOF_ROLL||"hall-of-fame-roulement.mp3");
+    [mus,roll].forEach(a=>{ a.preload="auto"; a.muted=!soundOn(); }); mus.volume=.35; mus.loop=true;
+    const sb=ov.querySelector(".mx-sound"), paint=()=>{ sb.textContent=soundOn()?"🔊":"🔇"; }; paint();
+    sb.addEventListener("click",()=>{ const on=!soundOn(); try{localStorage.setItem(MVP_SOUND_KEY,on?"1":"0")}catch(e){} paint(); mus.muted=roll.muted=!on; if(on&&!paused)mus.play().catch(()=>{}); });
+    mus.play().catch(()=>{ ov.addEventListener("pointerdown",()=>{ if(!paused)mus.play().catch(()=>{}); },{once:true}); });
+    const pb=ov.querySelector(".mx-pause");
+    const setPause=p=>{ if(done||p===paused)return; paused=p;
+      if(p){ pauseT0=performance.now(); ov.classList.add("hf-paused"); ov.getAnimations({subtree:true}).forEach(a=>{ try{a.pause()}catch(e){} }); try{mus.pause();roll.pause();}catch(e){}
+        pb.textContent="▶"; ptag=document.createElement("div"); ptag.className="hf-pausetag"; ptag.textContent="⏸ PAUSE · touche pour reprendre"; ov.appendChild(ptag); }
+      else{ pauseSum+=performance.now()-pauseT0; ov.classList.remove("hf-paused"); ov.getAnimations({subtree:true}).forEach(a=>{ try{ if(a.playState==="paused")a.play(); }catch(e){} }); mus.play().catch(()=>{});
+        pb.textContent="⏸"; if(ptag){ ptag.remove(); ptag=null; } } };
+    pb.addEventListener("click",()=>setPause(!paused));
+    ov.addEventListener("click",e=>{ if(done||e.target.closest("button,a"))return; setPause(!paused); });
+    const close=()=>{ if(done)return; done=true; skipR(); try{mus.pause();roll.pause();}catch(e){} ov.classList.add("out");
+      setTimeout(()=>{ ov.remove(); if($("#report").hidden&&$("#live").hidden)document.body.style.overflow=""; },320); };
+    ov.querySelector(".mx-skip").addEventListener("click",()=>{ if(scene.querySelector(".tt-final"))close(); else { done=true; skipR(); final(); } });
+    const el=(t,c,h)=>{ const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; };
+    const card=(x,w)=>{ const cv=document.createElement("canvas"); drawCard(cv,Object.assign({},x.p,{fond:"or",fondFixed:true}),w/W); cv.style.width=w+"px"; return cv; };
+    const line=x=>(x.gk&&x.gkStat?"🧤 "+svTxt(x.gkStat.sv)+" "+svLab(x.gkStat.sv)+" · ":"")+x.s.g+" but"+(x.s.g>1?"s":"")+" · "+x.s.a+" passe"+(x.s.a>1?"s":"")+(x.s.mvp?" · "+x.s.mvp+" MVP":"")+" · "+x.s.mp+" matchs";
+    const confetti=n=>{ for(let i=0;i<n;i++){ const c=el("i","tt-cf"); c.style.left=Math.random()*100+"%"; c.style.background=["#e9c76a","#fff3c4","#6ff5dc","#ff8fb1","#8fd0ff"][i%5];
+      c.style.animationDelay=(Math.random()*.6)+"s"; c.style.animationDuration=(2.2+Math.random()*1.6)+"s"; ov.appendChild(c); setTimeout(()=>c.remove(),4600); } };
+    const bench=el("div","tt-bench");
+    function final(){ scene.innerHTML=""; done=false;
+      const f=el("div","tt-final",'<div class="tt-eb">'+(opt.demo?"APERÇU · CLASSEMENT À CE JOUR":"SAISON "+esc(seasonLabel(CUR_SEASON)))+'</div><h2>TEAM OF THE SEASON</h2>');
+      const g=el("div","tt-grid"); team.forEach((x,i)=>{ const it=el("div","tt-it"); it.appendChild(card(x,Math.min(innerWidth*.17,92))); it.appendChild(el("b",null,"#"+(i+1)+" "+esc(x.p.name.split(" ")[0])+(x.gk?" 🧤":""))); g.appendChild(it); });
+      f.appendChild(g); const bt=el("div","tt-btns");
+      const im=el("button","hf-close","🖼 L'image à partager"); im.type="button"; im.addEventListener("click",()=>{ close(); setTimeout(openTots,350); });
+      const ok=el("button","hf-close","Fermer"); ok.type="button"; ok.addEventListener("click",close); bt.appendChild(im); bt.appendChild(ok); f.appendChild(bt);
+      scene.appendChild(f); requestAnimationFrame(()=>f.classList.add("on")); }
+    try{
+      await waitPhotos(team.map(x=>x.p.id),4000).catch(()=>{});
+      /* intro */
+      const intro=el("div","tt-intro",(opt.demo?'<div class="tt-demo">APERÇU ORGANISATEUR · CLASSEMENT À CE JOUR</div>':'')+'<span>🏆</span><small>FIN DE SAISON '+esc(seasonLabel(CUR_SEASON))+'</small><b>TEAM OF<br>THE SEASON</b><em>Les 10 meilleurs de la saison</em>');
+      scene.appendChild(intro); requestAnimationFrame(()=>intro.classList.add("on")); await sleep(3600); if(done)return;
+      intro.classList.add("out"); await sleep(500); if(done)return; scene.innerHTML=""; scene.appendChild(bench);
+      /* du 10e au 4e */
+      for(let i=team.length-1;i>=3;i--){ const x=team[i];
+        const st=el("div","tt-stage"); st.appendChild(el("div","tt-rk","#"+(i+1))); st.appendChild(card(x,Math.min(innerWidth*.4,190)));
+        st.appendChild(el("div","tt-nm",esc(x.p.name)+(x.gk?' <span class="tt-gk">🧤 Gardien garanti</span>':''))); st.appendChild(el("div","tt-ln",esc(line(x))));
+        scene.appendChild(st); requestAnimationFrame(()=>st.classList.add("on")); await sleep(2300); if(done)return;
+        st.classList.add("out"); await sleep(350); if(done)return; st.remove();
+        const b=el("div","tt-b"); b.appendChild(card(x,Math.min(innerWidth*.12,58))); b.appendChild(el("small",null,"#"+(i+1))); bench.prepend(b); }
+      /* podium */
+      const pod=el("div","tt-pod","<h3>LE PODIUM</h3>"); scene.appendChild(pod); requestAnimationFrame(()=>pod.classList.add("on"));
+      try{ mus.volume=.12; if(!paused){ roll.currentTime=0; roll.play().catch(()=>{}); } }catch(e){}
+      await sleep(2200); if(done)return; pod.remove();
+      for(let i=Math.min(2,team.length-1);i>=0;i--){ const x=team[i];
+        const st=el("div","tt-stage tt-top"+(i===0?" tt-one":"")); st.appendChild(el("div","tt-rk",i===0?"🥇 N°1":i===1?"🥈 N°2":"🥉 N°3")); st.appendChild(card(x,Math.min(innerWidth*(i===0?.55:.46),i===0?250:215)));
+        st.appendChild(el("div","tt-nm",esc(x.p.name)+(x.gk?' <span class="tt-gk">🧤</span>':''))); st.appendChild(el("div","tt-ln",esc(line(x))+" · <b>"+x.score+" pts</b>"));
+        scene.appendChild(st); requestAnimationFrame(()=>st.classList.add("on")); if(i===0){ try{ mus.volume=.4; }catch(e){} } confetti(i===0?90:35);
+        await sleep(i===0?3800:2800); if(done)return; st.classList.add("out"); await sleep(350); if(done)return; st.remove(); }
+      final();
+    }catch(e){ if(!done)final(); }
+  }
+  window.FUT5V5_TOTS={ play:o=>playTots(o) };
 
   /* ---- Poisson d'avril : la fausse notif « élu Joueur de la saison » ouvre la farce (#farce) ---- */
   function playPrank(){
@@ -5903,6 +5999,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
+    ["v55","9 nov. 2026","🏆","Team of the Season : la cérémonie animée est prête (du 10e au 1er, podium et roulement de tambour). Les orgas peuvent la revoir en démo dans Réglages › Événements. Les thèmes de saison changent à 10 h le 1er jour, en même temps que la notif."],
     ["v54","8 nov. 2026","⚖️","Fini le bureau des plaintes : l\'appli propose d\'ajuster TIR, PAS et GAR d\'après les 3 derniers matchs, les orgas acceptent, ajustent ou refusent. Règles des gardiens et des ajustements expliquées pas à pas dans le carnet."],
     ["v53","8 nov. 2026","🧤","Meilleur gardien aux « buts évités » : le dépanneur de 5 minutes ne passe plus devant le vrai gardien. Le chrono du Live Score part au bouton « ▶ Coup d\'envoi » (annulable tant qu\'il n\'y a pas de but). Réglages › Événements : durée du vote MVP et aperçu de la Team of the Season. Pause en touchant les animations. Règles des gardiens et de la Team of the Season dans le carnet. Statistiques : gros bouton Tableau / Cartes, catégorie 🧤 Gardien, Hall of Fame seulement dans Général. Fiche joueur : glisse à gauche / à droite pour changer d\'onglet, un peu plus compacte. Convocation : « prévenus le … par … »."],
     ["v52","3 nov. 2026","🧤","Les gardiens entrent dans les stats : pastille 🧤 sur la montre et le Live Score, meilleur gardien de chaque match, vrai temps de jeu pour tout le monde. Plus de thème bleu en juin : la Team of the Season aura sa propre cérémonie. Numéro de version en bas des Réglages."],
@@ -6039,7 +6136,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         "<ul><li>Minimum : avoir joué au moins ¼ des matchs de la saison.</li>"+
         "<li>Égalité : titres de MVP, puis points de victoire (3 par victoire, 1 par nul), buts, passes, le moins de matchs, puis la note générale.</li>"+
         "<li><b>Un gardien garanti</b> : le meilleur gardien de la saison (voir 🧤 Les gardiens) ; s'il n'est pas déjà dans les 10, il prend la 10e place.</li></ul>"+
-        "<p>Les orgas peuvent voir le classement à ce jour dans Réglages › Événements. La cérémonie animée et sa notif arriveront avec la 1re fin de saison.</p>"],
+        "<p>La cérémonie animée (du 10e au 1er, podium avec roulement de tambour) se revoit en démo dans Réglages › Événements › « 👁 Voir l'animation », avec le classement à ce jour ; « 🖼 L'image » donne l'image à partager. Toucher l'animation la met en pause. La notif pour tout le groupe et le lancement en fin de saison viendront avec une mise à jour du script.</p>"],
       ["saisons","🎨","Les saisons","Thèmes de saison, farce",
         live+table(["Thème","Dates","Annonce WhatsApp"],sc.map(x=>[x.ic+" "+esc(x.name),x.start===x.end?jm(x.start):jm(x.start)+" → "+jm(x.end),
           x.k==="poisson"?"🤫 Surtout pas":x.k==="nouvelan"?"Non, suit Noël":"Teaser conseillé"]))+
@@ -6147,6 +6244,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#evHofRes").addEventListener("click",()=>{ const d=hofDone(); if(d.length)playHof(d[0],{direct:true}); else toast("Pas encore de Hall of Fame terminé."); });
   $("#evMvpSee").addEventListener("click",()=>{ const rec=matches.find(m=>m.mvp); if(!rec){ toast("Pas encore de MVP désigné."); return; } lastReveal={id:"",t:0}; playMvpReveal(rec); });
   $("#evTotsSee").addEventListener("click",()=>openTots());
+  $("#evTotsPlay").addEventListener("click",()=>playTots({demo:true}));
   function renderReglages(){
     renderVoteSetting(); try{ renderSeasonSettings(); }catch(e){} try{ if(isAdmin())renderBalance(); }catch(e){} try{ renderEvents(); }catch(e){}
     try{ rgSum("seasonBox",SEASON_RAW?"En cours : "+(((SEASONS.find(x=>x.k===SEASON_RAW.k))||{}).ic||"")+" "+(((SEASONS.find(x=>x.k===SEASON_RAW.k))||{}).name||SEASON_RAW.k):""); }catch(e){}
@@ -6262,7 +6360,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 54 · 8 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 55 · 9 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
