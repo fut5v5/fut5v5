@@ -749,6 +749,10 @@ input[type="datetime-local"],input[type="search"],input[type="text"]{color-schem
 /* ---------- Hall of Fame (réutilise le décor et les boutons de la révélation MVP) ---------- */
 .fete.hofhome{background:linear-gradient(135deg,rgba(233,199,106,.2) 0 16%,transparent 16% 100%),radial-gradient(90% 70% at 20% 30%,#1d47d6 0%,#0b1f7a 60%,#040b36 100%)}
 .fete.hofhome .fete-t{background:rgba(4,12,60,.6)}
+/* Team of the Season / Joueur de la saison : blanc et or (maquette « Récompenses dans l'appli ») */
+.fete.tots{background:linear-gradient(135deg,rgba(255,243,196,.22) 0 16%,transparent 16% 100%),radial-gradient(90% 70% at 20% 30%,#3b3324 0%,#17140e 60%,#080705 100%)}
+.fete.jds{background:linear-gradient(135deg,rgba(255,243,196,.3) 0 16%,transparent 16% 100%),radial-gradient(90% 70% at 20% 30%,#5a4417 0%,#1d160a 60%,#090704 100%);border-color:#f3d888}
+.fete.tots.fete-mini,.fete.jds.fete-mini{background:none}
 .hof-open{margin-left:auto;border:1.5px solid var(--gold);background:transparent;color:var(--gold);border-radius:999px;padding:6px 12px;font:700 .85rem 'Barlow',sans-serif;cursor:pointer;white-space:nowrap}
 .hofbs{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
 .hofb{display:inline-flex;align-items:center;gap:1px;padding:1px 5px;border-radius:999px;background:linear-gradient(135deg,#1d47d6,#0e2aa0);border:1px solid #e9c76a;font-size:.72rem;line-height:1.3}
@@ -1233,6 +1237,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       </button>
       <button type="button" class="me-chg" id="meChg" hidden aria-label="Changer le visuel de ma carte">🎴 Changer le visuel</button>
       <button type="button" class="votebar" id="meVote" hidden></button>
+      <div class="fete totshome" id="meTots" hidden></div>
       <div class="fete" id="meFete" hidden></div>
       <div class="fete hofhome" id="meHof" hidden></div>
       <div class="me-news" id="meNews" hidden></div>
@@ -1556,7 +1561,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <div class="ev">
         <h4>🏆 Team of the Season</h4>
         <p class="rg-status">En fin de saison (juin) : les 10 meilleurs de la saison sur le terrain. Score : 3 par but, 2 par passe, 6 par titre de MVP, 1 par match ; un gardien garanti. L'animation se joue en démo avec le classement à ce jour, sur ton téléphone seulement (la notif pour tout le groupe viendra avec la 1re fin de saison).</p>
-        <div class="ev-btns"><button type="button" class="mvp-replay" id="evTotsPlay">👁 Voir l'animation</button><button type="button" class="mvp-replay" id="evTotsSee">🖼 L'image</button></div>
+        <div id="evTotsCfg" hidden>
+          <p class="ev-lab">Soirée de fin de saison (ferme la saison, notif pour tout le groupe)</p>
+          <div class="rg-row"><span>Date (JJ/MM)</span><input id="evTotsDate" class="vote-sel" style="width:6.5em;margin:0" inputmode="numeric" maxlength="5" aria-label="Date de la soirée (JJ/MM)"></div>
+          <div class="rg-row"><span>Heure</span><select id="evTotsHeure" class="vote-sel" style="width:auto;margin:0" aria-label="Heure de la soirée"></select></div>
+          <button type="button" class="notify-btn sz-save" id="evTotsSave" hidden>💾 Enregistrer</button>
+          <p class="rg-status" id="evTotsState"></p>
+        </div>
+        <div class="ev-btns"><button type="button" class="mvp-replay" id="evTotsPlay">👁 Voir l'animation</button><button type="button" class="mvp-replay" id="evTotsSee">⏩ Le résultat</button><button type="button" class="mvp-replay" id="evTotsGo" hidden>🚀 Lancer maintenant</button></div>
       </div>
       <p class="rg-status ev-note">Les aperçus ne se jouent que sur ton téléphone et ne préviennent personne.</p>
     </div>
@@ -1596,6 +1608,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     <div class="seg" role="group" aria-label="Trophées" id="trTabs">
       <button type="button" data-tr="hof" aria-pressed="true">🏛️ Hall of Fame</button>
       <button type="button" data-tr="pal" aria-pressed="false">Palmarès</button>
+      <button type="button" data-tr="tots" aria-pressed="false" hidden>🏆 Team of the Season</button>
     </div>
     <div id="trBody"></div>
   </section>
@@ -1765,6 +1778,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       if(started){ const h=computeHof(k); if(h)setTimeout(()=>playHof(h),300); } else pendingHof=k; }
     if(/^mur-\d{4}-\d{2}$/.test(route)){ const k=route.slice(4); history.replaceState(null,"",location.pathname+location.search); route="";
       if(started)setTimeout(()=>playMurSpecial(k,true),300); else pendingMur=k; }
+    if(route==="tots-ceremonie"){ history.replaceState(null,"",location.pathname+location.search); route=""; setTimeout(()=>autoTots(true),started?300:2000); }
     if(route==="tots"){ history.replaceState(null,"",location.pathname+location.search); route=""; setTimeout(()=>openTots(),started?300:1200); }
     if(route==="ajustements"){ history.replaceState(null,"",location.pathname+location.search); route=""; setTimeout(()=>{ if(isAdmin())openAdjust(); },started?300:1500); }
     if(route==="farce"){ history.replaceState(null,"",location.pathname+location.search); route=""; setTimeout(()=>playPrank(),started?200:900); }
@@ -1857,8 +1871,17 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     c.lineTo(20,450); c.quadraticCurveTo(0,442,0,424); c.lineTo(0,404); c.lineTo(8,396); c.lineTo(0,388);
     c.closePath();
   }
+  /* silhouette Team of the Season : corps plus étroit, crête pointue en haut ; les ornements sont dessinés par-dessus le cadre */
+  function pathToty(c){
+    c.beginPath();
+    c.moveTo(10,72); c.bezierCurveTo(32,68,46,54,50,36); c.quadraticCurveTo(112,32,150,28);
+    c.quadraticCurveTo(170,26,180,10); c.quadraticCurveTo(190,26,210,28); c.quadraticCurveTo(248,32,310,36);
+    c.bezierCurveTo(314,54,328,68,350,72); c.lineTo(350,410);
+    c.bezierCurveTo(350,440,328,452,290,462); c.bezierCurveTo(236,474,198,484,180,504); c.bezierCurveTo(162,484,124,474,70,462);
+    c.bezierCurveTo(32,452,10,440,10,410); c.closePath();
+  }
   function cardPath(c){
-    if(CARD_SHAPE==="icon")return pathIcon(c);
+    if(CARD_SHAPE==="icon")return pathIcon(c); if(CARD_SHAPE==="toty")return pathToty(c);
     c.beginPath();
     c.moveTo(0,52);
     c.bezierCurveTo(22,48,40,34,44,12);
@@ -1914,8 +1937,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     halloween:{shadow:"#2a0f3a",ink:"#ffffff",name:"#ffb35c",lab:"#d9b8ff",val:"#ffffff",sep:"rgba(255,138,31,.45)",q:"rgba(255,180,120,.42)",shieldStroke:"#ff8a1f",heartStroke:"#ffffff",starStroke:"#ffe0b0"},
     noel:{shadow:"#7fa9c9",ink:"#0c2a4a",name:"#0a2240",lab:"#2f5f8a",val:"#0c2a4a",sep:"rgba(40,90,140,.35)",q:"rgba(60,100,140,.4)",shieldStroke:"#2f5f8a",heartStroke:"#7a0a14",starStroke:"#2f5f8a"},
     nouvelan:{shadow:"#000000",ink:"#f7e3a1",name:"#ffffff",lab:"#d9c27a",val:"#ffffff",sep:"rgba(233,199,106,.45)",q:"rgba(233,199,106,.35)",shieldStroke:"#f7e3a1",heartStroke:"#ffffff",starStroke:"#fff3c4"},
-    poisson:Object.assign({},THEMES.or)};
+    poisson:Object.assign({},THEMES.or),
+    marbre:{shadow:"#a88a46",ink:"#2a2112",name:"#1a140a",lab:"#7a5d1e",val:"#1f180b",sep:"rgba(150,115,40,.45)",q:"rgba(120,100,60,.4)",shieldStroke:"#7a5d1e",heartStroke:"#5a0a14",starStroke:"#7a5d1e"}};
   const seasonSkin=(canvas,p)=>{
+    /* Team of the Season : carte marbre et or (choisie ou par défaut pour les 10, jusqu'à la reprise de septembre) */
+    if(p&&p.fond==="tots"&&!(canvas&&canvas.id==="cardCanvas"))return "marbre";
     if(!p||(p.fond&&p.fond!=="or")||(canvas&&canvas.id==="cardCanvas"))return null;
     if(p.noSeason)return null;
     return (typeof SEASON!=="undefined"&&SEASON)?SEASON.k:null;
@@ -1943,11 +1969,44 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       for(let i=0;i<70;i++){ c.save(); c.translate(rnd()*360,rnd()*400); c.rotate(rnd()*6.28); c.fillStyle=cols[i%cols.length]; c.globalAlpha=.35+rnd()*.6; c.fillRect(-3,-1.5,6+rnd()*5,3); c.restore(); }
       const sp=(x,y,r)=>{ c.fillStyle="#fff3c4"; c.beginPath(); c.moveTo(x,y-r); c.quadraticCurveTo(x,y,x+r,y); c.quadraticCurveTo(x,y,x,y+r); c.quadraticCurveTo(x,y,x-r,y); c.quadraticCurveTo(x,y,x,y-r); c.fill(); };
       sp(270,80,20); sp(310,130,10); sp(225,120,7);
+    } else if(k==="marbre"){
+      g.addColorStop(0,"#fbfbf9"); g.addColorStop(.5,"#ecebe7"); g.addColorStop(1,"#d9d7d1"); c.fillStyle=g; c.fillRect(0,0,360,510);
+      for(let i=0;i<46;i++){ const x=rnd()*360,y=rnd()*510,r=30+rnd()*80,m=c.createRadialGradient(x,y,0,x,y,r); m.addColorStop(0,"rgba(150,150,145,"+(.04+rnd()*.08).toFixed(3)+")"); m.addColorStop(1,"rgba(150,150,145,0)"); c.fillStyle=m; c.fillRect(x-r,y-r,2*r,2*r); }
+      /* veines grises fines */
+      c.lineCap="round";
+      for(let i=0;i<10;i++){ let x=rnd()*360,y=rnd()*510; c.strokeStyle="rgba(120,120,115,"+(.12+rnd()*.15).toFixed(2)+")"; c.lineWidth=.6+rnd(); c.beginPath(); c.moveTo(x,y); for(let j=0;j<8;j++){ x+=(rnd()-.5)*60; y+=rnd()*40; c.lineTo(x,y);} c.stroke(); }
+      /* veines d'or ramifiées (surtout dans le bas) */
+      const vein=(x,y,n,w)=>{ c.beginPath(); c.moveTo(x,y); const pts=[[x,y]]; for(let j=0;j<n;j++){ x+=(rnd()-.5)*46; y+=8+rnd()*26; pts.push([x,y]); c.lineTo(x,y);} c.strokeStyle="#c79a35"; c.lineWidth=w; c.stroke(); c.strokeStyle="rgba(255,240,190,.9)"; c.lineWidth=w*.35; c.stroke(); return pts; };
+      for(let i=0;i<7;i++){ const pts=vein(rnd()*360,250+rnd()*80,6+(rnd()*5|0),1.2+rnd()*1.2); for(let k2=1;k2<pts.length;k2+=2) if(rnd()<.6) vein(pts[k2][0],pts[k2][1],2+(rnd()*3|0),.7+rnd()*.6); }
+      /* deux lames d'or en diagonale */
+      const blade=(x0,y0,x1,y1,w,seed)=>{ const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy),nx=-dy/L*w/2,ny=dx/L*w/2;
+        const bg=c.createLinearGradient(x0+nx,y0+ny,x0-nx,y0-ny); [["#8a6a1e",0],["#f6dd8c",.18],["#c9982f",.4],["#fff3c4",.55],["#b8862a",.75],["#7a5a16",1]].forEach(([col,o])=>bg.addColorStop(o,col));
+        c.fillStyle=bg; c.beginPath(); c.moveTo(x0+nx,y0+ny); c.lineTo(x1+nx*.4,y1+ny*.4); c.lineTo(x1-nx*.4,y1-ny*.4); c.lineTo(x0-nx,y0-ny); c.closePath(); c.fill();
+        c.strokeStyle="rgba(90,66,16,.55)"; c.lineWidth=1; c.stroke();
+        for(let i=0;i<70;i++){ const t=rnd(), o=(rnd()-.5)*w*2.2; c.fillStyle=rnd()<.5?"rgba(212,167,58,.9)":"rgba(255,236,170,.9)"; c.beginPath(); c.arc(x0+dx*t+nx*o/(w/2),y0+dy*t+ny*o/(w/2),.5+rnd()*1.8,0,Math.PI*2); c.fill(); } };
+      blade(-30,300,390,70,52); blade(-30,352,390,170,20);
+      c.strokeStyle="rgba(255,255,255,.95)"; c.lineWidth=1.6; c.beginPath(); c.moveTo(-30,288); c.lineTo(390,62); c.stroke();
+      c.strokeStyle="rgba(255,255,255,.85)"; c.lineWidth=1.6; [[52,96],[86,78],[66,130],[120,104]].forEach(([x,y])=>{ c.beginPath(); c.moveTo(x-5,y); c.lineTo(x+5,y); c.moveTo(x,y-5); c.lineTo(x,y+5); c.stroke(); });
     } else paintGold(c);
-    if(k!=="noel"&&k!=="poisson"){ const v=c.createLinearGradient(0,330,0,510); v.addColorStop(0,"rgba(0,0,0,0)"); v.addColorStop(1,"rgba(0,0,0,.55)"); c.fillStyle=v; c.fillRect(0,330,360,180); }
+    if(k!=="noel"&&k!=="poisson"&&k!=="marbre"){ const v=c.createLinearGradient(0,330,0,510); v.addColorStop(0,"rgba(0,0,0,0)"); v.addColorStop(1,"rgba(0,0,0,.55)"); c.fillStyle=v; c.fillRect(0,330,360,180); }
+  }
+  function totyFrame(c){
+    const fg=c.createLinearGradient(0,0,360,510); [["#fff3c4",0],["#d4a73a",.3],["#8a6a1e",.5],["#f6dd8c",.7],["#b8862a",1]].forEach(([col,o])=>fg.addColorStop(o,col));
+    cardPath(c); c.lineWidth=10; c.strokeStyle="#5c4410"; c.stroke(); cardPath(c); c.lineWidth=7; c.strokeStyle=fg; c.stroke();
+    c.save(); c.translate(180,258); c.scale(.94,.952); c.translate(-180,-258); cardPath(c); c.restore(); c.lineWidth=1.8; c.strokeStyle="rgba(184,134,42,.9)"; c.stroke();
+    /* volutes dorées aux quatre coins, feuilles sur les côtés, médaillon en haut */
+    const curl=(x,y,r,a0,a1,ccw)=>{ c.beginPath(); c.arc(x,y,r,a0,a1,ccw); c.lineCap="round"; c.lineWidth=9; c.strokeStyle="#5c4410"; c.stroke(); c.lineWidth=6; c.strokeStyle=fg; c.stroke();
+      const ex=x+Math.cos(a1)*r, ey=y+Math.sin(a1)*r; c.beginPath(); c.arc(ex,ey,5.5,0,Math.PI*2); c.fillStyle=fg; c.fill(); c.lineWidth=1.5; c.strokeStyle="#5c4410"; c.stroke(); };
+    curl(26,64,16,-.2,Math.PI*1.35,false); curl(334,64,16,Math.PI+.2,-Math.PI*.35,true);
+    curl(14,424,14,-Math.PI*.4,Math.PI*.9,false); curl(346,424,14,Math.PI*1.4,Math.PI*.1,true);
+    const leaf=(x,y,dir)=>{ c.beginPath(); c.moveTo(x,y-26); c.quadraticCurveTo(x+dir*16,y,x,y+26); c.quadraticCurveTo(x+dir*5,y,x,y-26); c.fillStyle=fg; c.fill(); c.lineWidth=1.4; c.strokeStyle="#5c4410"; c.stroke(); };
+    leaf(8,236,-1); leaf(352,236,1);
+    c.beginPath(); c.arc(180,34,13,0,Math.PI*2); c.fillStyle=fg; c.fill(); c.lineWidth=2; c.strokeStyle="#5c4410"; c.stroke();
+    c.beginPath(); for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, rr=i%2?3.4:7.5; i?c.lineTo(180+Math.cos(a)*rr,34+Math.sin(a)*rr):c.moveTo(180+Math.cos(a)*rr,34+Math.sin(a)*rr); } c.closePath(); c.fillStyle="#5c4410"; c.fill();
   }
   function seasonFrame(c,k){
     if(k==="noel"){ iceFrame(c); return; }
+    if(k==="marbre"){ totyFrame(c); return; }
     const fg=c.createLinearGradient(0,0,360,510);
     const st={halloween:["#ffcf8a","#ff8a1f","#a8440a","#ffb35c","#c95a0c"],nouvelan:["#fff3c4","#e9c76a","#b8862a","#f7df95","#c99a2e"]}[k];
     if(!st){ cardPath(c); c.lineWidth=2; c.strokeStyle="rgba(150,110,36,.85)"; c.stroke(); return; }
@@ -2096,6 +2155,24 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     c.beginPath(); c.rect(x-14,y-5,28,3.5); c.fill(); c.stroke();
     [-10,-3.5,3,9.5].forEach(dx=>{ c.beginPath(); c.rect(x+dx-1.2,y-1,3.4,10.5); c.fill(); c.stroke(); });
     c.beginPath(); c.rect(x-15,y+9.5,30,4.5); c.fill(); c.stroke(); c.restore(); }
+  const goldG=(c,y0,y1)=>{ const g=c.createLinearGradient(0,y0,0,y1); g.addColorStop(0,"#fff0a8"); g.addColorStop(.5,"#e2b33f"); g.addColorStop(1,"#a8780e"); return g; };
+  /* Team of the Season : écusson marbre blanc cerclé d'or (A) ou laurier doré autour de « 10 » (B) */
+  function totsIcon(c,x,y){ c.save();
+    const wg=c.createLinearGradient(x,y-16,x,y+16); wg.addColorStop(0,"#ffffff"); wg.addColorStop(1,"#e4e2db");
+    c.beginPath(); c.arc(x,y,15.5,0,Math.PI*2); c.fillStyle=wg; c.fill(); c.lineWidth=5.5; c.strokeStyle="#3a2a00"; c.stroke(); c.lineWidth=3.5; c.strokeStyle=goldG(c,y-16,y+16); c.stroke();
+    c.fillStyle=goldG(c,y-11,y+11); c.strokeStyle="#6b4e0a";
+    for(let i=0;i<5;i++){ const th=(28+i*29)*Math.PI/180; [-1,1].forEach(sd=>{ const px=x+sd*Math.sin(th)*9.6, py=y+Math.cos(th)*9.6; c.save(); c.translate(px,py); c.rotate(Math.atan2(-Math.sin(th),sd*Math.cos(th))); c.beginPath(); c.ellipse(0,0,3.6,1.7,0,0,Math.PI*2); c.fill(); c.lineWidth=.6; c.stroke(); c.restore(); }); }
+    c.font="800 11px "+FONT; c.textAlign="center"; c.textBaseline="middle"; c.fillStyle="#7a5d1e"; c.fillText("10",x,y+.5);
+    c.restore(); }
+  /* médaille du Joueur de la saison, en haut à droite, avec ×N */
+  function jdsMedal(c,x,y,n){ c.save(); const R=31;
+    c.shadowColor="rgba(0,0,0,.45)"; c.shadowBlur=10; c.shadowOffsetY=4;
+    c.fillStyle="#b3261e"; c.strokeStyle="#3a0a06"; c.lineWidth=1.4; [-1,1].forEach(sd=>{ c.beginPath(); c.moveTo(x+sd*6,y+R*.5); c.lineTo(x+sd*18,y+R+20); c.lineTo(x+sd*10,y+R+14); c.lineTo(x+sd*5,y+R+22); c.lineTo(x-sd*4,y+R*.6); c.closePath(); c.fill(); c.stroke(); });
+    c.beginPath(); c.arc(x,y,R,0,Math.PI*2); c.fillStyle=goldG(c,y-R,y+R); c.fill(); c.shadowColor="transparent"; c.lineWidth=3; c.strokeStyle="#3a2a00"; c.stroke();
+    c.beginPath(); c.arc(x,y,R-6,0,Math.PI*2); c.lineWidth=1.5; c.strokeStyle="rgba(58,42,0,.6)"; c.stroke();
+    c.font="800 26px "+FONT; c.textAlign="center"; c.textBaseline="middle"; c.fillStyle="#3a2a00"; c.fillText("N°1",x,y+1);
+    if(n>1){ c.font="800 26px "+FONT; c.lineJoin="round"; c.lineWidth=7; c.strokeStyle="#000"; c.fillStyle="#fff"; c.textAlign="right"; c.strokeText("×"+n,x-R-2,y+10); c.fillText("×"+n,x-R-2,y+10); }
+    c.restore(); }
   /* ===== carte affichée selon la récompense en cours (règle validée par Kevin le 03/11/2026) =====
      MVP du dernier match : carte noire jusqu'au match suivant (21 jours max) ; lauréat du Hall of Fame : carte Hall of Fame
      jusqu'au Hall of Fame suivant. Par défaut la dernière récompense gagnée ; le joueur peut choisir une autre carte encore valable
@@ -2104,24 +2181,34 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   let RWD_CACHE=null;
   function rewardOpts(pid){
     const lsr=k=>{ try{ return localStorage.getItem(k)||""; }catch(e){ return ""; } };
-    const k=matches.length+"|"+(matches[0]&&matches[0].id+matches[0].mvp)+"|"+lsr("fut5v5:mvp-vus").length+"|"+lsr("fut5v5:hof-vus")+"|"+lsr("fut5v5:mur-vus")+"|"+hofNow().toDateString()+hofNow().getHours()+"|"+JSON.stringify((SETTINGS&&SETTINGS.events)||null)+JSON.stringify((SETTINGS&&SETTINGS.special)||null);
+    const k=matches.length+"|"+(matches[0]&&matches[0].id+matches[0].mvp)+"|"+lsr("fut5v5:mvp-vus").length+"|"+lsr("fut5v5:hof-vus")+"|"+lsr("fut5v5:mur-vus")+"|"+hofNow().toDateString()+hofNow().getHours()+"|"+JSON.stringify((SETTINGS&&SETTINGS.events)||null)+JSON.stringify((SETTINGS&&SETTINGS.special)||null)+JSON.stringify((SETTINGS&&SETTINGS.tots)||null)+lsr("fut5v5:tots-vus");
     if(!RWD_CACHE||RWD_CACHE.k!==k){ const map={}, now=hofNow(), add=(id,o)=>{ (map[id]=map[id]||[]).push(o); };
       const m=matches[0]; if(m&&m.mvp&&mvpRevealed(m.id)&&now-m.date<21*86400000)add(m.mvp,{k:"mvp",ref:m.id,at:+m.date});
       try{ const h=hofDone()[0]; let seen=[]; try{ seen=JSON.parse(lsr("fut5v5:hof-vus")||"[]"); }catch(e){}
         if(h&&seen.indexOf(h.key)>=0&&now<hofOpenAt(hofKey(hofRange(h.key)[1]))){ const at=+hofOpenAt(h.key);
           HOF_ORDER.forEach(t=>{ const r=(h[t]||[])[0]; if(!r)return; if(t==="mur"&&h.key<MUR_FROM&&!murSeen(h.key))return; if(!(map[r.id]||[]).some(o=>o.k==="hof"))add(r.id,{k:"hof",ref:h.key,at}); }); } }catch(e){}
+      try{ const t=totsCurrent(); if(t&&t.seen)t.r.ids.forEach(id=>add(id,{k:"tots",ref:"tots-"+t.y,at:t.at})); }catch(e){}
       Object.keys(map).forEach(id=>map[id].sort((a,b)=>b.at-a.at)); RWD_CACHE={k,map}; }
     return RWD_CACHE.map[pid]||[];
   }
+  /* palmarès figé au lancement de la soirée (SETTINGS.tots) : [sélections Team of the Season, titres de Joueur de la saison] */
+  function totsCount(pid){ const T=(SETTINGS&&SETTINGS.tots)||{}; let a=0,b=0;
+    Object.keys(T).forEach(y=>{ const i=((T[y]&&T[y].ids)||[]).indexOf(pid); if(i>=0){ a++; if(i===0)b++; } }); return [a,b]; }
+  /* récompense Team of the Season en cours : dernière saison lancée, jusqu'au 1er septembre qui suit (reprise) */
+  function totsCurrent(){ const T=(SETTINGS&&SETTINGS.tots)||{}, ys=Object.keys(T).map(Number).filter(isFinite).sort((a,b)=>b-a); if(!ys.length)return null;
+    const y=ys[0], r=T[y]; if(!r||!r.ids||!r.ids.length)return null;
+    const until=new Date(y+1,8,1); if(hofNow()>=until)return null;
+    let seen=[]; try{ seen=JSON.parse(localStorage.getItem("fut5v5:tots-vus")||"[]"); }catch(e){}
+    return {y,r,at:+new Date(r.at)||+new Date(y+1,6,1),until,seen:seen.indexOf(y)>=0}; }
   /* carte choisie : « or » vaut pour la récompense du moment (une nouvelle récompense repasse au défaut) */
   function rewardPick(pid){ const o=rewardOpts(pid); if(!o.length)return null;
     const c=SETTINGS&&SETTINGS.cards&&SETTINGS.cards[pid];
     if(c){ if(c.k==="or"&&c.ref===o[0].ref)return "or"; const x=o.find(z=>z.k===c.k&&z.ref===c.ref); if(x)return x.k; }
     return o[0].k; }
-  const REWARD_FOND={mvp:"forme",hof:"hof"};
+  const REWARD_FOND={mvp:"forme",hof:"hof",tots:"tots"};
   function drawCard(canvas,p,s){
     if(p&&p.id&&!p.fondFixed&&(!p.fond||p.fond==="or")&&!(canvas&&canvas.id==="cardCanvas")){ try{ const k=rewardPick(p.id); if(REWARD_FOND[k])p=Object.assign({},p,{fond:REWARD_FOND[k]}); }catch(e){} }
-    CARD_SHAPE=(p&&p.fond==="hof"&&!seasonSkin(canvas,p))?"icon":"std";
+    { const sk0=seasonSkin(canvas,p); CARD_SHAPE=sk0==="marbre"?"toty":(p&&p.fond==="hof"&&!sk0)?"icon":"std"; }
     try{ drawCard0(canvas,p,s); } finally { CARD_SHAPE="std"; }
   }
   function drawCard0(canvas,p,s){
@@ -2166,6 +2253,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* étoile MVP (dès le 1er titre) + « ×N » détouré à partir du 2e */
     const nMvp=p.mvpN!=null?p.mvpN:(p.id?mvpTotal(p.id):0), st=p.mvp||nMvp>0;
     const nHof=p.hofN!=null?p.hofN:(p.id&&canvas.id!=="cardCanvas"?hofTotal(p.id):0);
+    const TC=p.id&&canvas.id!=="cardCanvas"?totsCount(p.id):[0,0], nTots=p.totsN!=null?p.totsN:TC[0], nJds=p.jdsN!=null?p.jdsN:TC[1];
     /* colonne des récompenses : étoile MVP puis temple du Hall of Fame, chacun avec « ×N » à partir de 2 (détouré noir sur les cartes foncées) */
     const dark=inkIsLight(T.ink), times=(y,n)=>{ c.save(); c.textAlign="left"; c.textBaseline="alphabetic"; c.lineJoin="round"; c.lineWidth=7;
       c.strokeStyle=dark?"#000":"#fff6d8"; c.fillStyle=dark?"#ffffff":T.ink;
@@ -2174,7 +2262,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     let by=182, nb=0;
     if(st){ star(c,74,by,14,T); if(nMvp>1)times(by,nMvp); by+=34; nb++; }
     if(nHof>0){ hofIcon(c,74,by); if(nHof>1)times(by,nHof); by+=34; nb++; }
+    if(nTots>0){ totsIcon(c,74,by); if(nTots>1)times(by,nTots); by+=34; nb++; }
     heart(c,74,nb?202+34*(nb-1):172,70,clamp(p.stats.car),T);
+    if(nJds>0)jdsMedal(c,330,34,nJds);
 
     const name=(p.name||"").trim()||"Joueur";
     let size=39; c.textAlign="center"; c.font="700 "+size+"px "+FONT;
@@ -2190,7 +2280,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* poisson d'avril : le poisson en papier collé sur la carte */
     if(sk==="poisson"){ c.save(); c.translate(292,300); c.rotate(-.35); c.font="64px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif"; c.textAlign="center"; c.fillText("🐟",0,0); c.restore(); }
     /* étiquette de l'édition spéciale */
-    if(sk&&sk!=="poisson"){ const lab={halloween:"ULTIMATE SCREAM",noel:"WINTER WILDCARD",nouvelan:"NEW YEAR"}[sk];
+    if(sk&&sk!=="poisson"){ const lab={halloween:"ULTIMATE SCREAM",noel:"WINTER WILDCARD",nouvelan:"NEW YEAR",marbre:"TEAM OF THE SEASON"}[sk];
       c.save(); c.font="800 italic 17px "+FONT; c.textAlign="center"; c.fillStyle=T.lab; c.globalAlpha=.9; c.fillText(lab,180,478); c.restore(); }
   }
 
@@ -3459,17 +3549,18 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
           Object.keys(k.by).filter(p=>k.by[p].side===sd).map(p=>{ const o=k.by[p]; return '<span><b>'+esc(nm(p))+'</b> · '+o.min+' min · '+o.ga+' but'+(o.ga>1?"s":"")+' encaissé'+(o.ga>1?"s":"")+' · '+svTxt(o.sv)+' '+svLab(o.sv)+(o.min<GK_MINUTES?' (moins de '+GK_MINUTES+' min : hors classement)':'')+'</span>'; }).join("")+'</div></div>'; });
       h+='<small class="rg-status" style="margin:0">Match de '+k.dur+' min'+(rec.duree?'':' (durée inconnue : 90 min)')+'.</small></div>';
     } else h+='<p class="rg-status" style="margin:0 0 8px">'+(first?"1er match : saisi à la main, 90 min, pas de stats de gardien.":"Pas de gardiens notés pour ce match. Durée : "+(rec.duree?rec.duree+" min":"inconnue, comptée 90 min")+".")+'</p>';
-    if(isAdmin()&&!first)h+='<button type="button" class="gkedit" id="gkEdit" style="margin-top:8px">✏️ Corriger la durée et les gardiens</button>';
+    if(isAdmin()&&!first)h+='<button type="button" class="gkedit" id="gkEdit" style="margin-top:8px">✏️ Corriger la durée'+(new Date(rec.date)<GK_FROM?'':' et les gardiens')+'</button>';
     box.innerHTML=h; box.hidden=false;
     const ed=$("#gkEdit"); if(ed)ed.addEventListener("click",()=>openGkEdit(rec));
   }
   function openGkEdit(rec){
-    const K=JSON.parse(JSON.stringify(hasKeepers(rec.keepers)?rec.keepers:keepersFromLayout(rec.layout)));
+    const K=JSON.parse(JSON.stringify(hasKeepers(rec.keepers)?rec.keepers:keepersFromLayout(rec.layout))), K0=JSON.stringify(K), old=new Date(rec.date)<GK_FROM;
     openSheet("✏️ Durée et gardiens","Pour corriger un oubli pendant le match. Minute = minutes écoulées depuis le coup d'envoi.",body=>{
       const f=document.createElement("div"); f.className="gkform"; body.appendChild(f);
       const team=sd=>rec.present.map(byId).filter(p=>p&&rec.team[p.id]===sd);
       const draw=()=>{ f.innerHTML='<label for="gkDur">⏱ Durée du match (min)</label><div class="r"><input type="number" id="gkDur" min="1" max="240" value="'+(rec.duree||"")+'" placeholder="90"></div>';
-        ["blanc","rouge"].forEach(sd=>{ const L=K[sd]||(K[sd]=[]); const w=document.createElement("div"); w.className="gkform";
+        if(old){ const n=document.createElement("p"); n.className="rg-status"; n.textContent="Match joué avant la pastille 🧤 : on ne sait pas qui était au goal, il ne compte pas dans les stats de gardien."; f.appendChild(n); }
+        if(!old)["blanc","rouge"].forEach(sd=>{ const L=K[sd]||(K[sd]=[]); const w=document.createElement("div"); w.className="gkform";
           w.innerHTML='<label>🧤 '+(sd==="rouge"?"COULEURS":"BLANC")+'</label>';
           L.forEach((x,i)=>{ const r=document.createElement("div"); r.className="r";
             r.innerHTML='<input type="number" min="0" max="240" value="'+x.min+'" aria-label="Minute"><select aria-label="Gardien">'+team(sd).map(p=>'<option value="'+p.id+'"'+(p.id===x.pid?" selected":"")+'>'+p.name.replace(/</g,"&lt;")+'</option>').join("")+'</select><button type="button" class="x" aria-label="Retirer">✕</button>';
@@ -3481,7 +3572,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
           w.appendChild(a); f.appendChild(w); });
         const ok=document.createElement("button"); ok.type="button"; ok.className="later"; ok.textContent="💾 Enregistrer";
         ok.addEventListener("click",async()=>{ ok.disabled=true; const dv=$("#gkDur").value;
-          try{ const r=await api("setMatchMeta",ADMIN.code,rec.id,{duree:dv===""?"":+dv,keepers:K}); rec.duree=r.duree; rec.keepers=r.keepers; closeSheet(); toast("Match corrigé ✅"); renderDetail(rec); redrawSoon(); }
+          try{ const r=await api("setMatchMeta",ADMIN.code,rec.id,Object.assign({duree:dv===""?"":+dv},!old&&(hasKeepers(rec.keepers)||JSON.stringify(K)!==K0)?{keepers:K}:{})); rec.duree=r.duree; rec.keepers=r.keepers; closeSheet(); toast("Match corrigé ✅"); renderDetail(rec); redrawSoon(); }
           catch(err){ ok.disabled=false; toast("Pas enregistré : "+errMsg(err)); } });
         f.appendChild(ok); };
       const i0=()=>Math.random().toString(36).slice(2,6);
@@ -3616,11 +3707,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const f=matches.reduce((a,m)=>m.date<a.date?m:a,matches[0]); FIRST_CACHE={k,id:f.id}; return f.id; }
   const matchDur=m=>m.id===firstMatchId()?90:(+m.duree||90);
   const hasKeepers=k=>!!(k&&((k.blanc&&k.blanc.length)||(k.rouge&&k.rouge.length)));
+  /* stats de gardien seulement pour les matchs joués depuis la v52 (pastille 🧤) : avant, personne n'a noté qui était au goal
+     (une correction de durée enregistrait par erreur le gardien de la compo sur tout le match) */
+  const GK_FROM=new Date("2026-11-04T00:00:00");
+  const gkData=m=>!!m&&hasKeepers(m.keepers)&&m.id!==firstMatchId()&&new Date(m.date)>=GK_FROM;
   function keepersFromLayout(layout){ const k={blanc:[],rouge:[]}; if(layout){ if(layout["b-gk"])k.blanc.push({uid:"compo-blanc",pid:layout["b-gk"],min:0}); if(layout["r-gk"])k.rouge.push({uid:"compo-rouge",pid:layout["r-gk"],min:0}); } return k; }
   /* gardiens d'un match : minutes, buts encaissés et buts évités, meilleur gardien (≥ 10 min, le plus de buts évités ;
      égalité : plus de minutes, puis victoire). null sans données. */
   function keeperMatch(m){
-    if(!m||!hasKeepers(m.keepers)||m.id===firstMatchId())return null;
+    if(!gkData(m))return null;
     const sig=JSON.stringify(m.keepers)+"|"+m.goals.length+"|"+m.goals.map(g=>g.side+g.min).join("")+"|"+m.duree;
     if(m._gk&&m._gk.sig===sig)return m._gk.v;
     const dur=matchDur(m), by={}, stints={blanc:[],rouge:[]};
@@ -4492,7 +4587,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const gar=r=>clamp(byId(r.id).stats.gar);
     let mur=[];
     if(murOn(key)||(opt&&opt.mur)){
-      const msK=ms.filter(m=>hasKeepers(m.keepers)&&m.id!==firstMatchId());
+      const msK=ms.filter(gkData);
       if(msK.length){
         /* v52 : au goal (10 min) dans au moins la moitié des matchs avec données ; le plus de buts évités ;
            égalité : titres de meilleur gardien du match, puis % de victoires */
@@ -4725,7 +4820,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const q=(location.search.match(/[?&]saison=(\w+)/)||[])[1];
     if(q&&SEASONS.some(x=>x.k===q)) return {k:q,id:q+"-test",preview:true};
     const pv=lsGet(SEASON_PREV); if(pv&&isAdmin()&&SEASONS.some(x=>x.k===pv)) return {k:pv,id:pv+"-apercu",preview:true};
-    const s=seasonAt(seasonNow()); if(!s)return null;
+    let s=seasonAt(seasonNow());
+    const F=SETTINGS&&SETTINGS.seasonForce, tn=seasonNow();
+    if(F&&F.k&&SEASONS.some(x=>x.k===F.k)&&new Date(F.at)<=tn&&tn<=new Date(F.until)) s={k:F.k,id:F.k+"-"+new Date(F.until).getFullYear()+"-lance"};
+    if(!s)return null;
     if(lsGet(SEASON_OFF)===s.id)s.optedOut=true;
     return s;
   }
@@ -4848,31 +4946,45 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ---- Team of the Season : la cérémonie validée (maquette v8) est la page tots.html, ouverte en plein écran par-dessus l'appli.
      Les données réelles lui sont passées dans window.FUT5V5_TOTS_DATA ; elle répond par postMessage ({fut5v5tots:"close"|"share"}).
      opt.demo : aperçu organisateur (classement à ce jour). ---- */
-  function totsData(demo){
-    const inS=inSeason(CUR_SEASON), ms=matches.filter(inS), n=ms.length; if(!n)return null;
+  function totsData(demo,Y,direct){ if(Y==null)Y=CUR_SEASON;
+    const inS=inSeason(Y), ms=matches.filter(inS), n=ms.length; if(!n)return null;
     const players=roster.map(p=>{ const s=pstats(p.id,inS); if(!s.mp)return null;
       return {id:p.id,n:p.name,m:s.mp,b:s.g,p:s.a,v:s.mvp,vp:s.w*3+s.d,gar:clamp(p.stats.gar),ov:overall(p),hofN:hofTotal(p.id),
         card:{id:p.id,name:p.name,stats:Object.assign({},p.stats),photo:p.photo||null,zoom:p.zoom||1,ox:p.ox||0,oy:p.oy||0,forme:p.forme||0}}; }).filter(Boolean);
-    let gk=null; try{ const g=totsTen().find(x=>x.gk); gk=g?g.p.id:null; }catch(e){}
+    let gk=null; try{ const g=totsTen(Y).find(x=>x.gk); gk=g?g.p.id:null; }catch(e){}
     let rec=null; ms.forEach(m=>{ if(!rec||m.goals.length>rec.goals.length)rec=m; });
     const B=m=>sc(m,"blanc"), R=m=>sc(m,"rouge");
     const board={buts:ms.reduce((a,m)=>a+m.goals.length,0),
       record:rec?Math.max(B(rec),R(rec))+"-"+Math.min(B(rec),R(rec))+", le "+new Date(rec.date).toLocaleDateString("fr-FR",{day:"numeric",month:"long"}):"–",
       blanc:ms.filter(m=>B(m)>R(m)).length, couleurs:ms.filter(m=>R(m)>B(m)).length, nuls:ms.filter(m=>B(m)===R(m)).length};
     const me=myId()&&byId(myId());
-    return {demo:!!demo, matchs:n, min:Math.max(1,Math.ceil(n/4)), saison:"20"+seasonLabel(CUR_SEASON).replace("/","-"), board, players, gk, me:me?me.name:""};
+    return {demo:!!demo, direct:!!direct, matchs:n, min:Math.max(1,Math.ceil(n/4)), saison:"20"+seasonLabel(Y).replace("/","-"), board, players, gk, me:me?me.name:""};
   }
   function playTots(opt){
     if(document.querySelector(".tots-frame"))return;
-    const d=totsData(opt&&opt.demo); if(!d){ toast("Pas encore de match cette saison pour la Team of the Season."); return; }
+    opt=opt||{}; const d=totsData(opt.demo,opt.season,opt.direct); if(!d){ toast("Pas encore de match cette saison pour la Team of the Season."); return; }
     window.FUT5V5_TOTS_DATA=d;
     const f=document.createElement("iframe"); f.className="tots-frame"; f.title="Team of the Season"; f.setAttribute("allow","autoplay"); f.src="tots.html";
     document.body.appendChild(f); document.body.style.overflow="hidden"; try{ f.focus(); }catch(e){}
   }
   window.addEventListener("message",e=>{ const a=e.data&&e.data.fut5v5tots; if(!a)return;
     const f=document.querySelector(".tots-frame"); if(f)f.remove(); if($("#report").hidden&&$("#live").hidden)document.body.style.overflow="";
-    if(a==="share")setTimeout(openTots,200); });
+    try{ RWD_CACHE=null; renderMe(); redrawSoon(); }catch(err){}
+    if(a==="share"){ const b=e.data.blob, top=(e.data.top||[]).join(", ");
+      const txt="🏆 TEAM OF THE SEASON "+(e.data.saison||"")+" 🏆\nLe dix de la saison est tombé"+(top?" : "+top+" sur le podium":"")+". Les autres, on vous attend la saison prochaine 😏";
+      if(b)setTimeout(()=>{ showImage(b,"Team of the Season",txt); $("#ivMsg").textContent="« Partager » pour chambrer le groupe 😏"; },200); else setTimeout(openTots,200); } });
   window.FUT5V5_TOTS={ play:o=>playTots(o), data:o=>totsData(o) };
+  /* soirée de fin de saison (v56) : lancée par le script (date réglée ou « Lancer maintenant ») → la cérémonie s'ouvre à la 1re ouverture,
+     après le Hall of Fame de mai–juin s'il passe en même temps. Saisons lancées : SETTINGS.tots { "2026": {at, ids, …} } */
+  const TOTS_SEEN="fut5v5:tots-vus";
+  const totsLaunched=()=>Object.keys((SETTINGS&&SETTINGS.tots)||{}).map(Number).filter(y=>isFinite(y)).sort((a,b)=>b-a);
+  function autoTots(force){
+    const L=totsLaunched(); if(!L.length)return false; const y=L[0];
+    let seen=[]; try{ seen=JSON.parse(localStorage.getItem(TOTS_SEEN)||"[]"); }catch(e){}
+    if(!force&&seen.indexOf(y)>=0)return false;
+    const go=()=>{ if(document.querySelector(".mx,.tots-frame")){ setTimeout(go,1500); return; }
+      seen.push(y); try{ localStorage.setItem(TOTS_SEEN,JSON.stringify(seen)); }catch(e){} playTots({season:y}); };
+    setTimeout(go,900); return true; }
 
   /* ---- Poisson d'avril : la fausse notif « élu Joueur de la saison » ouvre la farce (#farce) ---- */
   function playPrank(){
@@ -4885,8 +4997,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
 
   /* ---- Team of the Season : les 10 meilleurs de la saison sur le terrain (image à partager, toucher une carte = pourquoi) ---- */
-  function totsTen(){
-    const inS=inSeason(CUR_SEASON), n=matches.filter(inS).length; if(!n)return [];
+  function totsTen(Y){ if(Y==null)Y=CUR_SEASON;
+    const inS=inSeason(Y), n=matches.filter(inS).length; if(!n)return [];
     const min=Math.max(1,Math.ceil(n/4));
     /* barème : 3/but, 2/passe, 6/MVP, 1/match ; départage : MVP, points de victoire (3/victoire, 1/nul), buts, passes, moins de matchs, note */
     const vp=s=>s.w*3+s.d;
@@ -4894,8 +5006,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       .sort((a,b)=>b.score-a.score||b.s.mvp-a.s.mvp||vp(b.s)-vp(a.s)||b.s.g-a.s.g||b.s.a-a.s.a||a.s.mp-b.s.mp||overall(b.p)-overall(a.p));
     const ten=all.slice(0,10);
     /* au moins un gardien : le meilleur GAR ≥ 65 aux points de gardien (3/victoire, 1/nul), puis % de victoires, titres « Le Mur » de la saison, GAR ; il prend la 10e place s'il n'y est pas */
-    const murN=pid=>{ try{ return hofWins(pid,CUR_SEASON).filter(x=>x.k==="mur").length; }catch(e){ return 0; } };
-    const msK=matches.filter(m=>inS(m)&&hasKeepers(m.keepers)&&m.id!==firstMatchId());
+    const murN=pid=>{ try{ return hofWins(pid,Y).filter(x=>x.k==="mur").length; }catch(e){ return 0; } };
+    const msK=matches.filter(m=>inS(m)&&gkData(m));
     let gk=null;
     if(msK.length){
       /* v52 : au goal (10 min) dans au moins ¼ des matchs avec données ; le plus de buts évités ; égalité : titres « Le Mur », meilleur gardien du match */
@@ -4960,7 +5072,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const d=document.createElement("div"); d.className="sz"; d.dataset.k=x.k;
       const f=md=>{ const [m,dd]=String(md).split("-"); return dd+"/"+m; };
       d.innerHTML='<div class="sz-h"><span></span><small></small></div><div class="sz-d">Du <input class="a" inputmode="numeric" maxlength="5"> au <input class="b" inputmode="numeric" maxlength="5"></div>'+
-        '<div class="sz-a"><button type="button" class="pv">👁️ Aperçu</button><button type="button" class="an">▶ Animation MVP</button><button type="button" class="nt">📲 Notif test</button></div>';
+        '<div class="sz-a"><button type="button" class="pv">👁️ Aperçu</button><button type="button" class="an">▶ Animation MVP</button><button type="button" class="nt">📲 Notif test</button><button type="button" class="go">🚀 Lancer maintenant</button></div>';
       d.querySelector(".sz-h span").textContent=x.ic+" "+x.name; d.querySelector(".sz-h small").textContent=now&&now.k===x.k?"● en cours":"";
       const ia=d.querySelector("input.a"), ib=d.querySelector("input.b"); ia.value=f(x.start); ib.value=f(x.end);
       ia.setAttribute("aria-label",x.name+" : début (JJ/MM)"); ib.setAttribute("aria-label",x.name+" : fin (JJ/MM)");
@@ -4974,6 +5086,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         lastReveal={id:"",t:0}; playMvpReveal(rec); });
       d.querySelector(".nt").addEventListener("click",async()=>{ const t=pushToken&&pushToken(); if(!t){ toast("Active d'abord les notifications sur ce téléphone (en haut des Réglages)."); return; }
         try{ await api("testSeasonNotif",ADMIN.code,t,x.k); toast("Notif "+x.name+" envoyée sur ce téléphone 📲"); }catch(e){ toast("Notif non envoyée : "+errMsg(e)); } });
+      d.querySelector(".go").addEventListener("click",()=>{
+        openSheet("🚀 Lancer "+x.name+" maintenant ?","Le thème s'active tout de suite pour tout le groupe, jusqu'au "+f(x.end)+", et sa notif part maintenant"+(x.k==="poisson"?" (la farce du Joueur de la saison)":"")+".",body=>{
+          const b=document.createElement("button"); b.type="button"; b.className="later"; b.textContent="🚀 Oui, lancer pour tout le groupe";
+          b.addEventListener("click",async()=>{ b.disabled=true;
+            try{ const r=await api("launchSeason",ADMIN.code,x.k); SETTINGS=Object.assign({},SETTINGS,{seasonForce:r.seasonForce}); closeSheet(); seasonChanged(); toast(x.ic+" "+x.name+" lancé ! "+(r.sent||0)+" notif"+((r.sent||0)>1?"s":"")+"."); }
+            catch(err){ b.disabled=false; toast("Pas lancé : "+errMsg(err)); } });
+          body.appendChild(b); }); });
       list.appendChild(d);
     });
     $("#seasonSave").hidden=true;
@@ -5105,9 +5224,21 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   document.querySelectorAll("#trTabs button").forEach(b=>b.addEventListener("click",()=>{ TR_TAB=b.dataset.tr; renderTrophees(); }));
   function renderTrophees(){
     try{ localStorage.setItem(TR_SEEN,"1"); }catch(e){} renderTrophyBtn();
+    const TL=totsLaunched(), tb=document.querySelector('#trTabs [data-tr="tots"]'); tb.hidden=!TL.length; $("#trTabs").style.gridTemplateColumns=TL.length?"1fr 1fr 1fr":"";
+    if(TR_TAB==="tots"&&!TL.length)TR_TAB="hof";
     document.querySelectorAll("#trTabs button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tr===TR_TAB)));
     const B=$("#trBody"); B.innerHTML="";
     const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+    if(TR_TAB==="tots"){
+      TL.forEach(y=>{ const l=SETTINGS.tots[y]||{}, ids=l.ids||[], nm=id=>esc((byId(id)||{}).name||"?");
+        const box=document.createElement("div"); box.className="pcardbox tr-hof";
+        box.innerHTML='<h3>Team of the Season 20'+esc(seasonLabel(y).replace("/","-"))+'<small>'+ids.length+' joueurs</small></h3>'+
+          '<p class="rg-status" style="margin:0 0 8px">🥇 Joueur de la saison : <b>'+(ids[0]?nm(ids[0]):"–")+'</b>'+(ids[1]?' · 2e '+nm(ids[1]):'')+(ids[2]?' · 3e '+nm(ids[2]):'')+'</p>'+
+          '<div class="tr-btns"><button type="button" class="tr-replay">▶ Revoir la cérémonie</button><button type="button" class="tr-direct">⏩ Le résultat</button></div>';
+        box.querySelector(".tr-replay").addEventListener("click",()=>playTots({season:y}));
+        box.querySelector(".tr-direct").addEventListener("click",()=>playTots({season:y,direct:true}));
+        B.appendChild(box); });
+      return; }
     if(TR_TAB==="hof"){
       const d=hofDone();
       if(!d.length){ B.innerHTML='<div class="pcardbox"><p class="rg-status" style="margin:0">Le premier Hall of Fame tombera à la fin du bimestre en cours. Ses lauréats et sa cérémonie s\'afficheront ici.</p></div>'; return; }
@@ -5132,13 +5263,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     /* palmarès : MVP (révélés sur ce téléphone) et titres du Hall of Fame, toutes saisons */
     const HT=hofTitles(), me=myId();
     const GKA=keeperAgg(matches);
-    const rows=roster.map(p=>{ const x=HT[p.id]||{fidele:0,caviar:0,buteur:0,mur:0}; return {p,mvp:mvpTotal(p.id),x,hof:x.fidele+x.caviar+x.buteur+x.mur,gk:(GKA[p.id]||{}).best||0}; })
-      .filter(r=>r.mvp||r.hof||r.gk).sort((a,b)=>(b.hof-a.hof)||(b.mvp-a.mvp)||a.p.name.localeCompare(b.p.name,"fr"));
+    /* Team of the Season : colonnes seulement après la 1re soirée (dix figé par le script) */
+    const TLP=totsLaunched(), TT={}, JS={}; TLP.forEach(y=>{ const ids=(SETTINGS.tots[y]||{}).ids||[]; ids.forEach((id,i)=>{ TT[id]=(TT[id]||0)+1; if(i===0)JS[id]=(JS[id]||0)+1; }); });
+    const rows=roster.map(p=>{ const x=HT[p.id]||{fidele:0,caviar:0,buteur:0,mur:0}; return {p,mvp:mvpTotal(p.id),x,hof:x.fidele+x.caviar+x.buteur+x.mur,gk:(GKA[p.id]||{}).best||0,tt:TT[p.id]||0,js:JS[p.id]||0}; })
+      .filter(r=>r.mvp||r.hof||r.gk||r.tt).sort((a,b)=>(b.hof-a.hof)||(b.mvp-a.mvp)||a.p.name.localeCompare(b.p.name,"fr"));
     if(!rows.length){ B.innerHTML='<div class="pcardbox"><p class="rg-status" style="margin:0">Aucun titre pour l\'instant. Le premier MVP ou le premier Hall of Fame ouvrira le palmarès.</p></div>'; return; }
     const det=x=>[["buteur","⚽"],["caviar","🎯"],["mur","🧱"],["fidele","🏃"]].filter(([k])=>x[k]).map(([k,ic])=>ic+(x[k]>1?"×"+x[k]:"")).join(" ");
-    B.innerHTML='<div class="pcardbox"><h3>Palmarès<small>toutes saisons</small></h3><table class="tr-pal"><thead><tr><th>Joueur</th><th>'+IC_STAR+' MVP</th><th>🏛️ Hall of Fame</th><th>🧤</th></tr></thead><tbody>'+
-      rows.map(r=>'<tr data-pid="'+esc(r.p.id)+'"'+(r.p.id===me?' class="me"':'')+'><td>'+esc(r.p.name)+(r.p.id===me?' <small>c\'est moi</small>':'')+'</td><td>'+(r.mvp||"–")+'</td><td>'+(r.hof?r.hof+'<small>'+det(r.x)+'</small>':"–")+'</td><td>'+(r.gk||"–")+'</td></tr>').join("")+
-      '</tbody></table><p class="rg-status" style="margin:10px 0 0">MVP : titres déjà révélés sur ce téléphone. Hall of Fame : 1res places des bimestres (⚽ Serial Buteur, 🎯 Caviars, 🧱 Le Mur, 🏃 Fidèle au poste). 🧤 : meilleur gardien du match. Touche un joueur pour ouvrir sa fiche.</p></div>';
+    B.innerHTML='<div class="pcardbox"><h3>Palmarès<small>toutes saisons</small></h3><table class="tr-pal"><thead><tr><th>Joueur</th><th>'+IC_STAR+' MVP</th><th>🏛️ Hall of Fame</th><th>🧤</th>'+(TLP.length?'<th>🏆 TOTS</th>':'')+'</tr></thead><tbody>'+
+      rows.map(r=>'<tr data-pid="'+esc(r.p.id)+'"'+(r.p.id===me?' class="me"':'')+'><td>'+esc(r.p.name)+(r.p.id===me?' <small>c\'est moi</small>':'')+'</td><td>'+(r.mvp||"–")+'</td><td>'+(r.hof?r.hof+'<small>'+det(r.x)+'</small>':"–")+'</td><td>'+(r.gk||"–")+'</td>'+(TLP.length?'<td>'+(r.tt?r.tt+(r.js?'<small>🥇 Joueur de la saison'+(r.js>1?' ×'+r.js:'')+'</small>':''):"–")+'</td>':'')+'</tr>').join("")+
+      '</tbody></table><p class="rg-status" style="margin:10px 0 0">MVP : titres déjà révélés sur ce téléphone. Hall of Fame : 1res places des bimestres (⚽ Serial Buteur, 🎯 Caviars, 🧱 Le Mur, 🏃 Fidèle au poste). 🧤 : meilleur gardien du match.'+(TLP.length?' 🏆 : Team of the Season.':'')+' Touche un joueur pour ouvrir sa fiche.</p></div>';
   }
   /* ---- accueil : le lauréat retrouve son entrée au Hall of Fame (21 jours après la fin du bimestre) ---- */
   const HOFH_KEY="fut5v5:hof-accueil-vus";
@@ -5234,6 +5367,38 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     box.querySelector(".replay").addEventListener("click",()=>playHof(h));
     box.querySelector(".brag").addEventListener("click",()=>openHofBrag(h,id,t));
     box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=hofHomeSeen(); a.push(hk); try{localStorage.setItem(HOFH_KEY,JSON.stringify(a.slice(-30)))}catch(e){} renderHofHome(id); });
+    box.hidden=false;
+  }
+  /* ---- bloc d'accueil Team of the Season (v56) : pour les 10, une fois la cérémonie vue sur ce téléphone, jusqu'à la reprise de septembre ---- */
+  const TOTSH_KEY="fut5v5:tots-humble";
+  const totsHumble=()=>{ try{ return JSON.parse(localStorage.getItem(TOTSH_KEY)||"[]"); }catch(e){ return []; } };
+  function renderTotsHome(id){
+    const box=$("#meTots"); if(!box)return;
+    const t=totsCurrent(), i=t?t.r.ids.indexOf(id):-1;
+    box.className="fete totshome";
+    if(!t||!t.seen||i<0){ box.hidden=true; box.innerHTML=""; return; }
+    const jds=i===0, y=t.y, saison="Saison "+y+"-"+String((y+1)%100).padStart(2,"0");
+    box.classList.add(jds?"jds":"tots");
+    if(totsHumble().indexOf(y)>=0){ box.classList.add("fete-mini");
+      box.innerHTML='<button type="button" class="fete-again"><span class="ic">'+(jds?"👑":"🏅")+'</span><span><b>Allez, encore une fois…</b><small>'+(jds?"Réaffiche ton titre de Joueur de la saison.":"Réaffiche ta Team of the Season.")+'</small></span><span class="go-ar" aria-hidden="true">›</span></button>';
+      box.querySelector(".fete-again").addEventListener("click",()=>{ try{localStorage.setItem(TOTSH_KEY,JSON.stringify(totsHumble().filter(x=>x!==y)))}catch(e){} renderTotsHome(id); });
+      box.hidden=false; return; }
+    const p=byId(id), s=pstats(id,inSeason(y)), pts=(t.r.pts||[])[i]!=null?t.r.pts[i]:s.g*3+s.a*2+s.mvp*6+s.mp, rk=i===0?"1er":(i+1)+"e";
+    box.innerHTML='<div class="fete-lab"><span>'+(jds?"👑 Joueur de la saison":"🏅 Team of the Season")+'</span><span>'+saison+'</span></div>'+
+      '<div class="fete-row"><div class="fete-cw"><canvas aria-label="Ta carte Team of the Season"></canvas></div><div class="fete-txt"><h3>'+(jds?'Tu es le <em>Joueur de la saison</em>':'Tu es dans la <em>Team of the Season</em>')+'</h3><q><span></span><small>— La rédac</small></q></div></div>'+
+      '<div class="fete-tiles"></div>'+
+      '<div class="fete-acts"><button type="button" class="fete-b replay">▶ Revoir la cérémonie</button><button type="button" class="fete-b brag">📲 Chambrer le groupe</button>'+
+      '<button type="button" class="fete-ok">OK, je reste humble 😇</button></div>';
+    box.querySelector("q span").textContent=jds?"« "+pts+" points, "+s.g+" but"+(s.g>1?"s":"")+", "+s.mvp+" fois MVP. Personne ne t'a vu venir… si, tout le monde. »"
+      :t.r.gk===id?"« "+rk+" de la saison, le dernier rempart de l'équipe type. Le vestiaire s'incline. »":"« "+rk+" de la saison avec "+pts+" points. Le vestiaire s'incline. »";
+    const tl=box.querySelector(".fete-tiles");
+    [[rk,"Classement"],[String(pts),"Points"],[String(s.g),"Buts"],jds?[String(s.mvp),"MVP"]:[String(s.a),"Passes"]].forEach(([v,l])=>{ const e=document.createElement("div"); e.className="fete-t"; e.innerHTML="<b></b><small></small>"; e.querySelector("b").textContent=v; e.querySelector("small").textContent=l; tl.appendChild(e); });
+    drawCard(box.querySelector("canvas"),Object.assign({},p,{fond:"tots",fondFixed:true}),.5);
+    box.querySelector(".replay").addEventListener("click",()=>openSheet("▶ Revoir la cérémonie","Team of the Season "+saison.replace("Saison ",""),b=>{
+      const g=document.createElement("div"); g.className="fete-acts"; b.appendChild(g);
+      [["🎬 Tout revoir",false],["⏩ Le résultat",true]].forEach(([l,d])=>{ const x=document.createElement("button"); x.type="button"; x.className="fete-b replay"; x.textContent=l; x.addEventListener("click",()=>{ closeSheet(); playTots({season:y,direct:d}); }); g.appendChild(x); }); }));
+    box.querySelector(".brag").addEventListener("click",()=>{ toast("Touche « Partager » sous le terrain 😏"); playTots({season:y,direct:true}); });
+    box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=totsHumble(); a.push(y); try{localStorage.setItem(TOTSH_KEY,JSON.stringify(a.slice(-10)))}catch(e){} renderTotsHome(id); });
     box.hidden=false;
   }
   window.FUT5V5_HOF={ key:hofKey, compute:computeHof, done:hofDone, play:k=>playHof(computeHof(k||hofKey(new Date()))) };
@@ -5669,7 +5834,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const p=byId(id), s=pstats(id,inSeason(CUR_SEASON));
     drawCard($("#meCv"),p,.34); $("#meName").textContent=p.name;
     try{ $("#meChg").hidden=!(SETTINGS&&SETTINGS.cards)||!rewardOpts(id).length; }catch(e){ $("#meChg").hidden=true; }
-    renderFete(id); try{ renderHofHome(id); }catch(e){} try{ renderVoteBar(); }catch(e){}
+    try{ renderTotsHome(id); }catch(e){} renderFete(id); try{ renderHofHome(id); }catch(e){} try{ renderVoteBar(); }catch(e){}
     /* compteur MVP : seulement les MVP déjà révélés sur ce téléphone (pas de spoil avant l'animation) */
     const mvpShown=s.mvp-matches.filter(m=>m.mvp===id&&inSeason(CUR_SEASON)(m)&&!mvpRevealed(m.id)).length;
     $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+mvpShown+'</b></span>';
@@ -5690,7 +5855,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#meOpen").addEventListener("click",()=>{ const id=myId(); if(id)location.hash="p-"+id; });
   $("#meChg").addEventListener("click",()=>{
     const id=myId(), p=id&&byId(id); if(!p)return; const o=rewardOpts(id); if(!o.length)return;
-    const cur=rewardPick(id), lab={mvp:["MVP","jusqu'au prochain match"],hof:["Hall of Fame","jusqu'au prochain Hall of Fame"],or:["Ma carte habituelle","toujours"]};
+    const cur=rewardPick(id), lab={mvp:["MVP","jusqu'au prochain match"],hof:["Hall of Fame","jusqu'au prochain Hall of Fame"],or:["Ma carte habituelle","toujours"],tots:[totsCount(id)[1]&&((totsCurrent()||{}).r||{ids:[]}).ids[0]===id?"Joueur de la saison":"Team of the Season","jusqu'à la reprise de septembre"]};
     openSheet("🎴 Ma carte en ce moment","Celle que tout le groupe voit : Statistiques, compos, fiches et images partagées. Par défaut, ta dernière récompense.",body=>{
       const g=document.createElement("div"); g.className="cpick"; body.appendChild(g);
       o.concat([{k:"or",ref:o[0].ref}]).forEach(x=>{ const b=document.createElement("button"); b.type="button"; b.setAttribute("aria-pressed",String(x.k===cur));
@@ -5809,7 +5974,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     applyRole(); $("#splash").hidden=true;
     try{ applySeason(); }catch(e){}
     quiet=true; syncForm(); renderHome(); renderMatch(); quiet=false;
-    started=true; show(location.hash.slice(1)); if(pendingVote){ const v=pendingVote; pendingVote=null; setTimeout(()=>openVote(v),600); } try{ if(pendingHof){ const h=computeHof(pendingHof); pendingHof=null; if(h)setTimeout(()=>playHof(h),400); } else if(pendingMur){ const k=pendingMur; pendingMur=null; setTimeout(()=>playMurSpecial(k,true),400); } else if(!autoHof())autoMur(); }catch(e){}
+    started=true; show(location.hash.slice(1)); if(pendingVote){ const v=pendingVote; pendingVote=null; setTimeout(()=>openVote(v),600); } try{ if(pendingHof){ const h=computeHof(pendingHof); pendingHof=null; if(h)setTimeout(()=>playHof(h),400); } else if(pendingMur){ const k=pendingMur; pendingMur=null; setTimeout(()=>playMurSpecial(k,true),400); } else if(!autoHof())autoMur(); }catch(e){} try{ autoTots(false); }catch(e){}
   }
   async function refreshData(){
     const data=await api("getData"); lastLoad=Date.now();
@@ -5935,6 +6100,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
+    ["v56","9 nov. 2026","🏆","Soirée de fin de saison : la Team of the Season part toute seule à la date réglée (ou « Lancer maintenant »), notif pour tout le groupe, cérémonie à l\'ouverture, onglet dans Trophées et Palmarès. Thèmes de saison : « Lancer maintenant ». Image de la Team of the Season = le terrain de la cérémonie avec le bilan de la saison. Stats de gardien seulement pour les matchs joués avec la pastille 🧤 (à partir du 4 novembre). Les 10 de la Team of the Season gagnent la carte marbre et or (au choix dans « Changer le visuel », jusqu'à la reprise de septembre) et un bloc sur leur accueil ; le Joueur de la saison porte la médaille N°1."],
     ["v55","9 nov. 2026","🏆","Team of the Season : la cérémonie animée validée est prête (bilan de la saison, du 10e au 2e en comète, le Joueur de la saison, le terrain et le classement complet). Les orgas peuvent la revoir en démo dans Réglages › Événements. Les thèmes de saison changent à 10 h le 1er jour, en même temps que la notif."],
     ["v54","8 nov. 2026","⚖️","Fini le bureau des plaintes : l\'appli propose d\'ajuster TIR, PAS et GAR d\'après les 3 derniers matchs, les orgas acceptent, ajustent ou refusent. Règles des gardiens et des ajustements expliquées pas à pas dans le carnet."],
     ["v53","8 nov. 2026","🧤","Meilleur gardien aux « buts évités » : le dépanneur de 5 minutes ne passe plus devant le vrai gardien. Le chrono du Live Score part au bouton « ▶ Coup d\'envoi » (annulable tant qu\'il n\'y a pas de but). Réglages › Événements : durée du vote MVP et aperçu de la Team of the Season. Pause en touchant les animations. Règles des gardiens et de la Team of the Season dans le carnet. Statistiques : gros bouton Tableau / Cartes, catégorie 🧤 Gardien, Hall of Fame seulement dans Général. Fiche joueur : glisse à gauche / à droite pour changer d\'onglet, un peu plus compacte. Convocation : « prévenus le … par … »."],
@@ -6050,7 +6216,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
           ["🧤 Meilleur gardien du match","au moins "+GK_MINUTES+" min au goal, le plus de buts évités","plus de minutes, puis victoire"],
           ["🧱 Le Mur (Hall of Fame)","au goal dans ½ des matchs du bimestre, le plus de buts évités cumulés","meilleur gardien du match, % de victoires"],
           ["🏆 Gardien de la Team of the Season","au goal dans ¼ des matchs de la saison, le plus de buts évités cumulés","titres « Le Mur », meilleur gardien du match, GAR"]])+
-        "<p>Temps de jeu : chacun compte la vraie durée du match (coup d'envoi → FIN). Le 1er match (saisi à la main) compte 90 min pour tous et jamais pour les gardiens. Matchs avant la v52 : pas de données de gardien (ancienne règle : GAR ≥ "+GK_MIN+", % de victoires).</p>"],
+        "<p>Temps de jeu : chacun compte la vraie durée du match (coup d'envoi → FIN). Le 1er match (saisi à la main) compte 90 min pour tous et jamais pour les gardiens. Matchs joués avant le 4 novembre 2026 (avant la pastille 🧤) : personne n'a noté qui était au goal, ils ne comptent pas dans les stats de gardien (ancienne règle pour Le Mur : GAR ≥ "+GK_MIN+", % de victoires).</p>"],
       ["ajust","⚖️","L'ajustement des notes","L'appli propose, les orgas décident",
         "<p><b>Les notes ne bougent jamais toutes seules.</b> Après chaque match, l'appli compare la note de chaque joueur à ses 3 derniers matchs et <b>propose</b> un ajustement. Un orga <b>accepte</b>, <b>ajuste</b> le chiffre ou <b>refuse</b> (bouton ⚖️ tout en bas de l'accueil, notif aux orgas après un match).</p>"+
         "<ul><li><b>Sur quoi</b> : les 3 derniers matchs du joueur, joués sur 2 mois maximum (le dernier il y a moins de 2 mois). Sinon, pas de proposition.</li>"+
@@ -6072,7 +6238,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         "<ul><li>Minimum : avoir joué au moins ¼ des matchs de la saison.</li>"+
         "<li>Égalité : titres de MVP, puis points de victoire (3 par victoire, 1 par nul), buts, passes, le moins de matchs, puis la note générale.</li>"+
         "<li><b>Un gardien garanti</b> : le meilleur gardien de la saison (voir 🧤 Les gardiens) ; s'il n'est pas déjà dans les 10, il prend la 10e place.</li></ul>"+
-        "<p>La cérémonie animée (bilan de la saison, cartes du 10e au 2e, Joueur de la saison, terrain, classement complet avec les égalités expliquées) se revoit en démo dans Réglages › Événements › « 👁 Voir l'animation », avec le classement à ce jour ; « 🖼 L'image » donne l'image à partager. Toucher l'animation la met en pause. La notif pour tout le groupe et le lancement en fin de saison viendront avec une mise à jour du script.</p>"],
+        "<p>La cérémonie animée (bilan de la saison, cartes du 10e au 2e, Joueur de la saison, terrain, classement complet avec les égalités expliquées) se revoit en démo dans Réglages › Événements › « 👁 Voir l'animation », avec le classement à ce jour ; « ⏩ Le résultat » va directement au terrain et au classement. Toucher l'animation la met en pause.</p><p><b>La soirée</b> : à la date réglée dans Réglages › Événements (par défaut le 1er juillet à 11 h), ou tout de suite avec « 🚀 Lancer maintenant », le dix est figé (onglet Palmarès du Sheet), tout le groupe reçoit la notif (et une perso pour les 10), et la cérémonie s'ouvre à la 1re ouverture de l'appli, après le Hall of Fame de mai–juin s'il tombe en même temps. Elle se revoit ensuite dans 🏆 Trophées › Team of the Season. « Partager » à la fin = l'image du terrain avec le bilan de la saison.</p>"],
       ["saisons","🎨","Les saisons","Thèmes de saison, farce",
         live+table(["Thème","Dates","Annonce WhatsApp"],sc.map(x=>[x.ic+" "+esc(x.name),x.start===x.end?jm(x.start):jm(x.start)+" → "+jm(x.end),
           x.k==="poisson"?"🤫 Surtout pas":x.k==="nouvelan"?"Non, suit Noël":"Teaser conseillé"]))+
@@ -6162,6 +6328,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       sel.value=String(d.heure); $("#evSave").hidden=!evDraft;
     }
     const nh=hofDone().length; $("#evHofSee").disabled=!nh; $("#evHofRes").disabled=!nh; $("#evMvpSee").disabled=!matches.some(m=>m.mvp);
+    try{ renderTotsEv(); }catch(e){}
     rgSum("evBox",srv?(d.moment==="fin"?"Dernier jour":"Le 1er")+" à "+d.heure+" h":"Aperçus");
   }
   document.querySelectorAll("#evHofMoment button").forEach(b=>b.addEventListener("click",()=>{
@@ -6179,8 +6346,33 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   $("#evHofSee").addEventListener("click",()=>{ const d=hofDone(); if(d.length)playHof(d[0]); else toast("Pas encore de Hall of Fame terminé."); });
   $("#evHofRes").addEventListener("click",()=>{ const d=hofDone(); if(d.length)playHof(d[0],{direct:true}); else toast("Pas encore de Hall of Fame terminé."); });
   $("#evMvpSee").addEventListener("click",()=>{ const rec=matches.find(m=>m.mvp); if(!rec){ toast("Pas encore de MVP désigné."); return; } lastReveal={id:"",t:0}; playMvpReveal(rec); });
-  $("#evTotsSee").addEventListener("click",()=>openTots());
+  $("#evTotsSee").addEventListener("click",()=>playTots({demo:true,direct:true}));
   $("#evTotsPlay").addEventListener("click",()=>playTots({demo:true}));
+  let totsDraft=null;
+  const evTots=()=>{ const e=SETTINGS&&SETTINGS.events&&SETTINGS.events.tots; return e?{date:e.date,heure:+e.heure||0}:null; };
+  function renderTotsEv(){
+    const srv=evTots(), d=totsDraft||srv; $("#evTotsCfg").hidden=!srv; $("#evTotsGo").hidden=!srv;
+    if(!srv)return;
+    const sel=$("#evTotsHeure"); if(!sel.options.length) for(let h=0;h<24;h++){ const o=document.createElement("option"); o.value=String(h); o.textContent=h+" h"; sel.appendChild(o); }
+    sel.value=String(d.heure); const [m,dd]=d.date.split("-"); if(document.activeElement!==$("#evTotsDate"))$("#evTotsDate").value=dd+"/"+m; $("#evTotsSave").hidden=!totsDraft;
+    const L=totsLaunched(), y=CUR_SEASON, l=SETTINGS.tots&&SETTINGS.tots[y];
+    $("#evTotsState").textContent=l?"✅ Saison "+seasonLabel(y)+" : lancée le "+new Date(l.at).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+".":"Saison "+seasonLabel(y)+" : le "+fmtMD(d.date)+" "+(y+1)+" à "+d.heure+" h, avec le Hall of Fame de mai–juin juste avant s'il tombe en même temps.";
+    $("#evTotsGo").hidden=!!l; }
+  $("#evTotsHeure").addEventListener("change",e=>{ const c=totsDraft||evTots(); if(!c)return; totsDraft={date:c.date,heure:+e.target.value}; renderTotsEv(); });
+  $("#evTotsDate").addEventListener("input",e=>{ const c=totsDraft||evTots(); if(!c)return; const m=String(e.target.value).match(/^(\d{1,2})\/(\d{1,2})$/); if(!m)return;
+    totsDraft={date:String(m[2]).padStart(2,"0")+"-"+String(m[1]).padStart(2,"0"),heure:c.heure}; $("#evTotsSave").hidden=false; });
+  $("#evTotsSave").addEventListener("click",async()=>{ if(!totsDraft)return; const bt=$("#evTotsSave"); bt.disabled=true;
+    try{ const r=await api("setEvents",ADMIN.code,{tots:totsDraft}); SETTINGS=Object.assign({},SETTINGS,{events:r.events}); totsDraft=null; toast("Soirée de fin de saison : le "+fmtMD(evTots().date)+" à "+evTots().heure+" h ✅"); }
+    catch(err){ toast("Pas enregistré : "+errMsg(err)); }
+    bt.disabled=false; renderTotsEv(); });
+  $("#evTotsGo").addEventListener("click",()=>{
+    openSheet("🚀 Lancer la Team of the Season ?","Le dix de la saison "+seasonLabel(CUR_SEASON)+" est figé, tout le groupe reçoit la notif et voit la cérémonie à sa prochaine ouverture. Une seule fois par saison, impossible d'annuler.",body=>{
+      const b=document.createElement("button"); b.type="button"; b.className="later"; b.textContent="🚀 Oui, lancer pour tout le groupe";
+      b.addEventListener("click",async()=>{ b.disabled=true;
+        try{ const r=await api("launchTots",ADMIN.code); if(!r.ok)throw new Error(r.error||"refusé"); SETTINGS=Object.assign({},SETTINGS,{tots:r.tots}); closeSheet(); renderTotsEv();
+          toast(r.already?"Déjà lancée.":"C'est parti ! "+(r.sent||0)+" notif"+((r.sent||0)>1?"s":"")+"."); renderTrophees&&0; }
+        catch(err){ b.disabled=false; toast("Pas lancé : "+errMsg(err)); } });
+      body.appendChild(b); }); });
   function renderReglages(){
     renderVoteSetting(); try{ renderSeasonSettings(); }catch(e){} try{ if(isAdmin())renderBalance(); }catch(e){} try{ renderEvents(); }catch(e){}
     try{ rgSum("seasonBox",SEASON_RAW?"En cours : "+(((SEASONS.find(x=>x.k===SEASON_RAW.k))||{}).ic||"")+" "+(((SEASONS.find(x=>x.k===SEASON_RAW.k))||{}).name||SEASON_RAW.k):""); }catch(e){}
@@ -6296,7 +6488,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 55 · 9 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 56 · 9 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 

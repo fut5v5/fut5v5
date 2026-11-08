@@ -124,9 +124,12 @@ button:focus-visible{outline:2px solid var(--ice);outline-offset:2px}
 #end.on{opacity:1;pointer-events:auto}
 #end .mine{text-align:center;font:600 16px var(--body)}
 #end .mine b{font:italic 900 22px var(--display);color:var(--me)}
-.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.btns button{border-radius:10px;padding:11px 10px;font-weight:700;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)}
-.btns .pri{grid-column:1/-1;background:var(--ice);color:var(--night);border:0}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:14px;padding:10px 12px;font:800 18px/1 var(--display);letter-spacing:.02em;text-transform:uppercase;color:var(--ink);background:rgba(255,255,255,.07);border:1px solid rgba(233,199,106,.35);cursor:pointer}
+.btns button svg{width:20px;height:20px;flex:none}
+.btns .pri{grid-column:1/-1;min-height:58px;font-size:19px;white-space:nowrap;background:linear-gradient(180deg,#f6dd8f,#d9ad45);color:#1c1505;border:0;box-shadow:0 6px 18px rgba(233,199,106,.35)}
+.btns .wa{background:#25d366;color:#05220f;border:0;box-shadow:0 6px 16px rgba(37,211,102,.28)}
+.btns .cl{grid-column:1/-1;min-height:44px;font-size:15px;background:none;border:0;border-top:1px solid rgba(255,255,255,.12);border-radius:0;color:var(--muted)}
 #end .hint{text-align:center;font-size:13px;color:var(--muted);margin:0}
 /* feuilles (classement, pourquoi) */
 .sheet{position:absolute;inset:0;z-index:60;background:rgba(2,10,28,.7);display:flex;align-items:flex-end}
@@ -1029,9 +1032,9 @@ function finale(){
   const me=RANKED.find(x=>x.n===ME), e=$("#end"), last=TOP[TOP.length-1];
   const mine=!me?(D&&D.demo?'Aperçu organisateur · classement à ce jour':''):me.rank<=10?'Tu es dans la Team of the Season · <b>'+ord(me.rank)+'</b> · '+me.pts+' pts'
                          :'Toi : <b>'+ord(me.rank)+'</b> sur '+RANKED.length+' · '+me.pts+' pts · à '+(last.pts-me.pts+1)+' pts du 10<sup>e</sup>';
-  e.innerHTML='<div class="mine">'+mine+'</div><div class="btns"><button type="button" class="pri" id="bRank">Voir le classement complet</button><button type="button" id="bShare">Partager l\'image</button><button type="button" id="bAgain">Revoir</button><button type="button" id="bClose">Fermer</button></div><p class="hint">Touche une carte pour voir pourquoi il est dans l\'équipe.</p>';
+  e.innerHTML='<div class="mine">'+mine+'</div><div class="btns"><button type="button" class="pri" id="bRank">🏆 Voir le classement complet</button><button type="button" class="wa" id="bShare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 15V3M7 8l5-5 5 5"/></svg>Partager</button><button type="button" id="bAgain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Revoir</button><button type="button" class="cl" id="bClose">✕ Fermer</button></div><p class="hint">Touche une carte pour voir pourquoi il est dans l\'équipe.</p>';
   e.classList.add("on"); e.style.top=(L.pr.y+L.pr.h+6)+"px"; e.style.bottom="auto"; e.style.background="none"; stage.style.overflowY="auto";
-  $("#bRank").onclick=ranking; $("#bAgain").onclick=()=>start(false); $("#bShare").onclick=()=>{ if(D)toApp("share"); else toast("Dans l'appli : partage de l'image sur WhatsApp"); }; $("#bClose").onclick=()=>toApp("close");
+  $("#bRank").onclick=ranking; $("#bAgain").onclick=()=>start(false); $("#bShare").onclick=async()=>{ const b=$("#bShare"); b.disabled=true; try{ const blob=await shareImage(); if(D)toApp("share",blob); else { const u=URL.createObjectURL(blob); window.open(u,"_blank"); } }catch(err){ toast("Image impossible : "+err.message); } b.disabled=false; }; $("#bClose").onclick=()=>toApp("close");
 }
 function skipToEnd(silent){
   document.querySelectorAll(".card").forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
@@ -1078,7 +1081,54 @@ function ranking(){
   s.querySelectorAll("button.row").forEach(b=>b.addEventListener("click",()=>b.setAttribute("aria-expanded",b.getAttribute("aria-expanded")==="true"?"false":"true")));
   const m=s.querySelector(".isme"); if(m)setTimeout(()=>m.scrollIntoView({block:"center"}),50);
 }
-function toApp(a){ try{ window.parent.postMessage({fut5v5tots:a},"*"); }catch(e){} }
+function toApp(a,blob){ try{ window.parent.postMessage({fut5v5tots:a,blob:blob||null,saison:SAISON,top:TOP.slice(0,3).map(p=>p.n)},"*"); }catch(e){} }
+/* image à partager = le terrain de fin de cérémonie : cartes Team of the Season, places, buts et passes, numéros, médaille N°1 */
+const loadImg=src=>new Promise((ok,ko)=>{ const im=new Image(); im.onload=()=>ok(im); im.onerror=()=>ko(new Error("image")); im.src=src; });
+async function shareImage(){
+  await FONTS_OK; try{ await Promise.all(['italic 800 120px "Barlow Condensed"','700 34px "Barlow Condensed"','800 30px "Barlow Condensed"','600 34px "Barlow"'].map(f=>document.fonts.load(f))); }catch(e){}
+  cardImages();
+  const Wd=1080, pw=980, ph=Math.round(pw*950/500), px=(Wd-pw)/2, py=520, Hh=py+ph+210;
+  const cv=document.createElement("canvas"); cv.width=Wd; cv.height=Hh; const c=cv.getContext("2d");
+  const g=c.createLinearGradient(0,0,0,Hh); g.addColorStop(0,"#1b2032"); g.addColorStop(.45,"#0c101d"); g.addColorStop(1,"#06080f"); c.fillStyle=g; c.fillRect(0,0,Wd,Hh);
+  const rg=c.createRadialGradient(Wd/2,140,20,Wd/2,140,620); rg.addColorStop(0,"rgba(233,199,106,.30)"); rg.addColorStop(1,"rgba(233,199,106,0)"); c.fillStyle=rg; c.fillRect(0,0,Wd,760);
+  c.textAlign="center"; c.textBaseline="alphabetic";
+  c.fillStyle="#e9c76a"; c.font='700 34px "Barlow Condensed",sans-serif'; c.fillText("FUT 5V5  ·  SAISON "+SAISON,Wd/2,82);
+  let fs=136; c.font='italic 800 '+fs+'px "Barlow Condensed",sans-serif'; while(c.measureText("TEAM OF THE SEASON").width>Wd-80&&fs>70){ fs-=4; c.font='italic 800 '+fs+'px "Barlow Condensed",sans-serif'; }
+  c.shadowColor="rgba(233,199,106,.55)"; c.shadowBlur=30; c.fillStyle="#fff3c4"; c.fillText("TEAM OF THE SEASON",Wd/2,196); c.shadowBlur=0;
+  c.fillStyle="#d9d3c3"; c.font='600 34px "Barlow",sans-serif'; c.fillText("Le dix de la saison  ·  Joueur de la saison : "+TOP[0].n,Wd/2,256);
+  /* le bilan de la saison (comme au début de la cérémonie) */
+  { const by=292, bh=190, gap=16, bw=(pw-2*gap)/3;
+    const tile=(i,lab,big,foot,duel)=>{ const x=px+i*(bw+gap);
+      c.save(); c.fillStyle="rgba(10,12,20,.85)"; c.strokeStyle="rgba(233,199,106,.55)"; c.lineWidth=2.5; c.beginPath(); if(c.roundRect)c.roundRect(x,by,bw,bh,22); else c.rect(x,by,bw,bh); c.fill(); c.stroke(); c.restore();
+      c.textAlign="center"; c.fillStyle="#e9c76a"; c.font='700 26px "Barlow Condensed",sans-serif'; c.fillText(lab.toUpperCase(),x+bw/2,by+42);
+      if(false){}
+      else { c.fillStyle="#ffb547"; c.font='800 76px "Barlow Condensed",sans-serif'; c.fillText(big,x+bw/2,by+120); }
+      c.fillStyle="#d9d3c3"; c.font='600 24px "Barlow",sans-serif'; let t=foot; while(c.measureText(t).width>bw-24&&t.length>4)t=t.slice(0,-2); if(t!==foot)t=t.slice(0,-1)+"…"; c.fillText(t,x+bw/2,by+164); };
+    tile(0,"Matchs joués",String(MATCHS),"Saison "+SAISON);
+    tile(1,"Buts marqués",String(BOARD.buts),"Carton : "+BOARD.record);
+    tile(2,"Blanc – Couleurs",BOARD.blanc+" – "+BOARD.couleurs,"victoires · "+BOARD.nuls+" nul"+(BOARD.nuls>1?"s":"")); }
+  /* terrain */
+  const svg=BADGE.pitchSVG().replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="500" height="950" ');
+  const pit=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg));
+  c.save(); c.shadowColor="rgba(0,0,0,.55)"; c.shadowBlur=40; c.shadowOffsetY=12; c.drawImage(pit,px,py,pw,ph); c.restore();
+  const f=pw*.02, ball=await loadImg(BALL_IMG), boot=await loadImg(BOOT_IMG);
+  for(const p of TOP){ const pos=LINE.pos.get(p); if(!pos)continue; const x=px+pos[0]*pw-5*f, y=py+pos[1]*ph-7*f, w=10*f, h=14.05*f;
+    const im=await loadImg(p.rank===1&&p.img1?p.img1:p.img);
+    c.save(); c.shadowColor="rgba(0,0,0,.5)"; c.shadowBlur=18; c.shadowOffsetY=6; c.drawImage(im,x,y,w,h); c.restore();
+    c.fillStyle="#e9c76a"; c.beginPath(); if(c.roundRect)c.roundRect(x+w*.28,y+h*.99,w*.44,h*.035,[0,0,6,6]); else c.rect(x+w*.28,y+h*.99,w*.44,h*.035); c.fill();
+    /* numéro */
+    const rx=x-1.15*f+1.2*f, ry=y-1.05*f+1.2*f, rr=1.2*f; c.beginPath(); c.arc(rx,ry,rr,0,Math.PI*2); c.fillStyle="#06080f"; c.fill(); c.lineWidth=.15*f; c.strokeStyle="#e9c76a"; c.stroke();
+    c.fillStyle="#e9c76a"; c.font='800 '+Math.round(1.25*f)+'px "Barlow Condensed",sans-serif'; c.textAlign="center"; c.textBaseline="middle"; c.fillText(String(p.rank),rx,ry+1); c.textBaseline="alphabetic";
+    /* buts et passes */
+    let gy=y+h*.15; const gx=x+w*.85, isz=.95*2.2*f;
+    c.font='800 '+Math.round(2.2*f)+'px "Barlow Condensed",sans-serif'; c.textAlign="left"; c.lineJoin="round"; c.lineWidth=.2*f; c.strokeStyle="rgba(8,14,40,.9)"; c.fillStyle="#fff";
+    for(const [n,img] of [[p.b,ball],[p.p,boot]]){ if(!n)continue; c.drawImage(img,gx,gy,isz,isz); if(n>1){ const t="×"+n; c.strokeText(t,gx+isz+.1*f,gy+isz*.86); c.fillText(t,gx+isz+.1*f,gy+isz*.86); } gy+=isz+.25*f*2.2; }
+  }
+  c.textAlign="center"; c.fillStyle="#f8f6ef"; c.font='600 32px "Barlow",sans-serif'; c.fillText("Barème : but 3 pts · passe déc. 2 pts · MVP 6 pts · match joué 1 pt",Wd/2,py+ph+80);
+  c.fillStyle="#e9c76a"; c.font='italic 800 40px "Barlow Condensed",sans-serif'; c.fillText("FUT 5V5",Wd/2,py+ph+150);
+  return await new Promise((ok,ko)=>cv.toBlob(b=>b?ok(b):ko(new Error("image")),"image/png"));
+}
+window.__TOTS_SHARE=shareImage;
 function toast(t){const e=$("#toast");e.textContent=t;e.style.opacity=1;clearTimeout(e._t);e._t=setTimeout(()=>e.style.opacity=0,2200);}
 
 /* ---------- commandes ---------- */
@@ -1096,7 +1146,8 @@ if(D){ const it=$("#intro"); it.querySelector(".who").hidden=true; it.querySelec
   const tg=it.querySelector(".tag"); tg.textContent=D.demo?"Aperçu organisateur · classement à ce jour":"Saison "+SAISON;
   it.querySelector("h1").innerHTML="Team of<br><span>the Season</span>";
   const cl=document.createElement("button"); cl.type="button"; cl.className="go2"; cl.textContent="Fermer"; cl.onclick=()=>toApp("close"); it.appendChild(cl);
-  document.querySelectorAll(".ttl .b").forEach(e=>e.textContent="SAISON "+SAISON); }
+  document.querySelectorAll(".ttl .b").forEach(e=>e.textContent="SAISON "+SAISON);
+  if(D.direct)setTimeout(()=>start(true),60); }
 layout(); try{ ctx(); }catch(e){}
 })();
 </script>
