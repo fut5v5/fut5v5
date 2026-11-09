@@ -1224,7 +1224,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 /* bloc d'accueil */
 .fete.redachome{background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 4px),linear-gradient(135deg,rgba(233,199,106,.18) 0 18%,transparent 18% 100%),radial-gradient(90% 70% at 20% 30%,#22367a 0%,#0c1a3d 60%,#060d24 100%)}
 .fete.redachome .rd-stamp{left:2px;right:auto;top:110px;transform:rotate(-12deg);font-size:.85rem;padding:3px 6px;background:rgba(3,8,28,.55)}
-.fete.redachome q .save{display:block;margin-top:6px;font-style:normal;color:#fff3c4}
+.fete.redachome q .rd-save{display:block;margin-top:6px;font-style:normal;color:#fff3c4}
 .fete.redachome .fete-cw canvas{width:96px}
 /* page de la rédac */
 #redac .rd-mast{text-align:center;padding:4px 0 10px;border-bottom:3px double rgba(233,199,106,.6)}
@@ -1250,8 +1250,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .rd-pl .cw{position:relative;align-self:start}.rd-pl canvas{width:56px;height:auto;display:block}
 .rd-pl .rd-nb{width:34px;height:34px;font-size:1.05rem;right:auto;left:30px;bottom:-4px;border-width:2px}
 .rd-pl .nm{font:800 1.08rem/1 'Barlow Condensed',sans-serif;text-transform:uppercase}
-.rd-pl .st{font:600 .72rem 'Barlow',sans-serif;color:var(--muted);margin-top:3px}.rd-pl .st .jsy{width:14px;height:14px;vertical-align:-2px}
-.rd-pl p{margin:5px 0 22px;font:400 .88rem/1.42 'Barlow',sans-serif}.rd-pl p .save{color:var(--gold)}
+.rd-pl .st{font:600 .72rem 'Barlow',sans-serif;color:var(--muted);margin-top:3px}.rd-pl .st .jsy{display:inline-block;width:14px;height:14px;margin:0;vertical-align:-2px}
+.rd-pl p{margin:5px 0 22px;font:400 .88rem/1.42 'Barlow',sans-serif}.rd-pl p .rd-save{color:var(--gold)}
 .rd-sp{position:absolute;right:8px;bottom:8px;transform:rotate(10deg);font:900 italic .7rem/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;padding:2px 5px;border:2px solid currentColor;border-radius:4px;text-transform:uppercase}
 .rd-src{margin:14px 0 0;font:500 .78rem 'Barlow',sans-serif;color:var(--muted);text-align:center}
 .rd-open{display:flex;justify-content:center;gap:8px;align-items:center;margin-top:10px;width:100%;border-radius:12px;border:1.5px solid var(--gold);background:linear-gradient(90deg,rgba(233,199,106,.22),rgba(233,199,106,.08));color:var(--gold);font:800 1.05rem 'Barlow Condensed',sans-serif;text-transform:uppercase;padding:11px;cursor:pointer}
@@ -5551,11 +5551,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       box.querySelector(".fete-again").addEventListener("click",()=>{ rdSet(RD_HUMBLE,rdLs(RD_HUMBLE).filter(z=>z!==R.id)); renderRedacHome(id); }); box.hidden=false; return; }
     box.innerHTML='<div class="fete-lab"><span>📰 Le mot de la rédac</span><span>'+rdEsc(dl)+'</span></div><div class="rd-stamp '+x.t+'">'+RD_STAMP[x.t]+'</div>'+
       '<div class="fete-row"><div class="fete-cw"><canvas aria-label="Ta carte"></canvas><div class="rd-nb rd-c-'+rdCls(x.n)+'">'+rdFmt(x.n)+'</div></div><div class="fete-txt"><h3>'+x.h+'</h3><div class="rd-chips">'+(x.b||[]).filter(k=>RD_B[k]).map(k=>'<span>'+RD_B[k][0]+' '+RD_B[k][1]+'</span>').join("")+'</div></div></div>'+
-      '<q><span class="v"></span><span class="save"></span><small>— La rédac</small></q>'+
+      '<q><span class="v"></span><span class="rd-save"></span><small>— La rédac</small></q>'+
       '<div class="fete-tiles"><div class="fete-t"><b>'+rdFmt(x.n)+'</b><small>Note</small></div><div class="fete-t"><b>'+g+'</b><small>Buts</small></div><div class="fete-t"><b>'+a+'</b><small>Passes</small></div></div>'+
       '<div class="fete-acts"><button type="button" class="fete-b replay">📰 Les 10 notes</button><button type="button" class="fete-b brag">↻ Revoir le dévoilement</button><button type="button" class="fete-ok">OK, j\'encaisse 😤</button></div>';
     const p=byId(id); if(p)drawCard(box.querySelector("canvas"),p,.5);
-    box.querySelector(".v").textContent="« "+x.v+" »"; const sv=box.querySelector(".save"); if(x.s)sv.textContent=x.s; else sv.remove();
+    box.querySelector(".v").textContent="« "+x.v+" »"; const sv=box.querySelector(".rd-save"); if(x.s)sv.textContent=x.s; else sv.remove();
     box.querySelector(".replay").addEventListener("click",()=>{ location.hash="redac-"+R.id; });
     box.querySelector(".brag").addEventListener("click",()=>playRedacReveal(R.id,id));
     box.querySelector(".fete-ok").addEventListener("click",()=>{ const h=rdLs(RD_HUMBLE); h.push(R.id); rdSet(RD_HUMBLE,h); renderRedacHome(id); });
@@ -5583,9 +5583,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     ids.filter(pid=>RD_FILT==="all"||(rec.team[pid]==="rouge"?"rouge":"blanc")===RD_FILT).forEach(pid=>{ const x=R.pl[pid], p=byId(pid), sd=rec.team[pid]==="rouge"?"rouge":"blanc";
       const g=rec.goals.filter(z=>z.pid===pid&&!z.own).length, a=rec.goals.filter(z=>z.ast===pid).length, d=document.createElement("div"); d.className="rd-pl"+(pid===me?" me":"");
       d.innerHTML='<div class="cw">'+(p?'<canvas></canvas>':'')+'<div class="rd-nb rd-c-'+rdCls(x.n)+'">'+rdFmt(x.n)+'</div></div><div style="min-width:0"><div class="nm"></div><div class="rd-chips">'+((x.b||[]).filter(k=>RD_B[k]).map(k=>'<span>'+RD_B[k][0]+' '+RD_B[k][1]+'</span>').join("")||'<span class="nob">Pas de badge</span>')+'</div>'+
-        '<div class="st">'+(sd==="rouge"?JSY_R:JSY_W)+' '+g+' but'+(g>1?'s':'')+' · '+a+' passe'+(a>1?'s':'')+'</div><p><span class="v"></span> <span class="save"></span></p></div><span class="rd-sp '+x.t+'">'+RD_STAMP[x.t]+'</span>';
+        '<div class="st">'+(sd==="rouge"?JSY_R:JSY_W)+' '+g+' but'+(g>1?'s':'')+' · '+a+' passe'+(a>1?'s':'')+'</div><p><span class="v"></span> <span class="rd-save"></span></p></div><span class="rd-sp '+x.t+'">'+RD_STAMP[x.t]+'</span>';
       if(p)drawCard(d.querySelector("canvas"),p,.32);
-      d.querySelector(".nm").textContent=rdName(pid)+(pid===me?" (toi)":""); d.querySelector(".v").textContent=x.v; d.querySelector(".save").textContent=x.s||""; L.appendChild(d); });
+      d.querySelector(".nm").textContent=rdName(pid)+(pid===me?" (toi)":""); d.querySelector(".v").textContent=x.v; d.querySelector(".rd-save").textContent=x.s||""; L.appendChild(d); });
     const mine=B.querySelector("#rdMine"); if(mine)mine.addEventListener("click",()=>playRedacReveal(mid,me));
   }
   /* bouton de la fiche d'un match (historique) */
@@ -6970,7 +6970,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57 · 10 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.1 · 10 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
