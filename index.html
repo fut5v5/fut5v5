@@ -1282,6 +1282,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .rd-sheet h4{margin:12px 0 2px;text-align:center;font:900 italic 1.9rem/1 'Barlow Condensed',sans-serif;text-transform:uppercase}
 .rd-sheet .fm{text-align:center;font:700 .74rem 'Barlow',sans-serif;letter-spacing:.1em;text-transform:uppercase}
 .rd-sheet .fm.up{color:#2fbf5b}.rd-sheet .fm.dn{color:#e5483f}.rd-sheet .fm.leg{color:#9b7bff}
+.rd-sheet{padding-bottom:18px}
 .rd-sheet dl{margin:14px 0 0;display:grid;gap:10px}
 .rd-sheet dt{font:800 .7rem 'Barlow',sans-serif;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}
 .rd-sheet dd{margin:2px 0 0;font:500 .9rem/1.4 'Barlow',sans-serif}
@@ -6975,7 +6976,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.3 · 10 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.4 · 10 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
