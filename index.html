@@ -479,7 +479,7 @@ button{font:inherit;color:inherit}
 .pid .ov b{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.5rem;color:#fff}
 .pid .sub{font-size:.85rem;color:#a9a3c0;margin-top:6px}
 .fa{display:inline-block;width:18px;height:18px}
-.ptabs{display:grid;grid-template-columns:repeat(4,1fr);margin:0 -16px}
+.ptabs{display:grid;grid-template-columns:repeat(5,1fr);margin:0 -16px}
 .ptabs button{border:0;background:none;color:#a9a3c0;font-weight:600;font-size:.98rem;padding:12px 4px 13px;cursor:pointer;border-bottom:3px solid transparent}
 .ptabs button[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold)}
 .pbody{padding:16px 18px 30px}
@@ -1290,6 +1290,17 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .rd-hl button{display:flex;justify-content:space-between;gap:8px;background:var(--tile);border:1px solid var(--tile-line);border-radius:10px;padding:6px 9px;font:600 .82rem 'Barlow',sans-serif;color:inherit;cursor:pointer;text-align:left}
 .rd-hl button em{font-style:normal;color:var(--muted)}
 .rd-replay{display:block;margin:12px auto 0;border:0;background:none;color:var(--muted);font:600 .78rem 'Barlow',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.ptabs button{font-size:.92rem}
+.rd-hist{width:100%;font:inherit;color:inherit;cursor:pointer;grid-template-columns:46px minmax(0,1fr)}
+.rd-hist .rd-nb{width:44px;height:44px;font-size:1.25rem;border-width:3px}
+.rd-pick{display:flex;flex-direction:column;gap:6px}
+.rd-pk{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--tile-line);background:var(--tile);color:inherit;border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;font:inherit}
+.rd-pk.on{border-color:var(--gold);background:rgba(233,199,106,.12)}
+.rd-pk .ck{width:24px;height:24px;flex:none;border-radius:7px;border:2px solid var(--tile-line);display:grid;place-items:center;font-weight:800;color:#0c1a3d}
+.rd-pk.on .ck{background:var(--gold);border-color:var(--gold)}
+.rd-pk .rd-nb{position:static;width:34px;height:34px;font-size:1rem;border-width:2px;flex:none}
+.rd-pk .tx{min-width:0}.rd-pk b{display:block;font:800 1rem 'Barlow Condensed',sans-serif;text-transform:uppercase}.rd-pk small{color:var(--muted);font-size:.78rem}
+.rd-pick .later{margin-top:8px}
 /* dévoilement */
 .rv{position:fixed;top:0;right:0;bottom:0;left:0;z-index:72;overflow:hidden;color:#fff;background:radial-gradient(120% 80% at 50% 35%,#1b2f78 0%,#0a1538 55%,#03081c 100%);cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:'Barlow',sans-serif}
 .rv-in{position:absolute;top:0;bottom:0;left:0;right:0;margin:0 auto;max-width:420px;transform-origin:50% 0}
@@ -1847,6 +1858,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         <button type="button" role="tab" data-tab="saison" aria-selected="false">Saison</button>
         <button type="button" role="tab" data-tab="matchs" aria-selected="false">Matchs</button>
         <button type="button" role="tab" data-tab="carriere" aria-selected="false">Carrière</button>
+        <button type="button" role="tab" data-tab="redac" aria-selected="false">Rédac</button>
       </div>
     </div>
     <div class="pbody" id="pBody"></div>
@@ -1980,7 +1992,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(route==="carnet"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderCarnet(); return; }
     if(route==="reglages"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); $("#rgDark").checked=document.documentElement.dataset.theme!=="light"; renderReglages(); return; }
     if(route==="stats"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderStatsGrid(); return; }
-    if(route.startsWith("p-")){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!renderPlayer(route.slice(2))){playerSec.hidden=true;home.hidden=false;} return; }
+    if(route.startsWith("p-")){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); const [pid,ptab]=route.slice(2).split("~"); if(!renderPlayer(pid)){playerSec.hidden=true;home.hidden=false;} else if(ptab&&ptab!==PV.tab){ PV.tab=ptab; renderPlayerBody(); setTimeout(()=>{ const tb=document.querySelector('.ptabs button[data-tab="'+ptab+'"]'); if(tb)tb.scrollIntoView({block:"nearest",inline:"center"}); },50); } return; }
     if(route==="historique"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderHistory(); return; }
     if(detRec){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!detailRec||detailRec.id!==detRec.id)dTab="det"; renderDetail(detRec); if(!detRec.live)playMvpReveal(detRec); return; }
     if(route==="carte"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); render(); return; }
@@ -4018,7 +4030,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   const PV={id:null,tab:"details",season:CUR_SEASON,hi:null,cmp:""};
   document.querySelectorAll(".ptabs button").forEach(b=>b.addEventListener("click",()=>{PV.tab=b.dataset.tab;renderPlayerBody()}));
   /* glisser à gauche / à droite sur la fiche = onglet suivant / précédent */
-  (()=>{ const TABS=["details","saison","matchs","carriere"], body=document.getElementById("pBody"); let x0=null,y0=0,t0=0;
+  (()=>{ const TABS=["details","saison","matchs","carriere","redac"], body=document.getElementById("pBody"); let x0=null,y0=0,t0=0;
     body.addEventListener("touchstart",e=>{ if(e.touches.length!==1||e.target.closest("input,select,.radar-wrap,canvas,.hscroll"))return x0=null; x0=e.touches[0].clientX; y0=e.touches[0].clientY; t0=Date.now(); },{passive:true});
     body.addEventListener("touchend",e=>{ if(x0==null)return; const t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0; x0=null;
       if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.6||Date.now()-t0>700)return;
@@ -4049,6 +4061,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(PV.tab==="details")body.innerHTML=detailsHTML(p);
     else if(PV.tab==="saison")body.innerHTML=seasonHTML(p);
     else if(PV.tab==="matchs")body.innerHTML=matchsHTML(p);
+    else if(PV.tab==="redac"){ body.innerHTML=redacTabHTML(p); wireRedacTab(p); }
     else body.innerHTML=careerHTML(p);
     if(PV.tab==="details")wireRadar(p);
     if(PV.tab==="saison")$("#pSeason").addEventListener("change",e=>{PV.season=e.target.value==="all"?"all":+e.target.value;renderPlayerBody()});
@@ -4325,6 +4338,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
   $("#pShare").addEventListener("click",async()=>{
     const p=byId(PV.id); if(!p)return;
+    if(PV.tab==="redac"){ shareRedacTab(p); return; }
     const names={details:"details",saison:"saison",matchs:"matchs",carriere:"carriere"};
     toast("Création de l'image…");
     const blob=await buildTabImage(p,PV.tab);
@@ -5606,7 +5620,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     B.innerHTML=(NEW.length?'<div class="rd-new">✨ <b>'+NEW.length+' badge'+(NEW.length>1?'s':'')+' pas encore regardé'+(NEW.length>1?'s':'')+'</b> (rattrapage des anciens matchs). Touche ceux qui brillent.</div>':'')+
       '<div class="rd-coll" style="margin-top:10px"><div class="rd-coll-t"><small>'+(mine?'Ta collection':'Collection de '+rdEsc(rdName(who)))+'</small><b>'+have+'<span> / '+RD_KEYS.length+'</span></b></div><div class="rd-prog"><i style="width:'+(have/RD_KEYS.length*100)+'%"></i></div>'+
       '<p>'+(lastK?'Dernier : '+RD_B[lastK][0]+' '+RD_B[lastK][1]:'Pas encore de badge : il faut jouer pour se faire allumer.')+'</p></div>'+
-      '<div class="rd-tools"><select class="vote-sel" id="rdWho" aria-label="Voir les badges de" style="margin:0">'+opts+'</select><button type="button" class="rd-share" id="rdShare"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11.2 11.2 0 0 0 4.3 3.8c1.6.7 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/></svg>Partager</button></div>';
+      '<div class="rd-tools"><select class="vote-sel" id="rdWho" aria-label="Voir les badges de" style="margin:0">'+opts+'</select><button type="button" class="rd-share" id="rdShare"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11.2 11.2 0 0 0 4.3 3.8c1.6.7 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/></svg>Partager</button></div>'+
+      '<button type="button" class="rd-open" id="rdToTab" style="margin-top:8px">📰 '+(mine?'Toutes mes rédacs':'Toutes ses rédacs')+'</button>';
     const g=document.createElement("button"); g.type="button"; const kg=(C.goat||[]).length; g.className="rd-legt"+(kg?"":" off");
     g.innerHTML=rdMed("goat",kg,NEW.indexOf("goat")>=0?" new":"").replace('</span></span>',(kg>1?'<span class="x">×'+kg+'</span>':'')+'</span></span>')+'<span><small>Légendaire</small><b>Le GOAT</b><em>'+(kg?(mine?'Tu l\'as eu':'Eu')+' ×'+kg+'. Respect.':'Un 10/10 de la rédac.')+'</em></span>';
     g.addEventListener("click",()=>openBadge("goat",who)); B.appendChild(g);
@@ -5618,6 +5633,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         t.querySelector(".nm").textContent=RD_B[k][1]; t.addEventListener("click",()=>openBadge(k,who)); gr.appendChild(t); }); });
     B.querySelector("#rdWho").addEventListener("change",e=>{ RD_WHO=e.target.value; renderTrophees(); });
     B.querySelector("#rdShare").addEventListener("click",()=>shareBadges(who));
+    B.querySelector("#rdToTab").addEventListener("click",()=>{ location.hash="p-"+who+"~redac"; });
   }
   function openBadge(k,who){
     const b=RD_B[k], C=rdColl(who), ids=C[k]||[], me=myId(), mine=who===me;
@@ -5672,6 +5688,71 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
     const msg="📰 Mes badges de la rédac : "+have+"/"+RD_KEYS.length+" 😎"+(C.goat?" Dont un GOAT 🐐":"")+"\nTu fais mieux ? Ouvre l'appli FUT 5V5 → 🏆 Trophées › 📰 Badges";
     showImage(blob,"Badges de "+(p?p.name:""),msg);
+  }
+  /* ---------- fiche joueur › onglet Rédac : toutes ses rédacs, la plus récente en haut ---------- */
+  function rdMine(pid){ return rdList().filter(r=>r.pl&&r.pl[pid]&&rdMatch(r.id)).map(r=>({R:r,x:r.pl[pid],rec:rdMatch(r.id)})).sort((a,b)=>+new Date(b.rec.date)-+new Date(a.rec.date)); }
+  function rdLineStats(rec,pid){ const sd=rec.team[pid]==="rouge"?"rouge":"blanc"; return {sd,my:sc(rec,sd),op:sc(rec,sd==="rouge"?"blanc":"rouge"),g:rec.goals.filter(z=>z.pid===pid&&!z.own).length,a:rec.goals.filter(z=>z.ast===pid).length}; }
+  function redacTabHTML(p){
+    const L=rdMine(p.id);
+    if(!L.length)return '<div class="pcardbox"><h3>📰 La rédac<small>notes sur 10, badges, vannes</small></h3><p class="rg-status" style="margin:0">Pas encore de rédac pour '+rdEsc(p.name)+'. Elle tombe le lendemain de chaque match joué.</p></div>';
+    const ns=L.map(z=>z.x.n), avg=ns.reduce((s,n)=>s+n,0)/ns.length, best=Math.max(...ns), C=rdColl(p.id), nb=RD_KEYS.reduce((s,k)=>s+(C[k]||[]).length,0);
+    let h='<div class="pcardbox"><h3>📰 La rédac<small>'+L.length+' match'+(L.length>1?'s':'')+'</small></h3><div class="ktiles">'+
+      kt(rdFmt(Math.round(avg*10)/10),"","note moyenne")+kt(rdFmt(best),"","meilleure note")+kt(nb,"","badges gagnés")+kt(L.filter(z=>z.x.t==="flop").length,"","fois chambré")+'</div>'+
+      '<button type="button" class="rd-open" id="rdToBadges" style="margin-top:12px">🏅 Voir ses badges</button></div>';
+    L.forEach(({R,x,rec})=>{ const s=rdLineStats(rec,p.id), d=new Date(rec.date);
+      h+='<button type="button" class="rd-pl rd-hist" data-rd="'+rdEsc(R.id)+'"><div class="cw"><div class="rd-nb rd-c-'+rdCls(x.n)+'" style="position:static;margin:2px 0 0">'+rdFmt(x.n)+'</div></div>'+
+        '<div style="min-width:0;text-align:left"><div class="nm">'+x.h+'</div><div class="st">'+rdEsc(d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}))+' · '+(s.sd==="rouge"?JSY_R:JSY_W)+' '+s.my+'–'+s.op+' · '+s.g+' but'+(s.g>1?'s':'')+' · '+s.a+' passe'+(s.a>1?'s':'')+(R.src==="rattrapage"?' · rattrapage':'')+'</div>'+
+        '<div class="rd-chips">'+((x.b||[]).filter(k=>RD_B[k]).map(k=>'<span>'+RD_B[k][0]+' '+RD_B[k][1]+'</span>').join("")||'<span class="nob">Pas de badge</span>')+'</div>'+
+        '<p>'+rdEsc(x.v)+(x.s?' <span class="rd-save">'+rdEsc(x.s)+'</span>':'')+'</p></div><span class="rd-sp '+x.t+'">'+RD_STAMP[x.t]+'</span></button>'; });
+    return h; }
+  function wireRedacTab(p){ const b=$("#pBody");
+    b.querySelectorAll(".rd-hist").forEach(e=>e.addEventListener("click",()=>{ location.hash="redac-"+e.dataset.rd; }));
+    const tb=$("#rdToBadges"); if(tb)tb.addEventListener("click",()=>{ RD_WHO=p.id; TR_TAB="badges"; location.hash="trophees"; }); }
+  /* partage de l'onglet Rédac : on choisit les matchs (5 derniers cochés par défaut, 8 au plus) */
+  function shareRedacTab(p){
+    const L=rdMine(p.id); if(!L.length){ toast("Pas encore de rédac à partager."); return; }
+    const sel=new Set(L.slice(0,5).map(z=>z.R.id)), MAX=8;
+    openSheet("📲 Partager ses rédacs","Choisis les matchs à mettre sur l'image ("+MAX+" au plus). Par défaut : les 5 derniers.",body=>{
+      const w=document.createElement("div"); w.className="rd-pick"; body.appendChild(w);
+      const draw=()=>{ w.innerHTML=""; L.forEach(({R,x,rec})=>{ const s=rdLineStats(rec,p.id), on=sel.has(R.id), l=document.createElement("button"); l.type="button"; l.className="rd-pk"+(on?" on":""); l.setAttribute("aria-pressed",String(on));
+          l.innerHTML='<span class="ck">'+(on?'✓':'')+'</span><span class="rd-nb rd-c-'+rdCls(x.n)+'">'+rdFmt(x.n)+'</span><span class="tx"><b>'+x.h.replace(/<[^>]+>/g,"")+'</b><small>'+rdEsc(new Date(rec.date).toLocaleDateString("fr-FR",{day:"numeric",month:"short"}))+' · '+s.my+'–'+s.op+'</small></span>';
+          l.addEventListener("click",()=>{ if(on)sel.delete(R.id); else { if(sel.size>=MAX){ toast(MAX+" matchs au plus sur une image."); return; } sel.add(R.id); } draw(); }); w.appendChild(l); });
+        const go=document.createElement("button"); go.type="button"; go.className="later"; go.textContent="📲 Créer l'image ("+sel.size+" match"+(sel.size>1?"s":"")+")"; go.disabled=!sel.size;
+        go.addEventListener("click",async()=>{ go.disabled=true; const items=L.filter(z=>sel.has(z.R.id)); closeSheet(); await buildRedacImage(p,items); }); w.appendChild(go); };
+      draw(); }); }
+  async function buildRedacImage(p,items){
+    const W=1080, ROW=196, TOP=470, H=TOP+items.length*ROW+80, cv=document.createElement("canvas"); cv.width=W; cv.height=H; const c=cv.getContext("2d");
+    const BC='"Barlow Condensed", "Arial Narrow", sans-serif', BR='Barlow, "Helvetica Neue", Arial, sans-serif', EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+    try{ await Promise.all(['900 italic 80px "Barlow Condensed"','800 30px "Barlow Condensed"','500 26px Barlow','700 26px Barlow'].map(f=>document.fonts.load(f))); }catch(e){}
+    try{ await getImg(p.photo).promise; }catch(e){}
+    const txt=(t,x,y,font,col,al)=>{ c.font=font; c.fillStyle=col; c.textAlign=al||"left"; c.textBaseline="alphabetic"; c.fillText(t,x,y); };
+    const g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,"#16295e"); g.addColorStop(1,"#0a1534"); c.fillStyle=g; c.fillRect(0,0,W,H);
+    c.fillStyle="rgba(255,255,255,.025)"; for(let y=0;y<H;y+=5)c.fillRect(0,y,W,1);
+    const gold=c.createLinearGradient(0,40,0,150); gold.addColorStop(0,"#fff3c4"); gold.addColorStop(.55,"#e9c76a"); gold.addColorStop(1,"#b8862a");
+    txt("LE QUOTIDIEN DU VESTIAIRE",W/2,58,"700 24px "+BR,"#a9b8dc","center"); txt("LA RÉDAC",W/2,150,"900 italic 104px "+BC,gold,"center");
+    c.strokeStyle="rgba(233,199,106,.7)"; c.lineWidth=3; c.beginPath(); c.moveTo(220,176); c.lineTo(860,176); c.moveTo(220,184); c.lineTo(860,184); c.stroke();
+    const cc=document.createElement("canvas"); drawCard(cc,p,.9); c.drawImage(cc,70,205,cc.width*.5,cc.height*.5);
+    let fs=76; c.font="900 italic "+fs+"px "+BC; while(c.measureText(p.name.toUpperCase()).width>640&&fs>44){ fs-=4; c.font="900 italic "+fs+"px "+BC; }
+    txt(p.name.toUpperCase(),290,290,"900 italic "+fs+"px "+BC,"#fff");
+    const all=rdMine(p.id), avg=all.reduce((s,z)=>s+z.x.n,0)/all.length;
+    txt(all.length+" match"+(all.length>1?"s":"")+" passé"+(all.length>1?"s":"")+" à la rédac",290,340,"600 28px "+BR,"#dbe3fb");
+    txt("Note moyenne : "+rdFmt(Math.round(avg*10)/10)+"/10",290,384,"800 34px "+BC,"#e9c76a");
+    const COL={leg:"#7b4dff",top:"#2fbf5b",mid:"#f0a52a",flop:"#e5483f"};
+    const wrap=(t,x,y,mw,lh,max)=>{ const w=t.split(" "); let line="", n=0; for(let i=0;i<w.length;i++){ const tst=line?line+" "+w[i]:w[i]; if(c.measureText(tst).width>mw&&line){ if(n===max-1){ c.fillText(line.replace(/[ ,;:.]*$/,"")+"…",x,y+n*lh); return; } c.fillText(line,x,y+n*lh); n++; line=w[i]; } else line=tst; } c.fillText(line,x,y+n*lh); };
+    items.forEach(({R,x,rec},i)=>{ const y=TOP+i*ROW, s=rdLineStats(rec,p.id), cl=rdCls(x.n);
+      c.fillStyle="rgba(255,255,255,.06)"; c.strokeStyle="rgba(255,255,255,.12)"; c.lineWidth=2; c.beginPath(); if(c.roundRect)c.roundRect(40,y,W-80,ROW-20,22); else c.rect(40,y,W-80,ROW-20); c.fill(); c.stroke();
+      c.beginPath(); c.arc(112,y+70,46,0,Math.PI*2); c.fillStyle=COL[cl]; c.fill(); c.lineWidth=5; c.strokeStyle="#e9c76a"; c.stroke();
+      txt(rdFmt(x.n),112,y+86,"900 italic 46px "+BC,"#fff","center");
+      txt(new Date(rec.date).toLocaleDateString("fr-FR",{day:"numeric",month:"short"}).toUpperCase(),112,y+146,"700 20px "+BR,"#a9b8dc","center");
+      txt(x.h.replace(/<[^>]+>/g,"").toUpperCase(),190,y+52,"900 italic 40px "+BC,"#fff");
+      const bs=(x.b||[]).filter(k=>RD_B[k]).map(k=>RD_B[k][0]).join(" ");
+      c.font="900 italic 40px "+BC; const tw=c.measureText(x.h.replace(/<[^>]+>/g,"").toUpperCase()).width; if(bs)txt(bs,200+tw,y+50,"32px "+EMO,"#fff");
+      txt((s.sd==="rouge"?"Couleurs ":"Blanc ")+s.my+"–"+s.op+" · "+s.g+" but"+(s.g>1?"s":"")+" · "+s.a+" passe"+(s.a>1?"s":""),190,y+88,"600 24px "+BR,"#a9b8dc");
+      c.font="italic 500 25px "+BR; c.fillStyle="#e3e9fb"; c.textAlign="left"; wrap("« "+x.v+" »",190,y+124,W-250,32,2);
+      txt(RD_STAMP[x.t].toUpperCase(),W-64,y+40,"900 italic 22px "+BC,x.t==="top"?"#58e27f":x.t==="flop"?"#ff6a60":"#ffc04d","right"); });
+    c.fillStyle="#e9c76a"; c.fillRect(0,H-50,W,50); txt("FUT 5V5 · 📰 LA RÉDAC DU MATCH",W/2,H-14,"800 28px "+BC,"#0c1a3d","center");
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    showImage(blob,"La rédac de "+p.name,"📰 La rédac a parlé : "+p.name+", "+rdFmt(Math.round(avg*10)/10)+"/10 de moyenne 😏\nTout est dans l'appli FUT 5V5 → fiche du joueur › Rédac");
   }
   /* ---------- Réglages › Événements : jour et heure de la rédac, publier tout de suite ---------- */
   let rdDraft=null;
@@ -6976,7 +7057,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.4 · 10 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.5 · 10 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
