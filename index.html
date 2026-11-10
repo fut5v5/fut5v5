@@ -5721,10 +5721,16 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         go.addEventListener("click",async()=>{ go.disabled=true; const items=L.filter(z=>sel.has(z.R.id)); closeSheet(); await buildRedacImage(p,items); }); w.appendChild(go); };
       draw(); }); }
   async function buildRedacImage(p,items){
-    const W=1080, ROW=196, TOP=470, H=TOP+items.length*ROW+80, cv=document.createElement("canvas"); cv.width=W; cv.height=H; const c=cv.getContext("2d");
+    const W=1080, TOP=470, TX=190, TW=W-TX-70, LH=34;
     const BC='"Barlow Condensed", "Arial Narrow", sans-serif', BR='Barlow, "Helvetica Neue", Arial, sans-serif', EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-    try{ await Promise.all(['900 italic 80px "Barlow Condensed"','800 30px "Barlow Condensed"','500 26px Barlow','700 26px Barlow'].map(f=>document.fonts.load(f))); }catch(e){}
+    try{ await Promise.all(['900 italic 80px "Barlow Condensed"','800 30px "Barlow Condensed"','500 26px Barlow','italic 500 25px Barlow','700 26px Barlow'].map(f=>document.fonts.load(f))); }catch(e){}
     try{ await getImg(p.photo).promise; }catch(e){}
+    /* découpe en lignes du texte complet (vanne + « pour l'honneur ») : la hauteur de chaque bloc suit le texte */
+    const mc=document.createElement("canvas").getContext("2d");
+    const lines=(t,font)=>{ mc.font=font; const out=[]; let line=""; t.split(" ").forEach(w=>{ const tst=line?line+" "+w:w; if(mc.measureText(tst).width>TW&&line){ out.push(line); line=w; } else line=tst; }); if(line)out.push(line); return out; };
+    const FV="italic 500 25px "+BR, FS="600 25px "+BR;
+    const blocks=items.map(it=>{ const v=lines("« "+it.x.v+" »",FV), sv=it.x.s?lines(it.x.s,FS):[]; return {it,v,sv,h:Math.max(176,108+(v.length+sv.length)*LH+(sv.length?8:0)+22)}; });
+    const H=TOP+blocks.reduce((t,b)=>t+b.h+20,0)+70, cv=document.createElement("canvas"); cv.width=W; cv.height=H; const c=cv.getContext("2d");
     const txt=(t,x,y,font,col,al)=>{ c.font=font; c.fillStyle=col; c.textAlign=al||"left"; c.textBaseline="alphabetic"; c.fillText(t,x,y); };
     const g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,"#16295e"); g.addColorStop(1,"#0a1534"); c.fillStyle=g; c.fillRect(0,0,W,H);
     c.fillStyle="rgba(255,255,255,.025)"; for(let y=0;y<H;y+=5)c.fillRect(0,y,W,1);
@@ -5738,18 +5744,20 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     txt(all.length+" match"+(all.length>1?"s":"")+" passé"+(all.length>1?"s":"")+" à la rédac",290,340,"600 28px "+BR,"#dbe3fb");
     txt("Note moyenne : "+rdFmt(Math.round(avg*10)/10)+"/10",290,384,"800 34px "+BC,"#e9c76a");
     const COL={leg:"#7b4dff",top:"#2fbf5b",mid:"#f0a52a",flop:"#e5483f"};
-    const wrap=(t,x,y,mw,lh,max)=>{ const w=t.split(" "); let line="", n=0; for(let i=0;i<w.length;i++){ const tst=line?line+" "+w[i]:w[i]; if(c.measureText(tst).width>mw&&line){ if(n===max-1){ c.fillText(line.replace(/[ ,;:.]*$/,"")+"…",x,y+n*lh); return; } c.fillText(line,x,y+n*lh); n++; line=w[i]; } else line=tst; } c.fillText(line,x,y+n*lh); };
-    items.forEach(({R,x,rec},i)=>{ const y=TOP+i*ROW, s=rdLineStats(rec,p.id), cl=rdCls(x.n);
-      c.fillStyle="rgba(255,255,255,.06)"; c.strokeStyle="rgba(255,255,255,.12)"; c.lineWidth=2; c.beginPath(); if(c.roundRect)c.roundRect(40,y,W-80,ROW-20,22); else c.rect(40,y,W-80,ROW-20); c.fill(); c.stroke();
+    let y=TOP;
+    blocks.forEach(({it,v,sv,h})=>{ const {x,rec}=it, s=rdLineStats(rec,p.id), cl=rdCls(x.n);
+      c.fillStyle="rgba(255,255,255,.06)"; c.strokeStyle="rgba(255,255,255,.12)"; c.lineWidth=2; c.beginPath(); if(c.roundRect)c.roundRect(40,y,W-80,h,22); else c.rect(40,y,W-80,h); c.fill(); c.stroke();
       c.beginPath(); c.arc(112,y+70,46,0,Math.PI*2); c.fillStyle=COL[cl]; c.fill(); c.lineWidth=5; c.strokeStyle="#e9c76a"; c.stroke();
       txt(rdFmt(x.n),112,y+86,"900 italic 46px "+BC,"#fff","center");
       txt(new Date(rec.date).toLocaleDateString("fr-FR",{day:"numeric",month:"short"}).toUpperCase(),112,y+146,"700 20px "+BR,"#a9b8dc","center");
-      txt(x.h.replace(/<[^>]+>/g,"").toUpperCase(),190,y+52,"900 italic 40px "+BC,"#fff");
-      const bs=(x.b||[]).filter(k=>RD_B[k]).map(k=>RD_B[k][0]).join(" ");
-      c.font="900 italic 40px "+BC; const tw=c.measureText(x.h.replace(/<[^>]+>/g,"").toUpperCase()).width; if(bs)txt(bs,200+tw,y+50,"32px "+EMO,"#fff");
-      txt((s.sd==="rouge"?"Couleurs ":"Blanc ")+s.my+"–"+s.op+" · "+s.g+" but"+(s.g>1?"s":"")+" · "+s.a+" passe"+(s.a>1?"s":""),190,y+88,"600 24px "+BR,"#a9b8dc");
-      c.font="italic 500 25px "+BR; c.fillStyle="#e3e9fb"; c.textAlign="left"; wrap("« "+x.v+" »",190,y+124,W-250,32,2);
-      txt(RD_STAMP[x.t].toUpperCase(),W-64,y+40,"900 italic 22px "+BC,x.t==="top"?"#58e27f":x.t==="flop"?"#ff6a60":"#ffc04d","right"); });
+      const tt=x.h.replace(/<[^>]+>/g,"").toUpperCase(); let tf=40; c.font="900 italic "+tf+"px "+BC; while(c.measureText(tt).width>TW-230&&tf>28){ tf-=2; c.font="900 italic "+tf+"px "+BC; }
+      txt(tt,TX,y+52,"900 italic "+tf+"px "+BC,"#fff"); const tw=c.measureText(tt).width;
+      const bs=(x.b||[]).filter(k=>RD_B[k]).map(k=>RD_B[k][0]).join(" "); if(bs)txt(bs,TX+tw+12,y+50,"30px "+EMO,"#fff");
+      txt(RD_STAMP[x.t].toUpperCase(),W-64,y+40,"900 italic 22px "+BC,x.t==="top"?"#58e27f":x.t==="flop"?"#ff6a60":"#ffc04d","right");
+      txt((s.sd==="rouge"?"Couleurs ":"Blanc ")+s.my+"–"+s.op+" · "+s.g+" but"+(s.g>1?"s":"")+" · "+s.a+" passe"+(s.a>1?"s":""),TX,y+88,"600 24px "+BR,"#a9b8dc");
+      let ly=y+126; v.forEach(l=>{ txt(l,TX,ly,FV,"#e3e9fb"); ly+=LH; });
+      if(sv.length){ ly+=8; sv.forEach(l=>{ txt(l,TX,ly,FS,"#e9c76a"); ly+=LH; }); }
+      y+=h+20; });
     c.fillStyle="#e9c76a"; c.fillRect(0,H-50,W,50); txt("FUT 5V5 · 📰 LA RÉDAC DU MATCH",W/2,H-14,"800 28px "+BC,"#0c1a3d","center");
     const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
     showImage(blob,"La rédac de "+p.name,"📰 La rédac a parlé : "+p.name+", "+rdFmt(Math.round(avg*10)/10)+"/10 de moyenne 😏\nTout est dans l'appli FUT 5V5 → fiche du joueur › Rédac");
@@ -7057,7 +7065,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.5 · 10 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.6 · 10 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
