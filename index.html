@@ -1264,15 +1264,15 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .om-row.om-new{border:1.5px dashed var(--gold);background:rgba(233,199,106,.08)}
 .om-row.om-new b{color:var(--gold)}
 /* v59 : la rédac en une dans la fiche du match */
-.rd-une{position:relative;display:block;width:100%;text-align:left;margin:12px 0 4px;padding:12px 14px 12px;border-radius:16px;border:1.5px solid var(--gold);cursor:pointer;color:#fff;font:inherit;
+.rd-bdo{position:relative;display:block;width:100%;text-align:left;margin:12px 0 4px;padding:12px 14px 12px;border-radius:16px;border:1.5px solid var(--gold);cursor:pointer;color:#fff;font:inherit;
   background:linear-gradient(135deg,rgba(233,199,106,.22) 0 18%,transparent 18%),radial-gradient(110% 90% at 10% 10%,#22367a,#0c1a3d 70%);box-shadow:0 8px 22px rgba(0,0,0,.28)}
-.rd-une .rd-une-k{display:flex;justify-content:space-between;align-items:center;font:800 .72rem 'Barlow',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
-.rd-une .rd-une-h{display:block;margin:6px 0 4px;font:900 italic 1.45rem/1.05 'Barlow Condensed',sans-serif;text-transform:uppercase}
-.rd-une .rd-une-h em{font-style:inherit;color:var(--gold)}
-.rd-une .rd-une-f{display:flex;justify-content:space-between;align-items:center;gap:10px;font:600 .88rem 'Barlow',sans-serif;color:#dbe3fb}
-.rd-une .rd-une-n{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 8px;border-radius:9px;font:900 italic 1.1rem 'Barlow Condensed',sans-serif;color:#0c1a3d}
-.rd-une .rd-une-go{font:800 1rem 'Barlow Condensed',sans-serif;color:var(--gold);white-space:nowrap}
-.rd-une .rd-une-dot{position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#ff3b30;box-shadow:0 0 0 3px var(--bg,#0c1a3d)}
+.rd-bdo .rd-bdo-k{display:flex;justify-content:space-between;align-items:center;font:800 .72rem 'Barlow',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.rd-bdo .rd-bdo-h{display:block;margin:6px 0 4px;font:900 italic 1.45rem/1.05 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.rd-bdo .rd-bdo-h em{font-style:inherit;color:var(--gold)}
+.rd-bdo .rd-bdo-f{display:flex;justify-content:space-between;align-items:center;gap:10px;font:600 .88rem 'Barlow',sans-serif;color:#dbe3fb}
+.rd-bdo .rd-bdo-n{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 8px;border-radius:9px;font:900 italic 1.1rem 'Barlow Condensed',sans-serif;color:#0c1a3d}
+.rd-bdo .rd-bdo-go{font:800 1rem 'Barlow Condensed',sans-serif;color:var(--gold);white-space:nowrap}
+.rd-bdo .rd-bdo-dot{position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#ff3b30;box-shadow:0 0 0 3px var(--bg,#0c1a3d)}
 /* v59 : comparatif entre joueurs (ajustements) */
 .adj-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 12px;padding:4px;border-radius:12px;background:rgba(255,255,255,.06)}
 .adj-tabs button{border:0;border-radius:9px;padding:10px 6px;background:transparent;color:var(--muted);font:700 .9rem 'Barlow',sans-serif;cursor:pointer}
@@ -5709,10 +5709,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function renderRedacBtn(rec){ const box=$("#dRedac"); if(!box)return; const R=rec&&rdOf(rec.id);
     if(!R){ box.hidden=true; box.innerHTML=""; return; }
     const me=myId(), x=me&&R.pl&&R.pl[me], read=rdLs(RD_READ).indexOf(rec.id)>=0, nc=x?(x.n>=7?"#3fd27a":x.n>=5?"#f5a524":"#ff6a60"):"";
-    box.innerHTML='<button type="button" class="rd-une">'+(read?'':'<span class="rd-une-dot" aria-label="pas encore lue"></span>')+
-      '<span class="rd-une-k"><span>📰 La rédac du match</span><span>'+(read?'déjà lue':'nouveau')+'</span></span>'+
-      '<span class="rd-une-h">'+(R.une||'Le compte rendu')+'</span>'+
-      '<span class="rd-une-f"><span>'+(x?'Ta note : <span class="rd-une-n" style="background:'+nc+'">'+rdFmt(x.n)+'</span>':'Notes, badges et vannes des 10 joueurs')+'</span><span class="rd-une-go">Lire la rédac ›</span></span></button>';
+    box.innerHTML='<button type="button" class="rd-bdo">'+(read?'':'<span class="rd-bdo-dot" aria-label="pas encore lue"></span>')+
+      '<span class="rd-bdo-k"><span>📰 La rédac du match</span><span>'+(read?'déjà lue':'nouveau')+'</span></span>'+
+      '<span class="rd-bdo-h">'+(R.une||'Le compte rendu')+'</span>'+
+      '<span class="rd-bdo-f"><span>'+(x?'Ta note : <span class="rd-bdo-n" style="background:'+nc+'">'+rdFmt(x.n)+'</span>':'Notes, badges et vannes des 10 joueurs')+'</span><span class="rd-bdo-go">Lire la rédac ›</span></span></button>';
     box.hidden=false;
     box.querySelector("button").addEventListener("click",()=>{ location.hash="redac-"+rec.id; }); }
 
