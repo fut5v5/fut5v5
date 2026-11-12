@@ -1286,6 +1286,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .rd-sheet dl{margin:14px 0 0;display:grid;gap:10px}
 .rd-sheet dt{font:800 .7rem 'Barlow',sans-serif;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}
 .rd-sheet dd{margin:2px 0 0;font:500 .9rem/1.4 'Barlow',sans-serif}
+.rd-sheet .rd-desc{margin:12px 6px 0;text-align:center;font:500 .95rem/1.4 'Barlow',sans-serif;color:var(--txt,#eef2ff)}
+.rd-sheet .rd-ib{display:block;margin:10px auto 0;padding:6px 14px;border-radius:20px;border:1px solid rgba(233,199,106,.55);background:rgba(233,199,106,.1);color:var(--gold);font:700 .8rem 'Barlow',sans-serif;cursor:pointer}
+.rd-sheet .rd-ib[aria-expanded="true"]{background:rgba(233,199,106,.22)}
+.rd-sheet .rd-ibox{margin:10px 0 0;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.rd-sheet .rd-ibox dl{margin:0}
 .rd-hl{display:flex;flex-direction:column;gap:5px}
 .rd-hl button{display:flex;justify-content:space-between;gap:8px;background:var(--tile);border:1px solid var(--tile-line);border-radius:10px;padding:6px 9px;font:600 .82rem 'Barlow',sans-serif;color:inherit;cursor:pointer;text-align:left}
 .rd-hl button em{font-style:normal;color:var(--muted)}
@@ -5419,21 +5424,75 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
      Dévoilement au toucher de la notif (ou à la 1re ouverture), page de la rédac (#redac-<id>), onglet Trophées › Badges, pastilles. */
   const RD_B={goat:["🐐","Le GOAT","leg","note de 10/10 (calcul d'au moins 10,5)","« Un 10. La rédac a vérifié trois fois et appelé un huissier. Encadre-le, ça n'arrivera plus. »"],
     festival:["🔥","Le Festival","up","7 contributions (buts + passes) ou plus","« Tu vas en parler toute la semaine, et ça, c'est un carton jaune. »"],
-    pepite:["💎","La Pépite cachée","up","TIR sous 80 et 4 buts ou plus, ou PAS sous 80 et 4 passes ou plus","« Ne dis rien au bureau des notes : on adore les joueurs soldés. »"],
+    basculeur:["🎢","Le Basculeur","up","le but qui fait passer son équipe devant après avoir été menée de 3 buts ou plus (+0,5 à la note)","« À 1–4, la rédac avait rangé son carnet. Toi non. »"],
     oneman:["🦸","Le One-man show","up","60 % des buts de son équipe ou plus, et défaite","« Les autres ont fait de la figuration, et encore, des figurants auraient couru. »"],
-    horloge:["⏱️","L'Horloge suisse","up","4 buts ou plus, sans jamais 2 buts en 3 minutes","« Tu marques comme on pointe au boulot : régulier, sans émotion. »"],
+    pepite:["💎","La Pépite cachée","up","TIR sous 80 et 4 buts ou plus, ou PAS sous 80 et 4 passes ou plus","« Ne dis rien au bureau des notes : on adore les joueurs soldés. »"],
+    verrou:["🔒","Le Verrou","up","DEF 80 ou plus, victoire, et son équipe encaisse au plus 60 % de ce qu'elle marque (+0,5 à la note ; remplace le Fantôme)","« Les attaquants d'en face sont rentrés chez eux en se demandant où était le but. »"],
+    cle:["🗝️","La Clé du match","up","le but qui donne l'avantage définitif, dans un match où le score a changé de camp","« Le genre de but qu'on raconte encore à la buvette. »"],
     plebiscite:["👏","Le Plébiscité","up","élu MVP, à partir de son 2e MVP de la saison (d'affilée ou pas)","« Ce n'est plus du foot, c'est de la campagne électorale. »"],
-    rafale:["⚡","La Rafale","up","2 buts en 3 minutes ou moins","« Le temps de boire une gorgée, c'était plié. »"],
     couple:["💞","Le Couple de l'année","up","même passeur → même buteur, 3 fois ou plus (pour les deux)","« À ce stade, il vous faut un contrat de mariage. »"],
+    rafale:["⚡","La Rafale","up","2 buts en 3 minutes ou moins","« Le temps de boire une gorgée, c'était plié. »"],
+    horloge:["⏱️","L'Horloge suisse","up","4 buts ou plus, sans jamais 2 buts en 3 minutes","« Tu marques comme on pointe au boulot : régulier, sans émotion. »"],
+    marathonien:["🫁","Le Marathonien","up","2 buts ou plus dans les 15 dernières minutes (remplace le Diesel)","« Quand les autres cherchaient leur souffle, toi tu cherchais le but. »"],
     pieuvre:["🐙","La Pieuvre","up","GAR 60 ou moins, 15 min au goal ou plus, plus de 2 buts évités","« Les gardiens titulaires sont priés de ne pas lire ceci. »"],
+    agent:["🕵️","L'Agent double","dn","au moins un but contre son camp","« Ton plus beau geste technique de la soirée, c'était pour l'autre équipe. »"],
+    chateau:["🏰","Le Château de sable","dn","son équipe a mené de 3 buts ou plus… et a perdu","« Il fallait juste ne rien faire. Vous avez fait quelque chose. »"],
+    fantome:["👻","Le Fantôme","dn","0 but, 0 passe","« Sur le terrain, la rédac a lancé un avis de recherche. »"],
+    gruyere:["🧀","Le Gruyère","dn","DEF 75 ou plus, son équipe encaisse 15 buts ou plus, 3 contributions ou moins","« On a retrouvé la clé de ta défense : sous le paillasson. »"],
+    carton:["🥅","La Passoire","dn","GAR 70 ou plus, 15 min au goal ou plus, moins de −3 buts évités","« 9 buts pris en 25 minutes. Même les pâtes ne passent pas aussi vite. »"],
+    perso:["🙈","Le Perso","dn","PAS 80 ou plus, 3 buts ou plus et 1 passe ou moins (remplace la Fraude côté passes)","« Le ballon t'a été confié, il ne t'a jamais quitté. »"],
     fraude:["🤥","Fraude à la carte","dn","TIR 80 ou plus et au moins 1 but sous sa moyenne de la saison, ou PAS 80 ou plus et au moins 1 passe sous sa moyenne","« TIR 96. 3 buts. On a appelé EA Sports, ils rigolent encore. »"],
     diesel:["🐢","Le Diesel","dn","tous ses buts (au moins 2) après la mi-temps","« On t'attendait au coup d'envoi, pas au deuxième café. »"],
-    gruyere:["🧀","Le Gruyère","dn","DEF 75 ou plus, son équipe encaisse 15 buts ou plus, 3 contributions ou moins","« On a retrouvé la clé de ta défense : sous le paillasson. »"],
-    carton:["📦","Le Gardien en carton","dn","GAR 70 ou plus, 15 min au goal ou plus, moins de −3 buts évités","« Les filets ont demandé une prime de risque. »"],
-    fantome:["👻","Le Fantôme","dn","0 but, 0 passe","« Sur le terrain, la rédac a lancé un avis de recherche. »"],
-    agent:["🕵️","L'Agent double","dn","au moins un but contre son camp","« Ton plus beau geste technique de la soirée, c'était pour l'autre équipe. »"],
     desert:["🌵","La Traversée du désert","dn","3 matchs de suite ou plus sans marquer","« Les filets ont oublié ton visage. »"],
     bizut:["🐣","Le Bizut","dn","1er match de la saison (sauf le match d'ouverture) ou retour après 2 mois","« Bienvenue : la rédac a noté ton nom, et elle surveille. »"]};
+  /* « Bon à savoir » de chaque badge : affiché dans la fiche du badge et dans le carnet du coach (v58) */
+  const RD_INFO={goat:"Le seul badge légendaire. Le calcul de la note doit atteindre 10,5 : un 9,5 « arrondi » ne suffit pas.",
+    festival:"Les buts et les passes décisives comptent pareil : 4 buts + 3 passes, 7 buts, 2 buts + 5 passes…",
+    basculeur:"Un seul Basculeur par remontée : le buteur du but qui fait passer devant. Le passeur est cité dans la vanne. Seulement pour les matchs chronométrés.",
+    oneman:"Se compte en buts + passes sur les buts de son équipe. Il faut perdre : c'est le badge de celui qui a tout porté pour rien.",
+    pepite:"Ta carte te sous-estime : moins de 80 en TIR mais 4 buts ou plus, ou moins de 80 en PAS mais 4 passes ou plus.",
+    verrou:"Exemple : victoire 10–5 ou 6–2 avec DEF 80 ou plus. Un défenseur qui ferme la porte n'est pas un fantôme, même à 0 but 0 passe.",
+    cle:"Le but qui met l'équipe gagnante devant pour de bon (plus jamais rejointe), dans un match où l'avantage a changé de camp au moins une fois. Seulement pour les matchs chronométrés.",
+    plebiscite:"Le 1er MVP de la saison ne compte pas : le badge arrive à partir du 2e, d'affilée ou pas.",
+    couple:"Le même passeur sert le même buteur 3 fois ou plus dans le match : les deux ont le badge.",
+    rafale:"Deux buts à 3 minutes d'écart ou moins. Seulement pour les matchs chronométrés.",
+    horloge:"4 buts ou plus, bien espacés : si deux d'entre eux tombent en 3 minutes, c'est la Rafale à la place.",
+    marathonien:"Sur un match de 90 minutes, 2 buts ou plus après la 75e. On ne chambre pas celui qui finit fort. Seulement pour les matchs chronométrés.",
+    pieuvre:"Pour un joueur de champ qui dépanne au goal : 60 ou moins en GAR, au moins 15 minutes dans les cages, et plus de 2 buts évités.",
+    agent:"Un seul but contre son camp suffit, et chaque CSC enlève 1 point à la note.",
+    chateau:"Toute l'équipe qui a mené de 3 buts ou plus (par exemple 4–1) et qui a perdu à la fin a le badge. Seulement pour les matchs chronométrés.",
+    fantome:"Ni but, ni passe décisive. Sauf pour le Verrou : un gros défenseur qui gagne en encaissant peu n'est pas un fantôme.",
+    gruyere:"Pour les défenseurs sur le papier (DEF 75 ou plus) : l'équipe prend 15 buts ou plus et le joueur ne se rattrape pas devant (3 buts + passes au plus).",
+    carton:"Pour les vrais gardiens (GAR 70 ou plus) : au moins 15 minutes au goal et plus de 3 buts encaissés de plus que prévu.",
+    perso:"Ta carte dit passeur (PAS 80 ou plus), le terrain dit buteur : 3 buts ou plus et 1 passe ou moins.",
+    fraude:"La moyenne est celle de ta saison avant ce match. Côté passes, c'est le Perso qui prend la place si tu as marqué 3 buts ou plus avec 1 passe ou moins.",
+    diesel:"Au moins 2 buts, tous après la mi-temps. Si 2 buts ou plus tombent dans les 15 dernières minutes, c'est le Marathonien à la place. Seulement pour les matchs chronométrés.",
+    desert:"Se compte sur tes matchs joués, pas sur les semaines : 3 matchs de suite sans but, ce match compris.",
+    bizut:"Le match d'ouverture ne compte pas (tout le monde serait bizut). Revient aussi après 2 mois sans jouer."};
+  /* Ce qu'est le badge, en une phrase, sous la médaille (v58) ; le détail (condition, bon à savoir, vanne type) est derrière le bouton ⓘ */
+  const RD_DESC={goat:"La soirée parfaite : le 10/10 de la rédac. Le badge le plus rare de l'appli.",
+    festival:"Tu as été partout : une avalanche de buts et de passes décisives.",
+    basculeur:"Ton équipe était menée de loin, et c'est ton but qui l'a fait repasser devant.",
+    oneman:"Tu as porté ton équipe à bout de bras… et elle a perdu quand même.",
+    pepite:"Ta carte te sous-estime : sur le terrain, tu as fait bien mieux qu'elle.",
+    verrou:"Derrière, c'était fermé à double tour : gros défenseur, victoire, presque rien encaissé.",
+    cle:"Le but qui a tranché un match serré : après lui, l'adversaire n'est plus jamais revenu.",
+    plebiscite:"Élu MVP, et ce n'est pas la première fois de la saison.",
+    couple:"Un duo passeur → buteur qui a fonctionné encore et encore.",
+    rafale:"Deux buts coup sur coup, le temps de boire une gorgée.",
+    horloge:"Des buts en série, réguliers comme une pendule.",
+    marathonien:"Le plus frais en fin de match : tes buts sont tombés quand les autres étaient cuits.",
+    pieuvre:"Joueur de champ dépanneur au goal, et des arrêts dans tous les sens.",
+    agent:"Un but… mais pour l'autre équipe.",
+    chateau:"Ton équipe avait le match en main, et elle l'a laissé filer.",
+    fantome:"Présent sur la feuille de match, introuvable sur le terrain.",
+    gruyere:"Défenseur sur la carte, mais la défense prenait l'eau de partout.",
+    carton:"Gardien sur la carte, mais ça rentrait de tous les côtés.",
+    perso:"Passeur sur la carte, buteur égoïste sur le terrain.",
+    fraude:"Ta carte promet beaucoup plus que ce que tu as montré ce soir-là.",
+    diesel:"Il t'a fallu une mi-temps pour démarrer.",
+    desert:"Les filets t'attendent depuis plusieurs matchs.",
+    bizut:"Ton premier match de la saison (ou ton grand retour) : la rédac t'a à l'œil."};
   const RD_KEYS=Object.keys(RD_B), RD_FAM={leg:"Le légendaire",up:"Les coups d'éclat",dn:"Les coups de moins bien"}, RD_STAMP={top:"Encensé",mid:"Mi-figue",flop:"Chambré"};
   const RD_SEEN="fut5v5:redac-vus", RD_BSEEN="fut5v5:badges-vus", RD_HUMBLE="fut5v5:redac-humble";
   const rdLs=(k)=>{ try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } }, rdSet=(k,a)=>{ try{ localStorage.setItem(k,JSON.stringify(a.slice(-400))); }catch(e){} };
@@ -5641,9 +5700,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(mine&&ids.length){ rdMarkSeen(me,k); rdDots(); }
     openSheet(b[0]+" "+b[1],RD_FAM[b[2]],body=>{ const w=document.createElement("div"); w.className="rd-sheet"; body.appendChild(w);
       w.innerHTML='<span class="rd-med '+(ids.length?b[2]:"off")+'"><span class="em">'+b[0]+'</span>'+(ids.length>1?'<span class="x">×'+ids.length+'</span>':'')+'</span><h4></h4><div class="fm '+b[2]+'">'+RD_FAM[b[2]]+'</div>'+
-        '<dl><dt>Comment l\'avoir</dt><dd class="q"></dd><dt>La vanne type</dt><dd><i class="ex"></i></dd><dt>'+(ids.length?(mine?'Tes matchs':'Ses matchs')+' (×'+ids.length+')':(mine?'Toi':rdEsc(rdName(who))))+'</dt><dd class="hl"></dd>'+
+        '<p class="rd-desc"></p><button type="button" class="rd-ib" aria-expanded="false">ⓘ Comment l\'avoir</button>'+
+        '<div class="rd-ibox" hidden><dl><dt>Comment l\'avoir</dt><dd class="q"></dd>'+(RD_INFO[k]?'<dt>Bon à savoir</dt><dd class="nf"></dd>':'')+'<dt>La vanne type</dt><dd><i class="ex"></i></dd></dl></div>'+
+        '<dl><dt>'+(ids.length?(mine?'Tes matchs':'Ses matchs')+' (×'+ids.length+')':(mine?'Toi':rdEsc(rdName(who))))+'</dt><dd class="hl"></dd>'+
         '<dt>Le recordman du groupe</dt><dd>'+(best?rdEsc(best[0])+' · ×'+best[1]:'Personne pour l\'instant. La place est libre.')+'</dd></dl>'+(mine&&ids.length?'<button type="button" class="rd-replay">↻ Revoir le dévoilement</button>':'');
-      w.querySelector("h4").textContent=b[1]; w.querySelector(".q").textContent=b[3].charAt(0).toUpperCase()+b[3].slice(1)+"."; w.querySelector(".ex").textContent=b[4];
+      w.querySelector("h4").textContent=b[1]; w.querySelector(".q").textContent=b[3].charAt(0).toUpperCase()+b[3].slice(1)+"."; w.querySelector(".ex").textContent=b[4]; if(RD_INFO[k])w.querySelector(".nf").textContent=RD_INFO[k];
+      w.querySelector(".rd-desc").textContent=RD_DESC[k]||""; const ib=w.querySelector(".rd-ib"), ibx=w.querySelector(".rd-ibox");
+      ib.onclick=()=>{ const on=ibx.hidden; ibx.hidden=!on; ib.setAttribute("aria-expanded",on?"true":"false"); ib.textContent=on?"✕ Fermer":"ⓘ Comment l'avoir"; };
       const hl=w.querySelector(".hl");
       if(ids.length){ const box=document.createElement("div"); box.className="rd-hl"; hl.appendChild(box);
         ids.forEach(id=>{ const rec=rdMatch(id), R=rdOf(id); if(!rec||!R)return; const x=R.pl[who], sd=rec.team[who]==="rouge"?"rouge":"blanc", bt=document.createElement("button"); bt.type="button";
@@ -5655,7 +5718,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
   /* image de la collection, à envoyer sur WhatsApp */
   async function shareBadges(who){
-    const C=rdColl(who), p=byId(who), have=RD_KEYS.filter(k=>C[k]).length, W=1080, H=1350, cv=document.createElement("canvas"); cv.width=W; cv.height=H; const c=cv.getContext("2d");
+    const C=rdColl(who), p=byId(who), have=RD_KEYS.filter(k=>C[k]).length, W=1080, H=1640, cv=document.createElement("canvas"); cv.width=W; cv.height=H; const c=cv.getContext("2d");
     const BC='"Barlow Condensed", "Arial Narrow", sans-serif', BR='Barlow, "Helvetica Neue", Arial, sans-serif', EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
     try{ await Promise.all(['900 italic 80px "Barlow Condensed"','800 30px "Barlow Condensed"','600 20px Barlow','700 26px Barlow'].map(f=>document.fonts.load(f))); }catch(e){}
     const txt=(t,x,y,font,col,al)=>{ c.font=font; c.fillStyle=col; c.textAlign=al||"center"; c.textBaseline="alphabetic"; c.fillText(t,x,y); };
@@ -5683,7 +5746,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     med("goat",W/2,538,44);
     const ups=RD_KEYS.filter(k=>RD_B[k][2]==="up"), dns=RD_KEYS.filter(k=>RD_B[k][2]==="dn"), X=[165,415,665,915];
     txt("COUPS D'ÉCLAT",W/2,650,"800 30px "+BC,"#58e27f"); ups.forEach((k,i)=>med(k,X[i%4],712+Math.floor(i/4)*148,46));
-    txt("COUPS DE MOINS BIEN",W/2,988,"800 30px "+BC,"#ff8a7a"); dns.forEach((k,i)=>med(k,X[i%4],1052+Math.floor(i/4)*148,46));
+    txt("COUPS DE MOINS BIEN",W/2,1136,"800 30px "+BC,"#ff8a7a"); dns.forEach((k,i,L)=>{ const r=Math.floor(i/4), n=Math.min(4,L.length-r*4), x0=W/2-(n-1)*125; med(k,x0+(i%4)*250,1200+r*148,46); });
     c.fillStyle="#e9c76a"; c.fillRect(0,H-50,W,50); txt("FUT 5V5 · 🏆 TROPHÉES › 📰 BADGES",W/2,H-14,"800 28px "+BC,"#0c1a3d");
     const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
     const msg="📰 Mes badges de la rédac : "+have+"/"+RD_KEYS.length+" 😎"+(C.goat?" Dont un GOAT 🐐":"")+"\nTu fais mieux ? Ouvre l'appli FUT 5V5 → 🏆 Trophées › 📰 Badges";
@@ -6593,6 +6656,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     ["saison","Événements de saison","Halloween, Noël, nouvel an : quand l'appli change de tenue.",true,false],
     ["mvp_vote","Vote du MVP","À la fin de ton match : vote pour l'homme du match.",true,false],
     ["mvp","Révélation du MVP","Quand le MVP d'un match est désigné : à découvrir dans l'appli.",true,false],
+    ["redac","📰 La rédac du match","Le lendemain du match : ta note, tes badges, ta vanne.",true,false],
     ["notes","Mes notes","Quand un organisateur modifie ta carte.",true,false],
     ["photo_reponse","Ma photo","Réponse à la photo que tu as proposée.",true,false],
     ["paliers","Paliers","10e but de la saison, 50e match, note qui franchit un cap.",false,false],
@@ -6668,6 +6732,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
+    ["v58","12 nov. 2026","🎢","La rédac passe à 23 badges : le Verrou, le Marathonien, le Basculeur, la Clé du match, le Château de sable et le Perso. Le Gardien en carton devient la Passoire. Le titre va au badge le plus fort du soir, et deux badges proches donnent une vanne combo (Box-to-box, Héros du soir, Paradoxe). Nouvelle notif à part : « 📰 La rédac du match » Chaque badge a son « Bon à savoir » (fiche du badge et carnet)."],
     ["v57","10 nov. 2026","📰","La rédac du match : le lendemain à 8 h, une note sur 10, des badges cumulables et une vanne pour chaque joueur, avec un dévoilement animé et sonore. Page de la rédac (notif, fiche du match), onglet Trophées › Badges avec pastilles et partage WhatsApp, rattrapage des 4 premiers matchs."],
     ["v56","9 nov. 2026","🏆","Soirée de fin de saison : la Team of the Season part toute seule à la date réglée (ou « Lancer maintenant »), notif pour tout le groupe, cérémonie à l\'ouverture, onglet dans Trophées et Palmarès. Thèmes de saison : « Lancer maintenant ». Image de la Team of the Season = le terrain de la cérémonie avec le bilan de la saison. Stats de gardien seulement pour les matchs joués avec la pastille 🧤 (à partir du 4 novembre). Les 10 de la Team of the Season gagnent la carte marbre et or (au choix dans « Changer le visuel », jusqu'à la reprise de septembre) et un bloc sur leur accueil ; le Joueur de la saison porte la médaille N°1."],
     ["v55","9 nov. 2026","🏆","Team of the Season : la cérémonie animée validée est prête (bilan de la saison, du 10e au 2e en comète, le Joueur de la saison, le terrain et le classement complet). Les orgas peuvent la revoir en démo dans Réglages › Événements. Les thèmes de saison changent à 10 h le 1er jour, en même temps que la notif."],
@@ -6803,10 +6868,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         "<li>Le barème GAR est provisoire : il sera recalé quand on aura assez de vrais matchs avec la pastille 🧤.</li></ul>"],
       ["redac","📰","La rédac du match","Notes sur 10, badges, vannes",
         '<p class="cn-rd">« Elle vous a vus jouer. Elle va tout balancer. » La rédac</p>'+
-        "<p>Le lendemain du match (Réglages › Événements, <b>8 h</b> par défaut), après la clôture du vote MVP, l'appli écrit la rédac : une <b>note sur 10</b>, des <b>badges</b> et une <b>vanne</b> pour chaque joueur. Notif perso pour les 10, générale pour les autres. Tout le monde lit tout : la notif, le bouton de la fiche du match (historique) et Trophées › Badges.</p>"+
-        '<p class="cn-f">Note = 5,5 + 0,8 × (buts − moyenne du match) + 0,4 × (passes − moyenne du match) ± 0,5 victoire / défaite + 1 MVP − 1 par CSC + 0,5 par but évité au goal</p>'+
+        "<p>Le lendemain du match (Réglages › Événements, <b>8 h</b> par défaut), après la clôture du vote MVP, l'appli écrit la rédac : une <b>note sur 10</b>, des <b>badges</b> et une <b>vanne</b> pour chaque joueur. Notif perso pour les 10, générale pour les autres (interrupteur à part « 📰 La rédac du match » dans Réglages › Notifications). Tout le monde lit tout : la notif, le bouton de la fiche du match (historique) et Trophées › Badges.</p>"+
+        '<p class="cn-f">Note = 5,5 + 0,8 × (buts − moyenne du match) + 0,4 × (passes − moyenne du match) ± 0,5 victoire / défaite + 1 MVP − 1 par CSC + 0,5 par but évité au goal + 0,5 Verrou + 0,5 Basculeur</p>'+
         "<p>Au demi-point, de 2 à 9,5. Le <b>10</b> seulement si le calcul atteint 10,5 : il donne le badge 🐐 Le GOAT. Vert à partir de 7, orange de 5 à 6,5, rouge en dessous. Une note sous 5 garde une phrase « pour l'honneur ».</p>"+
-        "<p><b>Les badges se cumulent</b> dans un même match ; le plus fort donne le titre et la notif.</p><ul>"+RD_KEYS.map(k=>"<li>"+RD_B[k][0]+" <b>"+RD_B[k][1]+"</b> : "+RD_B[k][3]+"</li>").join("")+"</ul>"+
+        "<p><b>"+RD_KEYS.length+" badges, cumulables</b> dans un même match. <b>Le titre et la notif vont au badge le plus fort</b> : celui qui dépasse le plus son seuil. À égalité, l'ordre de la liste ci-dessous. Bonne note : l'éloge d'abord, la pique à la fin ; note sous 5 : l'inverse.</p>"+
+        "<p><b>Vannes combo</b> : quand deux badges sont au coude-à-coude (à 20 % près), la rédac écrit une seule vanne pour les deux. 🔒 Verrou + un badge offensif = <b>Le Box-to-box</b> ; 🎢 Basculeur + Festival, Rafale, Horloge, Marathonien ou Clé = <b>Le Héros du soir</b> ; 🔒 Verrou + 🤥 Fraude au tir = <b>Le Paradoxe</b>.</p>"+
+        ["leg","up","dn"].map(f=>"<p><b>"+RD_FAM[f]+"</b></p><ul>"+RD_KEYS.filter(k=>RD_B[k][2]===f).map(k=>"<li>"+RD_B[k][0]+" <b>"+RD_B[k][1]+"</b> : "+RD_B[k][3]+"."+(RD_INFO[k]?" <small>"+RD_INFO[k]+"</small>":"")+"</li>").join("")+"</ul>").join("")+
+        "<p>Les badges qui dépendent de la minute des buts (Basculeur, Clé du match, Château de sable, Rafale, Horloge, Marathonien, Diesel) ne sont pas donnés pour un match dont le score a été saisi après coup.</p>"+
         "<p>Ça ne compte pour rien (ni stats, ni notes des cartes). Une rédac écrite ne bouge plus. Les 4 premiers matchs de la saison ont été rattrapés à la main, sans notif : leurs badges arrivent avec une pastille rouge sur Trophées.</p>"+
         "<p>Orgas : « 🚀 Publier maintenant » dans Réglages › Événements publie tout de suite la rédac du dernier match.</p>"],
       ["tots","🏆","La Team of the Season","Les 10 meilleurs de la saison",
@@ -7065,7 +7133,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 57.6 · 10 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 58 · 12 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
