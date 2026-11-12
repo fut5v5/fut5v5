@@ -1277,18 +1277,29 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .adj-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 12px;padding:4px;border-radius:12px;background:rgba(255,255,255,.06)}
 .adj-tabs button{border:0;border-radius:9px;padding:10px 6px;background:transparent;color:var(--muted);font:700 .9rem 'Barlow',sans-serif;cursor:pointer}
 .adj-tabs button.on{background:var(--gold);color:#0c1a3d}
-.adj-cmp{display:grid;gap:12px}
-.adj-cmp-card{border-radius:14px;border:1px solid var(--tile-line);background:var(--tile);padding:12px 14px}
-.adj-cmp-card h4{margin:0 0 8px;font:800 1.15rem 'Barlow Condensed',sans-serif;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
-.adj-cmp-card h4 small{font:700 .72rem 'Barlow',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.adj-cmp-pl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.adj-cmp-pl div{border-radius:10px;background:rgba(255,255,255,.05);padding:8px 10px;font-size:.85rem;line-height:1.35}
-.adj-cmp-pl b{display:block;font-size:.98rem}
-.adj-cmp-card p{margin:6px 0;font-size:.88rem;line-height:1.4}
-.adj-cmp-prop{border-left:3px solid var(--gold);padding-left:10px}
-.adj-cmp-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.adj-cmp-acts button{flex:1;min-width:130px;border-radius:10px;border:1px solid var(--gold);background:rgba(233,199,106,.12);color:var(--gold);font:700 .85rem 'Barlow',sans-serif;padding:9px 8px;cursor:pointer}
-.adj-cmp-conf{font-size:.78rem;color:var(--muted)}
+.adj-cmp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.adj-cmp-chips button{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:transparent;color:inherit;font:700 .84rem 'Barlow',sans-serif;cursor:pointer}
+.adj-cmp-chips button.on{background:var(--gold);color:#0c1a3d;border-color:var(--gold)}
+.adj-cmp-chips button.ind{border-style:dashed;opacity:.85}
+.adj-cmp-lead{font-size:.84rem;color:var(--muted);margin:0 0 8px;line-height:1.4}
+.adj-cmp-t{width:100%;border-collapse:collapse;border-radius:14px;overflow:hidden;background:var(--tile);font-size:.86rem}
+.adj-cmp-t th{font:700 .64rem 'Barlow',sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 4px;text-align:center;background:rgba(255,255,255,.05)}
+.adj-cmp-t td{padding:7px 4px;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+.adj-cmp-t .l{text-align:left}.adj-cmp-t td.l small{display:block;color:var(--muted);font-size:.72rem}
+.adj-cmp-t td.rk{color:var(--muted);width:22px}.adj-cmp-t td.ra{font-weight:700}.adj-cmp-t td.ex{color:var(--muted)}
+.adj-cmp-t .rt{display:inline-block;min-width:34px;padding:3px 6px;border-radius:6px;color:#fff;font:800 1.02rem 'Barlow Condensed',sans-serif}
+.adj-cmp-t tr.lo{background:rgba(63,210,122,.09)}.adj-cmp-t tr.hi{background:rgba(255,106,96,.09)}
+.adj-cmp-t .ch{display:inline-block;min-width:34px;padding:3px 5px;border-radius:7px;font-weight:800}.adj-cmp-t .ch.ok{color:var(--muted)}
+.adj-cmp-t .ch.lo{background:#1f7a43;color:#d8ffe6}.adj-cmp-t .ch.hi{background:#8a2a22;color:#ffe0dc}
+.adj-cmp-leg{font-size:.76rem;color:var(--muted);margin:6px 2px 14px}
+.adj-cmp-h{margin:0 0 8px;font:800 1.15rem 'Barlow Condensed',sans-serif}.adj-cmp-h small{font:600 .8rem 'Barlow',sans-serif;color:var(--muted)}
+.adj-cmp-card{border-radius:14px;background:var(--tile);border:1px solid var(--tile-line);border-left:4px solid;padding:11px 13px;margin-bottom:10px}
+.adj-cmp-card.lo{border-left-color:#3fd27a}.adj-cmp-card.hi{border-left-color:#ff6a60}
+.adj-cmp-top{display:flex;align-items:center;gap:8px}.adj-cmp-top b{flex:1;font-size:1.02rem}.adj-cmp-card.lo .adj-cmp-ar{color:#3fd27a}.adj-cmp-card.hi .adj-cmp-ar{color:#ff6a60}
+.adj-cmp-pr{font-weight:600;font-size:.92rem}.adj-cmp-pr b{color:var(--gold);font-size:1.05rem}
+.adj-cmp-card p{margin:6px 0 4px;font-size:.86rem;line-height:1.4}.adj-cmp-card ul{margin:0;padding-left:18px;font-size:.84rem}
+.adj-cmp-ft{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:.76rem;color:var(--muted)}
+.adj-cmp-ft button{border:1px solid var(--gold);background:rgba(233,199,106,.12);color:var(--gold);border-radius:9px;padding:6px 10px;font:700 .8rem 'Barlow',sans-serif;cursor:pointer}
 .rd-open{display:flex;justify-content:center;gap:8px;align-items:center;margin-top:10px;width:100%;border-radius:12px;border:1.5px solid var(--gold);background:linear-gradient(90deg,rgba(233,199,106,.22),rgba(233,199,106,.08));color:var(--gold);font:800 1.05rem 'Barlow Condensed',sans-serif;text-transform:uppercase;padding:11px;cursor:pointer}
 /* onglet Badges */
 .rd-coll{position:relative;overflow:hidden;border-radius:18px;padding:12px 14px;border:1px solid rgba(233,199,106,.6);color:#fff;background:linear-gradient(135deg,rgba(233,199,106,.16) 0 22%,transparent 22%),radial-gradient(90% 80% at 15% 20%,#22367a,#0c1a3d 65%,#060d24)}
@@ -6299,6 +6310,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     '<li><b>GAR</b> = buts évités par match sur les 3 derniers matchs avec au moins 10 min au goal. Hausse : +1,5 → +1, +2,5 → +2, +3,5 → +3 ; baisse (GAR 70 et plus) : −1,5 → −1, −2,5 → −2, −3,5 → −3. Barème provisoire.</li>'+
     '<li><b>90 et plus</b> : jamais de hausse automatique. <b>±3 points</b> au maximum. PHY, TEC, CAR, DEF ne sont jamais proposées.</li>'+
     '<li><b>Accepter</b> change la carte (trace dans l\'onglet Notes, le joueur est prévenu comme d\'habitude). <b>Ajuster</b> : vous choisissez le chiffre. <b>Refuser</b> : ne revient pas tant que ses stats n\'ont pas changé. Après un changement, 3 nouveaux matchs avant de reproposer la même stat.</li></ul>'+
+    '<p><b>🔍 Comparatif saison</b> : pour chaque stat, le classement de tous les joueurs avec au moins 3 matchs dans la saison (ratio, note actuelle, note « attendue » d\'après la grille du groupe, écart). À 3 points d\'écart ou plus, une proposition argumentée avec 2 comparaisons ; TIR, PAS, GAR et DEF (indicateur d\'équipe) ; TEC et Global à titre indicatif. Rien ne change tout seul : vous modifiez la carte à la main.</p>'+
     '<p>Tout le détail : carnet du coach › ⚖️ L\'ajustement des notes.</p>';
   function openAdjust(){
     if(!isAdmin())return;
@@ -6341,58 +6353,87 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       draw();
     });
   }
-  /* ---- v59 : comparatif entre joueurs (saison) — les orgas jugent et modifient à la main ----
-     TIR ↔ buts par match, PAS ↔ passes par match (matchs dans le champ), GAR ↔ buts évités par match (10 min au goal ou plus).
+  /* ---- v59 : comparatif saison — classement de TOUS les joueurs admissibles, stat par stat ----
      Ratio « prudent » : (total + 2 × moyenne du groupe) / (matchs + 2). Grille du groupe = droite note ↔ ratio (moindres carrés).
-     Incohérence : ratio nettement meilleur (TIR +0,6, PAS +0,5, GAR +1) mais 5 points de moins sur la carte. */
-  const CMP_MIN=3, CMP_K=2, CMP_GAP={TIR:.6,PAS:.5,GAR:1}, CMP_LAB={TIR:["buts","but"],PAS:["passes déc.","passe déc."],GAR:["buts évités","but évité"]};
-  function adjCompare(){
-    const y0=seasonStart(hofNow()), ms=matches.filter(m=>seasonStart(m.date)===y0), out=[];
-    ["TIR","PAS","GAR"].forEach(st=>{
-      const rows=[];
-      roster.forEach(p=>{ let n=0, sum=0;
-        ms.forEach(m=>{ if(!m.present.includes(p.id))return; const k=keeperMatch(m), o=k&&k.by[p.id];
-          if(st==="GAR"){ if(o&&o.min>=GK_MINUTES){ n++; sum+=o.sv; } return; }
-          if(o&&o.min>=matchDur(m)/2)return; n++; sum+=st==="TIR"?m.goals.filter(g=>g.pid===p.id&&!g.own).length:m.goals.filter(g=>g.ast===p.id).length; });
-        if(n>=CMP_MIN) rows.push({p,n,sum,raw:sum/n,card:clamp(p.stats[ADJ_KEY[st]])}); });
-      if(rows.length<4)return;
-      const mean=rows.reduce((s,r)=>s+r.sum,0)/rows.reduce((s,r)=>s+r.n,0);
-      rows.forEach(r=>r.r=(r.sum+CMP_K*mean)/(r.n+CMP_K));
-      const mx=rows.reduce((s,r)=>s+r.r,0)/rows.length, my=rows.reduce((s,r)=>s+r.card,0)/rows.length;
-      const sxx=rows.reduce((s,r)=>s+(r.r-mx)*(r.r-mx),0), sxy=rows.reduce((s,r)=>s+(r.r-mx)*(r.card-my),0);
-      if(sxx<=1e-9)return; let b=sxy/sxx; if(b<=0) b=(st==="GAR"?4:8);   /* grille à l'envers : pente minimale raisonnable */
-      const exp=r=>Math.max(40,Math.min(99,Math.round(my+b*(r.r-mx))));
-      rows.forEach(r=>r.e=exp(r));
-      const seen={};
-      rows.forEach(a=>rows.forEach(c=>{ if(a===c||a.r-c.r<CMP_GAP[st]||a.card>c.card-5)return;
-        const key=st+a.p.id+c.p.id; if(seen[key])return; seen[key]=1;
-        const up=Math.max(0,Math.min(4,a.e-a.card)), dn=Math.max(0,Math.min(4,c.card-c.e)); if(!up&&!dn)return;
-        const nmin=Math.min(a.n,c.n), conf=nmin>=5?"solide":nmin>=4?"moyenne":"à confirmer";
-        out.push({st,a,c,up,dn,gap:(a.r-c.r)/CMP_GAP[st]+(c.card-a.card)/5,conf}); }));
-    });
-    /* un joueur n'apparaît qu'une fois par stat (la paire la plus parlante) */
-    out.sort((x,y)=>y.gap-x.gap); const used={}, res=[];
-    out.forEach(x=>{ const ka=x.st+x.a.p.id, kc=x.st+x.c.p.id; if(used[ka]||used[kc])return; used[ka]=used[kc]=1; res.push(x); });
-    return res.slice(0,8);
+     Note attendue = la note que donnerait son ratio d'après la grille ; surligné à 3 points d'écart ou plus.
+     TIR, PAS, GAR, DEF : proposition argumentée (±4 max, 2 comparaisons concrètes). TEC et Global : à titre indicatif.
+     Rien ne change tout seul : les orgas modifient la carte à la main. */
+  const CMP_MIN=3, CMP_K=2, CMP_FLAG=3;
+  const CMP_STATS=[
+    {k:"TIR",key:"tir",lab:"Buts / match",u:["but","buts"],mode:"field",val:(m,id)=>m.goals.filter(g=>g.pid===id&&!g.own).length,prop:true,
+      info:"Buts par match sur la saison, matchs joués dans le champ."},
+    {k:"PAS",key:"pas",lab:"Passes / match",u:["passe","passes"],mode:"field",val:(m,id)=>m.goals.filter(g=>g.ast===id).length,prop:true,
+      info:"Passes décisives par match sur la saison, matchs joués dans le champ."},
+    {k:"GAR",key:"gar",lab:"Buts évités / match",u:["but évité","buts évités"],mode:"gk",val:(m,id)=>keeperMatch(m).by[id].sv,prop:true,
+      info:"Buts évités par match, sur les matchs avec au moins 10 min au goal."},
+    {k:"DEF",key:"phy",lab:"Buts pris en moins / match",u:["but","buts"],mode:"field",val:(m,id)=>{ const s=m.team[id]==="rouge"?"rouge":"blanc", op=sc(m,s==="rouge"?"blanc":"rouge"); return (sc(m,"blanc")+sc(m,"rouge"))/2-op; },prop:true,team:true,
+      info:"Indicateur d'équipe : buts encaissés par son équipe comparés à la moyenne du match (au-dessus de 0 = son équipe en a pris moins). À lire avec du recul."},
+    {k:"TEC",key:"dri",lab:"Buts sans passe / match",u:["but","buts"],mode:"field",val:(m,id)=>m.goals.filter(g=>g.pid===id&&!g.own&&!g.ast).length,prop:false,
+      info:"À titre indicatif : buts marqués sans passeur (action perso, mais aussi frappe de loin ou rebond)."},
+    {k:"Global",key:null,lab:"+/− par match",u:["but","buts"],mode:"all",val:(m,id)=>{ const s=m.team[id]==="rouge"?"rouge":"blanc"; return sc(m,s)-sc(m,s==="rouge"?"blanc":"rouge"); },prop:false,
+      info:"À titre indicatif : différence de buts de son équipe quand il joue, comparée à sa note générale."}];
+  let CMP_TAB="PAS";
+  function cmpRows(S){
+    const y0=seasonStart(hofNow()), ms=matches.filter(m=>seasonStart(m.date)===y0), rows=[];
+    roster.forEach(p=>{ let n=0, sum=0;
+      ms.forEach(m=>{ if(!m.present.includes(p.id))return; const k=keeperMatch(m), o=k&&k.by[p.id];
+        if(S.mode==="gk"){ if(!(o&&o.min>=GK_MINUTES))return; }
+        else if(S.mode==="field"){ if(o&&o.min>=matchDur(m)/2)return; }
+        n++; sum+=S.val(m,p.id); });
+      if(n>=CMP_MIN) rows.push({p,n,sum,raw:sum/n,card:S.key?clamp(p.stats[S.key]):overall(p)}); });
+    if(rows.length<4) return {rows,ok:false};
+    const mean=rows.reduce((s,r)=>s+r.sum,0)/rows.reduce((s,r)=>s+r.n,0);
+    rows.forEach(r=>r.r=(r.sum+CMP_K*mean)/(r.n+CMP_K));
+    const mx=rows.reduce((s,r)=>s+r.r,0)/rows.length, my=rows.reduce((s,r)=>s+r.card,0)/rows.length;
+    const sxx=rows.reduce((s,r)=>s+(r.r-mx)*(r.r-mx),0), sxy=rows.reduce((s,r)=>s+(r.r-mx)*(r.card-my),0);
+    const b=sxx>1e-9?sxy/sxx:0, flat=b<=0;   /* pas de lien note ↔ ratio dans le groupe : on n'invente pas de note attendue */
+    rows.forEach(r=>{ r.e=flat?null:Math.max(40,Math.min(99,Math.round(my+b*(r.r-mx)))); r.d=flat?0:r.card-r.e; });
+    rows.sort((x,y)=>y.raw-x.raw||y.card-x.card);
+    const byCard=rows.slice().sort((x,y)=>y.card-x.card); rows.forEach((r,i)=>{ r.rk=i+1; r.ck=byCard.indexOf(r)+1; });
+    return {rows,ok:true,flat};
+  }
+  const cmpNum=x=>{ const a=Math.abs(x)<10?Math.round(x*100)/100:Math.round(x*10)/10; let t=a.toFixed(Math.abs(a*10-Math.round(a*10))<1e-9?1:2).replace(".",","); return (x>0&&false?"+":"")+t; };
+  function cmpProps(S,rows){
+    const out=[];
+    const fl=S.team?5:CMP_FLAG, cap=S.team?2:4;   /* DEF (indicateur d'équipe) : plus prudent */
+    rows.filter(r=>Math.abs(r.d)>=fl).forEach(r=>{
+      const under=r.d<0, eq=o=>Math.abs(o.raw-r.raw)<.05;
+      const pool=rows.filter(o=>o!==r&&(under?(o.raw<=r.raw+.05&&o.card>r.card):(o.raw>=r.raw-.05&&o.card<r.card)))
+        .sort((x,y)=>under?(y.card-x.card||y.raw-x.raw):(x.card-y.card||y.raw-x.raw)).slice(0,2);
+      const cmp=pool.map(o=>rdEsc(o.p.name)+(eq(o)?" en fait autant ("+cmpNum(o.raw)+")":under?" en fait moins ("+cmpNum(o.raw)+")":" en fait plus ("+cmpNum(o.raw)+")")+" avec <b>"+o.card+"</b>");
+      const nv=r.card+Math.max(-cap,Math.min(cap,r.e-r.card)), conf=S.team?(r.n>=5?"moyenne":"à confirmer"):(r.n>=5?"solide":r.n>=4?"moyenne":"à confirmer");
+      out.push({r,under,nv,cmp,conf}); });
+    return out.sort((x,y)=>Math.abs(y.r.d)-Math.abs(x.r.d));
   }
   function drawAdjCompare(list){
-    list.innerHTML=""; const L=adjCompare();
-    const intro=document.createElement("p"); intro.className="adj-cmp-conf";
-    intro.textContent="Sur toute la saison, joueurs avec au moins 3 matchs. On compare chaque joueur aux autres : celui qui produit nettement plus mais a une note plus basse. Rien ne change tout seul : vous jugez, et vous modifiez la carte à la main.";
-    list.appendChild(intro);
-    if(!L.length){ const p=document.createElement("p"); p.className="adj-none"; p.textContent="✅ Pas d'incohérence nette entre joueurs pour l'instant."; list.appendChild(p); return; }
-    const box=document.createElement("div"); box.className="adj-cmp"; list.appendChild(box);
-    const f=x=>dec1(x), lab=(st,v)=>CMP_LAB[st][Math.abs(v)>=2?0:1];
-    L.forEach(x=>{ const {st,a,c}=x, el=document.createElement("div"); el.className="adj-cmp-card";
-      const na=a.p.name, nc=c.p.name, pa=a.card+x.up, pc=c.card-x.dn;
-      el.innerHTML='<h4><span>'+st+' : '+rdEsc(na)+' '+a.card+' / '+rdEsc(nc)+' '+c.card+'</span><small>'+x.conf+'</small></h4>'+
-        '<div class="adj-cmp-pl"><div><b>'+rdEsc(na)+'</b>'+st+' '+a.card+'<br>'+f(a.raw)+' '+lab(st,a.raw)+' / match<br>'+a.n+' matchs</div>'+
-        '<div><b>'+rdEsc(nc)+'</b>'+st+' '+c.card+'<br>'+f(c.raw)+' '+lab(st,c.raw)+' / match<br>'+c.n+' matchs</div></div>'+
-        '<p>'+rdEsc(na)+' produit plus ('+f(a.raw)+' contre '+f(c.raw)+' par match) mais a '+(c.card-a.card)+' points de moins en '+st+'. D\'après la grille du groupe, '+f(a.r)+' par match vaut environ <b>'+a.e+'</b>, et '+f(c.r)+' environ <b>'+c.e+'</b> (ratios lissés vers la moyenne du groupe).</p>'+
-        '<p class="adj-cmp-prop"><b>Proposition</b> : '+(x.up?rdEsc(na)+' '+a.card+' → <b>'+pa+'</b>':'')+(x.up&&x.dn?' et ':'')+(x.dn?rdEsc(nc)+' '+c.card+' → <b>'+pc+'</b>':'')+(x.up&&x.dn?', ou seulement l\'un des deux.':'.')+'</p>'+
-        '<div class="adj-cmp-acts">'+(x.up?'<button type="button" data-p="'+a.p.id+'">✏️ Carte de '+rdEsc(na)+'</button>':'')+(x.dn?'<button type="button" data-p="'+c.p.id+'">✏️ Carte de '+rdEsc(nc)+'</button>':'')+'</div>';
-      el.querySelectorAll("[data-p]").forEach(bt=>bt.addEventListener("click",()=>{ closeSheet(); editPlayer(bt.dataset.p); }));
-      box.appendChild(el); });
+    list.innerHTML="";
+    const chips=document.createElement("div"); chips.className="adj-cmp-chips";
+    chips.innerHTML=CMP_STATS.map(S=>'<button type="button" data-k="'+S.k+'" class="'+(S.k===CMP_TAB?"on ":"")+(S.prop?"":"ind")+'">'+S.k+(S.prop?"":" ⓘ")+'</button>').join("");
+    chips.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return; CMP_TAB=b.dataset.k; drawAdjCompare(list); });
+    list.appendChild(chips);
+    const S=CMP_STATS.find(x=>x.k===CMP_TAB)||CMP_STATS[1], R=cmpRows(S), lead=document.createElement("p"); lead.className="adj-cmp-lead";
+    lead.textContent=S.info+" Tous les joueurs avec au moins 3 matchs ("+R.rows.length+" joueur"+(R.rows.length>1?"s":"")+")."+(S.prop?"":" Pas de proposition pour cette ligne.");
+    list.appendChild(lead);
+    if(!R.ok){ const p=document.createElement("p"); p.className="adj-none"; p.textContent="Pas encore assez de joueurs avec 3 matchs"+(S.mode==="gk"?" au goal (10 min ou plus)":"")+" pour comparer."; list.appendChild(p); return; }
+    const cardLab=S.key?S.k:"Note";
+    let h='<table class="adj-cmp-t"><thead><tr><th>#</th><th class="l">Joueur</th><th>'+S.lab+'</th><th>'+cardLab+'</th><th>Attendue</th><th>Écart</th></tr></thead><tbody>';
+    const fl=S.team?5:CMP_FLAG;
+    R.rows.forEach(r=>{ const f=!R.flat&&Math.abs(r.d)>=fl?(r.d<0?"lo":"hi"):"ok";
+      h+='<tr class="'+f+'"><td class="rk">'+r.rk+'</td><td class="l"><b>'+rdEsc(r.p.name)+'</b><small>'+r.n+' matchs</small></td><td class="ra">'+cmpNum(r.raw)+'</td>'+
+        '<td><span class="rt" style="background:'+badgeCol(r.card)+'">'+r.card+'</span></td><td class="ex">'+(R.flat?"–":r.e)+'</td><td><span class="ch '+f+'">'+(R.flat?"–":r.d===0?"±0":(r.d>0?"+":"−")+Math.abs(r.d))+'</span></td></tr>'; });
+    h+='</tbody></table><p class="adj-cmp-leg">« Attendue » = la note '+cardLab+' que donnerait son ratio d\'après la grille du groupe (ratios lissés vers la moyenne quand il y a peu de matchs). Surligné à '+fl+' points d\'écart ou plus : vert = sous-noté, rouge = sur-noté.</p>'+
+      (R.flat?'<p class="adj-cmp-leg"><b>Pas de note attendue pour l\'instant</b> : dans le groupe, les meilleurs ratios n\'ont pas les meilleures notes '+cardLab+' (aucun lien clair). Le classement reste lisible, mais l\'appli ne propose rien.</p>':'');
+    const tb=document.createElement("div"); tb.innerHTML=h; list.appendChild(tb);
+    if(!S.prop||R.flat)return;
+    const P=cmpProps(S,R.rows), t=document.createElement("h4"); t.className="adj-cmp-h"; t.innerHTML='Propositions <small>· '+(P.length?P.length+" joueur"+(P.length>1?"s":""):"aucune")+'</small>'; list.appendChild(t);
+    if(!P.length){ const p=document.createElement("p"); p.className="adj-none"; p.textContent="✅ Pas d'écart de 3 points ou plus sur cette stat."; list.appendChild(p); return; }
+    P.forEach(x=>{ const r=x.r, el=document.createElement("div"); el.className="adj-cmp-card "+(x.under?"lo":"hi");
+      el.innerHTML='<div class="adj-cmp-top"><span class="adj-cmp-ar">'+(x.under?"▲":"▼")+'</span><b>'+rdEsc(r.p.name)+'</b><span class="adj-cmp-pr">'+S.k+' '+r.card+' → <b>'+x.nv+'</b></span></div>'+
+        '<p>'+cmpNum(r.raw)+' '+(Math.abs(r.raw)>=2?S.u[1]:S.u[0])+' par match sur '+r.n+' matchs : '+r.rk+(r.rk>1?"e":"er")+' du groupe. Sa carte le place '+r.ck+(r.ck>1?"e":"er")+'.'+(S.team?" Indicateur d'équipe, à lire avec du recul.":"")+'</p>'+
+        (x.cmp.length?'<ul>'+x.cmp.map(c=>'<li>'+c+'</li>').join("")+'</ul>':'')+
+        '<div class="adj-cmp-ft"><span>Confiance : '+x.conf+' · '+r.n+' matchs</span><button type="button" data-p="'+r.p.id+'">✏️ Ouvrir sa carte</button></div>';
+      el.querySelector("[data-p]").addEventListener("click",()=>{ closeSheet(); editPlayer(r.p.id); });
+      list.appendChild(el); });
   }
   /* après un match (téléphone d'un orga) : notif aux seuls orgas s'il y a des propositions pour les joueurs du match (une fois par match, côté script) */
   function adjNotify(rec){ try{ if(!isAdmin()||!rec)return; renderAdjBtn();
@@ -6878,7 +6919,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
-    ["v59","13 nov. 2026","🗳️","Plusieurs matchs prévus en même temps (« Organiser un match » : reprendre ou ➕ nouveau). MVP : plus de note le soir, la rédac rapporte le dépouillement (unanimité, élu d'une voix…) ; suggestions du vote avec le gardien (+2 pts par but évité) et toujours 3 propositions. L'animation du MVP ne se relance plus toute seule. Rédac : la victoire compte selon l'écart, plancher à 5 pour l'équipe gagnante, le « croqueur » chambré ; bandeau de la rédac en haut de la fiche du match. Ajustements : comparatif saison entre joueurs. Réglages épurés. Au goal, un passage raté compte dans la note de la rédac dès 5 minutes."],
+    ["v59","13 nov. 2026","🗳️","Plusieurs matchs prévus en même temps (« Organiser un match » : reprendre ou ➕ nouveau). MVP : plus de note le soir, la rédac rapporte le dépouillement (unanimité, élu d'une voix…) ; suggestions du vote avec le gardien (+2 pts par but évité) et toujours 3 propositions. L'animation du MVP ne se relance plus toute seule. Rédac : la victoire compte selon l'écart, plancher à 5 pour l'équipe gagnante, le « croqueur » chambré ; bandeau de la rédac en haut de la fiche du match. Ajustements : comparatif saison (classement de tous les joueurs par stat, note attendue, propositions argumentées). Réglages épurés. Au goal, un passage raté compte dans la note de la rédac dès 5 minutes."],
     ["v58","12 nov. 2026","🎢","La rédac passe à 23 badges : le Verrou, le Marathonien, le Basculeur, la Clé du match, le Château de sable et le Perso. Le Gardien en carton devient la Passoire. Le titre va au badge le plus fort du soir, et deux badges proches donnent une vanne combo (Box-to-box, Héros du soir, Paradoxe). Nouvelle notif à part : « 📰 La rédac du match » Chaque badge a son « Bon à savoir » (fiche du badge et carnet)."],
     ["v57","10 nov. 2026","📰","La rédac du match : le lendemain à 8 h, une note sur 10, des badges cumulables et une vanne pour chaque joueur, avec un dévoilement animé et sonore. Page de la rédac (notif, fiche du match), onglet Trophées › Badges avec pastilles et partage WhatsApp, rattrapage des 4 premiers matchs."],
     ["v56","9 nov. 2026","🏆","Soirée de fin de saison : la Team of the Season part toute seule à la date réglée (ou « Lancer maintenant »), notif pour tout le groupe, cérémonie à l\'ouverture, onglet dans Trophées et Palmarès. Thèmes de saison : « Lancer maintenant ». Image de la Team of the Season = le terrain de la cérémonie avec le bilan de la saison. Stats de gardien seulement pour les matchs joués avec la pastille 🧤 (à partir du 4 novembre). Les 10 de la Team of the Season gagnent la carte marbre et or (au choix dans « Changer le visuel », jusqu'à la reprise de septembre) et un bloc sur leur accueil ; le Joueur de la saison porte la médaille N°1."],
@@ -7015,7 +7056,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         "<li><b>Refus</b> : la même proposition ne revient pas tant que les stats du joueur n'ont pas changé (nouveau match).</li>"+
         "<li><b>Après un changement accepté</b> : 3 nouveaux matchs avant de reproposer la même note.</li>"+
         "<li>Un changement accepté est noté dans l'onglet Notes et le joueur est prévenu, comme quand un orga modifie sa carte.</li>"+
-        "<li>Le barème GAR est provisoire : il sera recalé quand on aura assez de vrais matchs avec la pastille 🧤.</li></ul>"],
+        "<li>Le barème GAR est provisoire : il sera recalé quand on aura assez de vrais matchs avec la pastille 🧤.</li></ul>"+
+        "<p><b>🔍 Le comparatif saison</b> (2e onglet des Ajustements suggérés) regarde toute la saison et compare les joueurs <b>entre eux</b>.</p><ul>"+
+        "<li><b>Qui</b> : tous les joueurs avec au moins 3 matchs dans la saison (pas de top 10).</li>"+
+        "<li><b>Quelles stats</b> : TIR (buts / match), PAS (passes déc. / match), GAR (buts évités / match, 10 min au goal ou plus), DEF (buts encaissés par son équipe comparés à la moyenne du match : indicateur d'équipe, à lire avec du recul). À titre indicatif, sans proposition : TEC (buts sans passeur / match) et Global (+/− de son équipe / match comparé à la note générale). PHY et CAR : pas de mesure possible.</li>"+
+        "<li><b>Note attendue</b> : la note que donnerait le ratio du joueur d'après la grille du groupe (droite note ↔ ratio). Les ratios sont lissés vers la moyenne du groupe quand il y a peu de matchs, pour qu'un gros soir isolé ne fausse pas tout.</li>"+
+        "<li><b>Surligné</b> à 3 points d'écart ou plus (5 pour DEF), vert = sous-noté, rouge = sur-noté, avec une <b>proposition argumentée</b> : vers la note attendue (±4 au maximum, ±2 pour DEF), 2 joueurs comparables cités, et une confiance (à confirmer : 3 matchs ; moyenne : 4 ; solide : 5 et plus).</li>"+
+        "<li><b>Pas de lien clair</b> entre une note et son ratio dans le groupe (les meilleurs ratios n'ont pas les meilleures notes) : pas de note attendue, l'appli ne propose rien sur cette stat.</li><li><b>Rien ne change tout seul</b> : « Ouvrir sa carte » et vous modifiez à la main.</li></ul>"],
       ["redac","📰","La rédac du match","Notes sur 10, badges, vannes",
         '<p class="cn-rd">« Elle vous a vus jouer. Elle va tout balancer. » La rédac</p>'+
         "<p>Le lendemain du match (Réglages › Événements, <b>8 h</b> par défaut), après la clôture du vote MVP, l'appli écrit la rédac : une <b>note sur 10</b>, des <b>badges</b> et une <b>vanne</b> pour chaque joueur. Notif perso pour les 10, générale pour les autres (interrupteur à part « 📰 La rédac du match » dans Réglages › Notifications). Tout le monde lit tout : la notif, le bouton de la fiche du match (historique) et Trophées › Badges.</p>"+
