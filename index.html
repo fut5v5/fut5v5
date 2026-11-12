@@ -490,7 +490,7 @@ button{font:inherit;color:inherit}
 .rg-head{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:inherit;font:inherit;text-align:left;padding:14px;cursor:pointer;border-radius:18px}
 .rg-head:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 .rg-head .rg-t{flex:1;min-width:0}
-.rg-head .rg-sum{font-family:'Barlow',sans-serif;font-weight:500;font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+.rg-head .rg-sum{display:none!important;font-family:'Barlow',sans-serif;font-weight:500;font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
 .rg-head .chev{width:18px;height:18px;flex:none;transition:transform .2s;color:var(--muted)}
 .rg-head[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .rg-body{padding:0 14px 14px}
@@ -1000,8 +1000,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .seg.vsw button small{font-size:.72rem;font-weight:600;opacity:.75}
 .seg.vsw button[aria-pressed="true"]{color:#0c1a3d;box-shadow:0 4px 14px rgba(233,199,106,.35)}
 .tots-frame{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:70;background:#06080f}
-.adj-btn{border:2px solid var(--gold)!important}
-.adj-btn .adj-ic{font-size:1.7rem;line-height:1}
+.adj-btn{border:2px solid var(--gold)!important;justify-content:flex-start!important;gap:16px!important}
+.adj-btn .t{flex:1;min-width:0}
+.adj-btn .adj-ic{width:46px;flex:none;text-align:center;font-size:2rem;line-height:1}
 .adj-btn .adj-n{margin-left:auto;background:var(--gold);color:#0c1a3d;border-radius:999px;font-weight:800;padding:2px 10px;font-size:1rem}
 .adj-head{margin:0 0 10px}
 .adj-info{border:1px solid var(--gold);background:none;color:var(--gold);border-radius:999px;padding:6px 12px;font-weight:700;cursor:pointer}
@@ -1254,6 +1255,40 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .rd-pl p{margin:5px 0 22px;font:400 .88rem/1.42 'Barlow',sans-serif}.rd-pl p .rd-save{color:var(--gold)}
 .rd-sp{position:absolute;right:8px;bottom:8px;transform:rotate(10deg);font:900 italic .7rem/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;padding:2px 5px;border:2px solid currentColor;border-radius:4px;text-transform:uppercase}
 .rd-src{margin:14px 0 0;font:500 .78rem 'Barlow',sans-serif;color:var(--muted);text-align:center}
+/* v59 : choix du match à organiser */
+.om-list{display:grid;gap:10px;margin-top:4px}
+.om-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:14px;border:1px solid var(--tile-line);background:var(--tile);color:inherit;font:inherit;cursor:pointer}
+.om-row b{display:block;font:800 1.15rem 'Barlow Condensed',sans-serif}
+.om-row small{color:var(--muted);font-size:.84rem}
+.om-row .om-ic{font-size:1.6rem;flex:none}
+.om-row.om-new{border:1.5px dashed var(--gold);background:rgba(233,199,106,.08)}
+.om-row.om-new b{color:var(--gold)}
+/* v59 : la rédac en une dans la fiche du match */
+.rd-une{position:relative;display:block;width:100%;text-align:left;margin:12px 0 4px;padding:12px 14px 12px;border-radius:16px;border:1.5px solid var(--gold);cursor:pointer;color:#fff;font:inherit;
+  background:linear-gradient(135deg,rgba(233,199,106,.22) 0 18%,transparent 18%),radial-gradient(110% 90% at 10% 10%,#22367a,#0c1a3d 70%);box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.rd-une .rd-une-k{display:flex;justify-content:space-between;align-items:center;font:800 .72rem 'Barlow',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.rd-une .rd-une-h{display:block;margin:6px 0 4px;font:900 italic 1.45rem/1.05 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.rd-une .rd-une-h em{font-style:inherit;color:var(--gold)}
+.rd-une .rd-une-f{display:flex;justify-content:space-between;align-items:center;gap:10px;font:600 .88rem 'Barlow',sans-serif;color:#dbe3fb}
+.rd-une .rd-une-n{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 8px;border-radius:9px;font:900 italic 1.1rem 'Barlow Condensed',sans-serif;color:#0c1a3d}
+.rd-une .rd-une-go{font:800 1rem 'Barlow Condensed',sans-serif;color:var(--gold);white-space:nowrap}
+.rd-une .rd-une-dot{position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#ff3b30;box-shadow:0 0 0 3px var(--bg,#0c1a3d)}
+/* v59 : comparatif entre joueurs (ajustements) */
+.adj-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 12px;padding:4px;border-radius:12px;background:rgba(255,255,255,.06)}
+.adj-tabs button{border:0;border-radius:9px;padding:10px 6px;background:transparent;color:var(--muted);font:700 .9rem 'Barlow',sans-serif;cursor:pointer}
+.adj-tabs button.on{background:var(--gold);color:#0c1a3d}
+.adj-cmp{display:grid;gap:12px}
+.adj-cmp-card{border-radius:14px;border:1px solid var(--tile-line);background:var(--tile);padding:12px 14px}
+.adj-cmp-card h4{margin:0 0 8px;font:800 1.15rem 'Barlow Condensed',sans-serif;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.adj-cmp-card h4 small{font:700 .72rem 'Barlow',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.adj-cmp-pl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.adj-cmp-pl div{border-radius:10px;background:rgba(255,255,255,.05);padding:8px 10px;font-size:.85rem;line-height:1.35}
+.adj-cmp-pl b{display:block;font-size:.98rem}
+.adj-cmp-card p{margin:6px 0;font-size:.88rem;line-height:1.4}
+.adj-cmp-prop{border-left:3px solid var(--gold);padding-left:10px}
+.adj-cmp-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.adj-cmp-acts button{flex:1;min-width:130px;border-radius:10px;border:1px solid var(--gold);background:rgba(233,199,106,.12);color:var(--gold);font:700 .85rem 'Barlow',sans-serif;padding:9px 8px;cursor:pointer}
+.adj-cmp-conf{font-size:.78rem;color:var(--muted)}
 .rd-open{display:flex;justify-content:center;gap:8px;align-items:center;margin-top:10px;width:100%;border-radius:12px;border:1.5px solid var(--gold);background:linear-gradient(90deg,rgba(233,199,106,.22),rgba(233,199,106,.08));color:var(--gold);font:800 1.05rem 'Barlow Condensed',sans-serif;text-transform:uppercase;padding:11px;cursor:pointer}
 /* onglet Badges */
 .rd-coll{position:relative;overflow:hidden;border-radius:18px;padding:12px 14px;border:1px solid rgba(233,199,106,.6);color:#fff;background:linear-gradient(135deg,rgba(233,199,106,.16) 0 22%,transparent 22%),radial-gradient(90% 80% at 15% 20%,#22367a,#0c1a3d 65%,#060d24)}
@@ -1651,9 +1686,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <h2 id="dTitle">Détails du match</h2>
     </div>
     <div class="dhero" id="dHero"></div>
+    <div id="dRedac" hidden></div>
     <div class="dmom"><div class="dmom-top"><b>Momentum</b><span id="dMomSub"></span></div><canvas id="dMom" role="img" aria-label="Momentum du match"></canvas></div>
     <div id="dMvpBox"><p class="dsec">MVP du match</p><div class="dmvp" id="dMvp"></div></div>
-    <div id="dRedac" hidden></div>
     <div id="dGkBox" hidden></div>
     <p class="dlivemvp" id="dLiveMvp" hidden>★ MVP : désigné à la fin du match</p>
     <div class="dtabs" role="tablist" aria-label="Contenu du match">
@@ -1999,7 +2034,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     if(route==="stats"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderStatsGrid(); return; }
     if(route.startsWith("p-")){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); const [pid,ptab]=route.slice(2).split("~"); if(!renderPlayer(pid)){playerSec.hidden=true;home.hidden=false;} else if(ptab&&ptab!==PV.tab){ PV.tab=ptab; renderPlayerBody(); setTimeout(()=>{ const tb=document.querySelector('.ptabs button[data-tab="'+ptab+'"]'); if(tb)tb.scrollIntoView({block:"nearest",inline:"center"}); },50); } return; }
     if(route==="historique"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderHistory(); return; }
-    if(detRec){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!detailRec||detailRec.id!==detRec.id)dTab="det"; renderDetail(detRec); if(!detRec.live)playMvpReveal(detRec); return; }
+    if(detRec){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); if(!detailRec||detailRec.id!==detRec.id)dTab="det"; renderDetail(detRec); if(!detRec.live&&(!mvpRevealed(detRec.id)||forceReveal===detRec.id)){ forceReveal=null; playMvpReveal(detRec); } return; }
     if(route==="carte"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); render(); return; }
     if(route==="match"){ home.hidden=true; screen.hidden=true; window.scrollTo(0,0); renderMatch(); return; }
     const plan=PLANS[route];
@@ -3180,8 +3215,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
   /* --- fin du match : MVP puis compte rendu --- */
   /* --- suggestions de MVP d'après l'impact sur le score ---
-     but 3 pts, passe décisive 2 pts, but de la victoire +2, équipe gagnante +2 (nul +1), contre son camp -2 */
-  function mvpSuggestions(rec){
+     but 3 pts, passe décisive 2 pts, but de la victoire +2, équipe gagnante +2 (nul +1), contre son camp -2,
+     v59 : gardien +2 pts par but évité (15 min au goal ou plus, seulement le positif) ; le votant est retiré AVANT de garder les 3 */
+  function mvpSuggestions(rec,exclude){
     const b=rec.goals.filter(g=>g.side==="blanc").length, r=rec.goals.filter(g=>g.side==="rouge").length;
     const win=b>r?"blanc":r>b?"rouge":null;
     let winning=null;
@@ -3193,10 +3229,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       if(g.ast&&sc[g.ast]){ sc[g.ast].a++; sc[g.ast].pts+=2; if(g===winning)sc[g.ast].ga=true; }
     });
     Object.values(sc).forEach(x=>{ const t=rec.team[x.id]; if(win&&t===win)x.pts+=2; else if(!win)x.pts+=1; });
-    return Object.values(sc).filter(x=>x.g||x.a).sort((x,y)=>y.pts-x.pts||y.g-x.g||y.a-x.a||avgStats(byId(y.id))-avgStats(byId(x.id))).slice(0,3).map(x=>{
+    let gk=null; try{ gk=keeperMatch(rec); }catch(e){}
+    if(gk) Object.values(sc).forEach(x=>{ const o=gk.by[x.id]; if(o&&o.min>=15&&o.sv>0){ x.sv=o.sv; x.pts+=Math.round(2*o.sv*2)/2; x.bestGk=gk.best===x.id; } });
+    return Object.values(sc).filter(x=>(x.g||x.a||x.sv)&&x.id!==exclude).sort((x,y)=>y.pts-x.pts||y.g-x.g||y.a-x.a||avgStats(byId(y.id))-avgStats(byId(x.id))).slice(0,3).map(x=>{
       const bits=[]; if(x.g)bits.push(x.g+" but"+(x.g>1?"s":"")); if(x.a)bits.push(x.a+" passe"+(x.a>1?"s":"")+" déc.");
       if(x.gw)bits.push("but de la victoire"); else if(x.ga)bits.push("passe du but de la victoire");
       if(x.o)bits.push(x.o+" CSC");
+      if(x.sv)bits.push("🧤 +"+String(Math.round(x.sv*10)/10).replace(".",",")+" but"+(x.sv>=2?"s":"")+" évité"+(x.sv>=2?"s":"")+(x.bestGk?" (meilleur gardien)":""));
       bits.push(win?(rec.team[x.id]===win?"victoire":"défaite"):"match nul");
       return {id:x.id,pts:x.pts,why:bits.join(", ")};
     });
@@ -3204,7 +3243,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function openMvpSheet(rec,title,onPick,opts){
     opts=opts||{};
     openSheet(title,opts.sub||"Choisis le MVP. Sa carte passera sur le fond sombre dans le compte rendu.",body=>{
-      const sug=mvpSuggestions(rec).filter(x=>x.id!==opts.exclude);
+      const sug=mvpSuggestions(rec,opts.exclude);
       if(sug.length){
         const h=document.createElement("p"); h.className="sgroup"; h.textContent="Suggestions d'après le match"; body.appendChild(h);
         const box=document.createElement("div"); box.className="sugg";
@@ -3215,7 +3254,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
           t.querySelector("small").textContent=x.why+" : "+x.pts+" pts"; b.appendChild(t);
           b.addEventListener("click",()=>{closeSheet();onPick(p.id)}); box.appendChild(b); });
         body.appendChild(box);
-        const n=document.createElement("p"); n.className="sug-note"; n.textContent="Calcul : but 3 pts, passe décisive 2 pts, but de la victoire +2, équipe gagnante +2 (nul +1), contre son camp -2.";
+        const n=document.createElement("p"); n.className="sug-note"; n.textContent="Calcul : but 3 pts, passe décisive 2 pts, but de la victoire +2, équipe gagnante +2 (nul +1), 🧤 +2 pts par but évité au goal (15 min ou plus), contre son camp −2.";
         body.appendChild(n);
       }
       /* vote des joueurs : on rappelle que tout le monde est éligible, pas seulement les suggestions */
@@ -4618,6 +4657,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 
   /* ================= RÉVÉLATION DU MVP ================= */
   const MVP_SEEN_KEY="fut5v5:mvp-vus";
+  let forceReveal=null;   /* v59 : « Revivre mon sacre » relance l'animation même si elle a déjà été vue */
   const mvpSeen=()=>{ try{return JSON.parse(localStorage.getItem(MVP_SEEN_KEY)||"[]")}catch(e){return []} };
   const mvpRevealed=id=>mvpSeen().includes(id);
   function markMvpRevealed(id){ const a=mvpSeen(); if(a.includes(id))return; a.push(id); try{localStorage.setItem(MVP_SEEN_KEY,JSON.stringify(a.slice(-300)))}catch(e){} }
@@ -5494,6 +5534,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     desert:"Les filets t'attendent depuis plusieurs matchs.",
     bizut:"Ton premier match de la saison (ou ton grand retour) : la rédac t'a à l'œil."};
   const RD_KEYS=Object.keys(RD_B), RD_FAM={leg:"Le légendaire",up:"Les coups d'éclat",dn:"Les coups de moins bien"}, RD_STAMP={top:"Encensé",mid:"Mi-figue",flop:"Chambré"};
+  const RD_READ="fut5v5:redac-lues";   /* v59 : rédacs ouvertes (pastille du bandeau de la fiche du match) */
   const RD_SEEN="fut5v5:redac-vus", RD_BSEEN="fut5v5:badges-vus", RD_HUMBLE="fut5v5:redac-humble";
   const rdLs=(k)=>{ try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } }, rdSet=(k,a)=>{ try{ localStorage.setItem(k,JSON.stringify(a.slice(-400))); }catch(e){} };
   const rdFmt=n=>String(n).replace(".",","), rdCls=n=>n>=10?"leg":n>=7?"top":n>=5?"mid":"flop";
@@ -5641,6 +5682,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   function renderRedacPage(mid){
     const B=$("#rdBody"); if(!B)return; const R=rdOf(mid), rec=rdMatch(mid);
     if(!R||!rec){ B.innerHTML='<p class="rg-status">Pas encore de rédac pour ce match. Elle tombe le lendemain du match.</p>'; return; }
+    try{ const lu=rdLs(RD_READ); if(lu.indexOf(mid)<0){ lu.push(mid); rdSet(RD_READ,lu.slice(-200)); } }catch(e){}
     const me=myId(), sb=sc(rec,"blanc"), sr=sc(rec,"rouge"), mv=rec.mvp&&byId(rec.mvp), dd=new Date(rec.date);
     const ids=Object.keys(R.pl).sort((a,b)=>R.pl[b].n-R.pl[a].n), tp=R.top||ids[0], fl=R.flop||ids[ids.length-1];
     B.innerHTML='<div class="rd-mast"><small>'+(R.src==="rattrapage"?"Rattrapage · édition spéciale":"Édition du lendemain")+'</small><b>La Rédac</b></div>'+
@@ -5666,7 +5708,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* bouton de la fiche d'un match (historique) */
   function renderRedacBtn(rec){ const box=$("#dRedac"); if(!box)return; const R=rec&&rdOf(rec.id);
     if(!R){ box.hidden=true; box.innerHTML=""; return; }
-    box.innerHTML='<button type="button" class="rd-open">📰 L\'analyse de la rédac</button>'; box.hidden=false;
+    const me=myId(), x=me&&R.pl&&R.pl[me], read=rdLs(RD_READ).indexOf(rec.id)>=0, nc=x?(x.n>=7?"#3fd27a":x.n>=5?"#f5a524":"#ff6a60"):"";
+    box.innerHTML='<button type="button" class="rd-une">'+(read?'':'<span class="rd-une-dot" aria-label="pas encore lue"></span>')+
+      '<span class="rd-une-k"><span>📰 La rédac du match</span><span>'+(read?'déjà lue':'nouveau')+'</span></span>'+
+      '<span class="rd-une-h">'+(R.une||'Le compte rendu')+'</span>'+
+      '<span class="rd-une-f"><span>'+(x?'Ta note : <span class="rd-une-n" style="background:'+nc+'">'+rdFmt(x.n)+'</span>':'Notes, badges et vannes des 10 joueurs')+'</span><span class="rd-une-go">Lire la rédac ›</span></span></button>';
+    box.hidden=false;
     box.querySelector("button").addEventListener("click",()=>{ location.hash="redac-"+rec.id; }); }
 
   /* ---------- Trophées › Badges ---------- */
@@ -6261,7 +6308,9 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const ib=head.querySelector(".adj-info"), hp=head.querySelector(".adj-help");
       ib.addEventListener("click",()=>{ hp.hidden=!hp.hidden; ib.setAttribute("aria-expanded",String(!hp.hidden)); });
       body.appendChild(head);
+      const tabs=document.createElement("div"); tabs.className="adj-tabs"; tabs.innerHTML='<button type="button" class="on" data-t="last">3 derniers matchs</button><button type="button" data-t="cmp">🔍 Comparatif saison</button>'; body.appendChild(tabs);
       const list=document.createElement("div"); list.className="adj-list"; body.appendChild(list);
+      tabs.addEventListener("click",e=>{ const t=e.target.closest("button"); if(!t)return; tabs.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===t)); if(t.dataset.t==="cmp")drawAdjCompare(list); else draw(); });
       const draw=()=>{ list.innerHTML=""; const L=adjList();
         if(!L.length){ list.innerHTML='<p class="adj-none">✅ Rien à revoir pour l\'instant : les notes collent aux derniers matchs.</p>'; renderAdjBtn(); return; }
         L.forEach(x=>{ const c=document.createElement("div"), up=x.d>0; c.className="adj-card "+(up?"up":"down");
@@ -6291,6 +6340,59 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         renderAdjBtn(); };
       draw();
     });
+  }
+  /* ---- v59 : comparatif entre joueurs (saison) — les orgas jugent et modifient à la main ----
+     TIR ↔ buts par match, PAS ↔ passes par match (matchs dans le champ), GAR ↔ buts évités par match (10 min au goal ou plus).
+     Ratio « prudent » : (total + 2 × moyenne du groupe) / (matchs + 2). Grille du groupe = droite note ↔ ratio (moindres carrés).
+     Incohérence : ratio nettement meilleur (TIR +0,6, PAS +0,5, GAR +1) mais 5 points de moins sur la carte. */
+  const CMP_MIN=3, CMP_K=2, CMP_GAP={TIR:.6,PAS:.5,GAR:1}, CMP_LAB={TIR:["buts","but"],PAS:["passes déc.","passe déc."],GAR:["buts évités","but évité"]};
+  function adjCompare(){
+    const y0=seasonStart(hofNow()), ms=matches.filter(m=>seasonStart(m.date)===y0), out=[];
+    ["TIR","PAS","GAR"].forEach(st=>{
+      const rows=[];
+      roster.forEach(p=>{ let n=0, sum=0;
+        ms.forEach(m=>{ if(!m.present.includes(p.id))return; const k=keeperMatch(m), o=k&&k.by[p.id];
+          if(st==="GAR"){ if(o&&o.min>=GK_MINUTES){ n++; sum+=o.sv; } return; }
+          if(o&&o.min>=matchDur(m)/2)return; n++; sum+=st==="TIR"?m.goals.filter(g=>g.pid===p.id&&!g.own).length:m.goals.filter(g=>g.ast===p.id).length; });
+        if(n>=CMP_MIN) rows.push({p,n,sum,raw:sum/n,card:clamp(p.stats[ADJ_KEY[st]])}); });
+      if(rows.length<4)return;
+      const mean=rows.reduce((s,r)=>s+r.sum,0)/rows.reduce((s,r)=>s+r.n,0);
+      rows.forEach(r=>r.r=(r.sum+CMP_K*mean)/(r.n+CMP_K));
+      const mx=rows.reduce((s,r)=>s+r.r,0)/rows.length, my=rows.reduce((s,r)=>s+r.card,0)/rows.length;
+      const sxx=rows.reduce((s,r)=>s+(r.r-mx)*(r.r-mx),0), sxy=rows.reduce((s,r)=>s+(r.r-mx)*(r.card-my),0);
+      if(sxx<=1e-9)return; let b=sxy/sxx; if(b<=0) b=(st==="GAR"?4:8);   /* grille à l'envers : pente minimale raisonnable */
+      const exp=r=>Math.max(40,Math.min(99,Math.round(my+b*(r.r-mx))));
+      rows.forEach(r=>r.e=exp(r));
+      const seen={};
+      rows.forEach(a=>rows.forEach(c=>{ if(a===c||a.r-c.r<CMP_GAP[st]||a.card>c.card-5)return;
+        const key=st+a.p.id+c.p.id; if(seen[key])return; seen[key]=1;
+        const up=Math.max(0,Math.min(4,a.e-a.card)), dn=Math.max(0,Math.min(4,c.card-c.e)); if(!up&&!dn)return;
+        const nmin=Math.min(a.n,c.n), conf=nmin>=5?"solide":nmin>=4?"moyenne":"à confirmer";
+        out.push({st,a,c,up,dn,gap:(a.r-c.r)/CMP_GAP[st]+(c.card-a.card)/5,conf}); }));
+    });
+    /* un joueur n'apparaît qu'une fois par stat (la paire la plus parlante) */
+    out.sort((x,y)=>y.gap-x.gap); const used={}, res=[];
+    out.forEach(x=>{ const ka=x.st+x.a.p.id, kc=x.st+x.c.p.id; if(used[ka]||used[kc])return; used[ka]=used[kc]=1; res.push(x); });
+    return res.slice(0,8);
+  }
+  function drawAdjCompare(list){
+    list.innerHTML=""; const L=adjCompare();
+    const intro=document.createElement("p"); intro.className="adj-cmp-conf";
+    intro.textContent="Sur toute la saison, joueurs avec au moins 3 matchs. On compare chaque joueur aux autres : celui qui produit nettement plus mais a une note plus basse. Rien ne change tout seul : vous jugez, et vous modifiez la carte à la main.";
+    list.appendChild(intro);
+    if(!L.length){ const p=document.createElement("p"); p.className="adj-none"; p.textContent="✅ Pas d'incohérence nette entre joueurs pour l'instant."; list.appendChild(p); return; }
+    const box=document.createElement("div"); box.className="adj-cmp"; list.appendChild(box);
+    const f=x=>dec1(x), lab=(st,v)=>CMP_LAB[st][Math.abs(v)>=2?0:1];
+    L.forEach(x=>{ const {st,a,c}=x, el=document.createElement("div"); el.className="adj-cmp-card";
+      const na=a.p.name, nc=c.p.name, pa=a.card+x.up, pc=c.card-x.dn;
+      el.innerHTML='<h4><span>'+st+' : '+rdEsc(na)+' '+a.card+' / '+rdEsc(nc)+' '+c.card+'</span><small>'+x.conf+'</small></h4>'+
+        '<div class="adj-cmp-pl"><div><b>'+rdEsc(na)+'</b>'+st+' '+a.card+'<br>'+f(a.raw)+' '+lab(st,a.raw)+' / match<br>'+a.n+' matchs</div>'+
+        '<div><b>'+rdEsc(nc)+'</b>'+st+' '+c.card+'<br>'+f(c.raw)+' '+lab(st,c.raw)+' / match<br>'+c.n+' matchs</div></div>'+
+        '<p>'+rdEsc(na)+' produit plus ('+f(a.raw)+' contre '+f(c.raw)+' par match) mais a '+(c.card-a.card)+' points de moins en '+st+'. D\'après la grille du groupe, '+f(a.r)+' par match vaut environ <b>'+a.e+'</b>, et '+f(c.r)+' environ <b>'+c.e+'</b> (ratios lissés vers la moyenne du groupe).</p>'+
+        '<p class="adj-cmp-prop"><b>Proposition</b> : '+(x.up?rdEsc(na)+' '+a.card+' → <b>'+pa+'</b>':'')+(x.up&&x.dn?' et ':'')+(x.dn?rdEsc(nc)+' '+c.card+' → <b>'+pc+'</b>':'')+(x.up&&x.dn?', ou seulement l\'un des deux.':'.')+'</p>'+
+        '<div class="adj-cmp-acts">'+(x.up?'<button type="button" data-p="'+a.p.id+'">✏️ Carte de '+rdEsc(na)+'</button>':'')+(x.dn?'<button type="button" data-p="'+c.p.id+'">✏️ Carte de '+rdEsc(nc)+'</button>':'')+'</div>';
+      el.querySelectorAll("[data-p]").forEach(bt=>bt.addEventListener("click",()=>{ closeSheet(); editPlayer(bt.dataset.p); }));
+      box.appendChild(el); });
   }
   /* après un match (téléphone d'un orga) : notif aux seuls orgas s'il y a des propositions pour les joueurs du match (une fois par match, côté script) */
   function adjNotify(rec){ try{ if(!isAdmin()||!rec)return; renderAdjBtn();
@@ -6332,8 +6434,21 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     else if(a===1){ H=["La passe <em>qui fait la différence</em> 🎯","L'art de <em>faire briller les autres</em> ✨"]; Q=["Pas besoin de marquer quand on voit le jeu comme ça.","Une passe, un regard, un but. Classe."]; }
     else { H=["Le patron <em>de l'ombre</em> 🕶️","Pas de stats, <em>que du cœur</em> 🫀"]; Q=["Pas de stats, mais un match à 200 %. Le vrai sait.","Le genre de match qu'on ne voit que dans les yeux du coach."]; }
     const sig=pickF(["La rédac, encore sous le choc","La rédac, conquise","La rédac, en PLS","La rédac, qui n'en revient toujours pas"],seed>>>3);
-    let note=6+g+a*0.5+(res==="win"?0.5:res==="draw"?0.25:0)-o; note=Math.max(5,Math.min(10,Math.round(note*2)/2));
-    return {h:pickF(H,seed),q:pickF(Q,seed>>>1),sig,note:String(note).replace(".",","),g,a,o,my,op,res};
+    const vs=voteSay(rec,seed);   /* v59 : plus de note le soir, la rédac rapporte le dépouillement */
+    return {h:pickF(H,seed),q:vs?vs.q:pickF(Q,seed>>>1),sig:vs?pickF(["La rédac, au dépouillement","La rédac, qui a recompté les bulletins","La rédac, scrutatrice d'un soir"],seed>>>2):sig,badge:vs?vs.badge:"★",vb:vs?vs.vb:"",g,a,o,my,op,res};
+  }
+  /* v59 : ce que disent les urnes (résumé anonyme renvoyé par le script une fois le vote clos ; jamais qui a voté pour qui) */
+  function voteSay(rec,seed){
+    const R=rec&&rec.vote&&rec.vote.res; if(!R)return null;
+    const w=+R.w||0, tot=+R.tot||0, d=R.d&&byId(R.d)?byId(R.d).name:"", dv=+R.dv||0, pk=L=>pickF(L,seed>>>4);
+    if(R.how==="orga"||!tot) return {badge:"★",vb:"",q:pk(["Les votants n'ont pas tranché : ce sont les orgas qui ont choisi. Ça compte pareil, mais ça fait moins rêver.","Pas de verdict dans les urnes : les orgas ont tranché. Un MVP nommé, pas élu. La rédac respecte, sans plus."])};
+    const vb=w+" voix sur "+tot, badge=w+"/"+tot;
+    if(R.how==="tirage") return {badge,vb,q:"Égalité parfaite dans les urnes ("+w+" voix chacun"+(d?" avec "+d:"")+"), et même aux stats : c'est le tirage au sort qui a parlé. La chance, ça se travaille aussi."};
+    if(R.how==="stats") return {badge,vb,q:pk(["Égalité dans les urnes ("+w+" voix chacun"+(d?" avec "+d:"")+"), départagée aux buts et aux passes. MVP aux points, mais MVP quand même.","Les votants n'ont pas su choisir"+(d?" entre toi et "+d:"")+" ("+w+" partout) : ce sont les stats qui ont tranché. Merci les stats."])};
+    if(tot>=2&&w===tot) return {badge,vb,q:pk(["Unanimité : "+w+" voix sur "+tot+". Pas un seul votant n'a hésité. Même ceux qui ne t'aiment pas.","Grand chelem dans les urnes : "+w+" sur "+tot+". La rédac a cherché un bulletin dissident, elle n'en a pas trouvé."])};
+    if(d&&w-dv===1) return {badge,vb,q:pk(["Élu d'une seule voix devant "+d+" ("+w+" contre "+dv+"). La rédac a recompté trois fois. Quelqu'un dans ce vestiaire te doit un verre.","Au coude-à-coude avec "+d+" jusqu'au dernier bulletin : "+w+" voix contre "+dv+". "+d+" demande déjà un recomptage."])};
+    if(tot&&w/tot>=.6) return {badge,vb,q:pk([vb+". Le vestiaire a parlé, et il parle fort."+(tot-w?" Les "+(tot-w)+" autre"+(tot-w>1?"s":"")+" sont priés de se justifier.":""),vb+" : large majorité. Pas besoin de second tour."])};
+    return {badge,vb,q:vb+(R.nc>2?", dans un vote éclaté entre "+R.nc+" joueurs":"")+". Pas un plébiscite, mais c'est toi qui repars avec le titre."};
   }
   /* ---- « Chambrer le groupe » : image du sacre + message façon MPG (🎲 pour en changer) ---- */
   let bragVariant=0;
@@ -6343,11 +6458,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const V=[
       "🎤 Petit rappel : le MVP de "+d+", c'est moi. "+B+". Allez, bisous les remplaçants.",
       "🏆 Qui c'est le MVP de "+d+" ? C'est bibi 😎 "+B+". Merci, merci, pas d'autographes.",
-      "📰 La rédac a tranché : "+t.note+"/10 et le titre de MVP. Vous pouvez applaudir, je vous entends pas d'ici 👂",
+      "📰 Le vestiaire a voté"+(t.vb?" : "+t.vb:"")+", et c'est moi le MVP. Vous pouvez applaudir, je vous entends pas d'ici 👂",
       "🐐 Le GOAT a encore frappé : "+B+". Les réclamations se font auprès de la VAR.",
       "🍿 Allez revoir mon sacre dans l'appli. Oui, j'ai regardé l'animation 14 fois. Et alors ?",
       "🧤 Aux gardiens de "+d+" : désolé. Enfin… pas trop 😏 "+B+".",
-      "⭐ "+t.note+"/10 selon la rédac. Je vous laisse comparer avec vos notes, courage 😇",
+      "⭐ "+(t.vb?t.vb+". ":"")+"Le peuple a parlé. Je vous laisse digérer, courage 😇",
       t.res==="loss"?"🦁 Perdre et être MVP quand même, c'est un art. Demandez à la rédac.":"✍️ "+B+" et le brassard de MVP. Mon agent attend vos offres pour le mercato."];
     return V[bragVariant%V.length]+"\n👉 "+location.href.split("#")[0];
   }
@@ -6376,7 +6491,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     c.shadowColor="rgba(233,199,106,.55)"; c.shadowBlur=70; c.drawImage(cc,-cw/2,-ch/2); c.shadowColor="rgba(0,0,0,.5)"; c.shadowBlur=40; c.shadowOffsetY=20; c.drawImage(cc,-cw/2,-ch/2); c.restore();
     c.save(); c.translate(470,215); c.rotate(8*Math.PI/180); const hw=62, hh=70; c.beginPath(); c.moveTo(0,-hh); c.lineTo(hw,-hh/2); c.lineTo(hw,hh/2); c.lineTo(0,hh); c.lineTo(-hw,hh/2); c.lineTo(-hw,-hh/2); c.closePath();
     g=c.createLinearGradient(-hw,-hh,hw,hh); g.addColorStop(0,"#fff1b8"); g.addColorStop(.6,GOLD); g.addColorStop(1,"#c99a2e"); c.fillStyle=g; c.shadowColor="rgba(0,0,0,.45)"; c.shadowBlur=20; c.fill(); c.shadowBlur=0;
-    c.fillStyle="#0c1a3d"; c.font="italic 800 60px "+BC; c.textAlign="center"; c.fillText(t.note,0,21); c.restore(); c.textAlign="left";
+    c.fillStyle="#0c1a3d"; c.font="italic 800 "+(t.badge.length>3?40:t.badge.length>1?52:60)+"px "+BC; c.textAlign="center"; c.fillText(t.badge,0,t.badge.length>1?16:21); c.restore(); c.textAlign="left";
     /* titre (mots dorés = <em>) */
     const runs=[]; t.h.split(/(<em>.*?<\/em>)/).forEach(part=>{ if(!part)return; const gold=/^<em>/.test(part); runs.push({t:part.replace(/<\/?em>/g,"").toUpperCase(),gold}); });
     const X=560, MW=Wd-70-X; let fs=92, lines;
@@ -6449,12 +6564,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       '<div class="fete-acts"><button type="button" class="fete-b replay">▶ Revivre mon sacre</button><button type="button" class="fete-b brag">📲 Chambrer le groupe</button>'+
       '<button type="button" class="fete-ok">OK, je reste humble 😇</button></div>';
     box.querySelector(".fete-lab span:last-child").textContent=d;
-    box.querySelector(".fete-note").textContent=t.note;
+    box.querySelector(".fete-note").textContent=t.badge; if(t.vb)box.querySelector(".fete-note").title=t.vb;
     box.querySelector("q span").textContent="« "+t.q+" »";
     box.querySelector("q small").textContent="— "+t.sig;
     drawCard(box.querySelector("canvas"),Object.assign({},p,{fond:"forme",mvp:true}),.5);
     box.querySelector(".brag").addEventListener("click",()=>openBrag(rec,id,t,d));
-    box.querySelector(".replay").addEventListener("click",()=>{ lastReveal={id:"",t:0}; location.hash="m-"+rec.id; });
+    box.querySelector(".replay").addEventListener("click",()=>{ lastReveal={id:"",t:0}; forceReveal=rec.id; if(location.hash==="#m-"+rec.id)playMvpReveal(rec); else location.hash="m-"+rec.id; });
     box.querySelector(".fete-ok").addEventListener("click",()=>{ const a=feteSeen(); a.push(rec.id); try{localStorage.setItem(FETE_KEY,JSON.stringify(a.slice(-100)))}catch(e){} renderFete(id); });
     box.hidden=false;
   }
@@ -6589,8 +6704,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const busy=started&&(location.hash==="#match"||!$("#live").hidden||M.pending||syncBusy);
     if(!busy){
       let local=null; try{local=JSON.parse(localStorage.getItem(SAVE_KEY)||"null")}catch(e){}
-      const src=(local&&(local.pending||local.draft)&&(!data.planned||data.planned.id===local.id))?local:(data.planned?{
-        id:data.planned.id,present:data.planned.present,team:data.planned.team,layout:data.planned.layout,made:true,goals:data.planned.goals,start:data.planned.start,date:toLocalInput(data.planned.date),convokedAt:data.planned.convokedAt||"",convokedBy:data.planned.convokedBy||"",liveMode:data.planned.liveMode||"",keepers:data.planned.keepers||null}:null);
+      /* v59 : plusieurs matchs prévus. On garde le match qu'on avait ouvert s'il existe encore, sinon le dernier modifié */
+      PLANNED=plannedOf(data); const pick=PLANNED.find(x=>x.id===M.id)||data.planned||null;
+      const keepLocal=local&&(local.pending||local.draft)&&(!pick||PLANNED.some(x=>x.id===local.id)||(local.pending&&!matches.some(x=>x.id===local.id)));
+      const src=keepLocal?local:(pick?plannedSrc(pick):null);
       if(src){
         M.id=src.id; M.present=new Set((src.present||[]).filter(id=>roster.some(p=>p.id===id)));
         Object.assign(M,{team:src.team||{},layout:src.layout||{},made:!!src.made,goals:src.goals||[],start:src.start||null,date:src.date||M.date,folded:!!src.made,pending:!!src.pending,convokedAt:src.convokedAt||M.convokedAt||"",convokedBy:src.convokedBy||M.convokedBy||"",liveMode:src.liveMode||"",keepers:src.keepers||null});
@@ -6600,6 +6717,35 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         try{localStorage.removeItem(SAVE_KEY)}catch(e){}
       }
     }
+  }
+  let PLANNED=[];
+  const plannedOf=data=>(data&&data.plannedList&&data.plannedList.length?data.plannedList:(data&&data.planned?[data.planned]:[]));
+  const plannedSrc=p=>({id:p.id,present:p.present,team:p.team,layout:p.layout,made:true,goals:p.goals,start:p.start,date:toLocalInput(p.date),convokedAt:p.convokedAt||"",convokedBy:p.convokedBy||"",liveMode:p.liveMode||"",keepers:p.keepers||null});
+  /* v59 : « Organiser un match » → reprendre un des matchs prévus, ou en créer un nouveau */
+  function loadPlanned(p){
+    const s=plannedSrc(p); M.id=s.id; M.present=new Set((s.present||[]).filter(id=>roster.some(q=>q.id===id)));
+    Object.assign(M,{team:s.team||{},layout:s.layout||{},made:true,goals:s.goals||[],start:s.start||null,date:s.date,folded:true,pending:false,convokedAt:s.convokedAt,convokedBy:s.convokedBy,liveMode:s.liveMode,keepers:s.keepers,draft:false,mvp:null});
+    M.sent=M.convokedAt?compoSnap():null; matchUndo.clear(); liveUndo.clear(); quiet=true; persistLocal(); syncForm(); renderMatch(); quiet=false; }
+  function newPlanned(){
+    let dd=defaultDate(); const last=PLANNED.map(x=>new Date(x.date)).sort((a,b)=>b-a)[0];   /* par défaut : une semaine après le dernier match prévu */
+    if(last){ const x=new Date(last.getTime()+7*86400000); dd=toLocalInput(x); }
+    Object.assign(M,{id:null,convokedAt:"",convokedBy:"",sent:null,draft:false,pending:false,present:new Set(),team:{},layout:{},made:false,folded:false,goals:[],start:null,mvp:null,date:dd,liveMode:"",keepers:null});
+    try{localStorage.removeItem(SAVE_KEY)}catch(e){} matchUndo.clear(); liveUndo.clear(); quiet=true; syncForm(); renderMatch(); quiet=false; }
+  function openMatchChoice(){
+    if(M.pending||syncBusy){ toast("Enregistrement du match en cours… réessaie dans un instant."); return; }
+    const L=PLANNED.slice(); if(M.id&&(M.made||M.present.size)&&!L.some(x=>x.id===M.id)) L.push({id:M.id,date:parseDate(M.date),present:[...M.present],_local:true});
+    if(!L.length){ location.hash="match"; return; }
+    openSheet("Organiser un match","Reprends un match déjà prévu, ou prépare-en un nouveau.",body=>{
+      const box=document.createElement("div"); box.className="om-list"; body.appendChild(box);
+      L.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(p=>{ const b=document.createElement("button"); b.type="button"; b.className="om-row";
+        const d=new Date(p.date), n=(p.present||[]).length, live=!!p.start;
+        b.innerHTML='<span class="om-ic">'+(live?"🔴":"📋")+'</span><span><b></b><small></small></span>';
+        b.querySelector("b").textContent=(live?"Reprendre le match en cours du ":"Reprendre le match du ")+d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+        b.querySelector("small").textContent=(n?n+" présent"+(n>1?"s":""):"aucun présent pour l'instant")+(p.convokedAt?" · convoqués":"")+(p.id===M.id?" · ouvert sur ce téléphone":"");
+        b.addEventListener("click",()=>{ closeSheet(); if(!p._local&&p.id!==M.id)loadPlanned(p); location.hash="match"; }); box.appendChild(b); });
+      const nb=document.createElement("button"); nb.type="button"; nb.className="om-row om-new";
+      nb.innerHTML='<span class="om-ic">➕</span><span><b>Nouveau match</b><small>Les matchs déjà prévus restent enregistrés. Choisis la date dans l\'écran suivant.</small></span>';
+      nb.addEventListener("click",()=>{ closeSheet(); newPlanned(); location.hash="match"; }); box.appendChild(nb); });
   }
   function startUI(){
     applyRole(); $("#splash").hidden=true;
@@ -6732,6 +6878,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
+    ["v59","13 nov. 2026","🗳️","Plusieurs matchs prévus en même temps (« Organiser un match » : reprendre ou ➕ nouveau). MVP : plus de note le soir, la rédac rapporte le dépouillement (unanimité, élu d'une voix…) ; suggestions du vote avec le gardien (+2 pts par but évité) et toujours 3 propositions. L'animation du MVP ne se relance plus toute seule. Rédac : la victoire compte selon l'écart, plancher à 5 pour l'équipe gagnante, le « croqueur » chambré ; bandeau de la rédac en haut de la fiche du match. Ajustements : comparatif saison entre joueurs. Réglages épurés. Au goal, un passage raté compte dans la note de la rédac dès 5 minutes."],
     ["v58","12 nov. 2026","🎢","La rédac passe à 23 badges : le Verrou, le Marathonien, le Basculeur, la Clé du match, le Château de sable et le Perso. Le Gardien en carton devient la Passoire. Le titre va au badge le plus fort du soir, et deux badges proches donnent une vanne combo (Box-to-box, Héros du soir, Paradoxe). Nouvelle notif à part : « 📰 La rédac du match » Chaque badge a son « Bon à savoir » (fiche du badge et carnet)."],
     ["v57","10 nov. 2026","📰","La rédac du match : le lendemain à 8 h, une note sur 10, des badges cumulables et une vanne pour chaque joueur, avec un dévoilement animé et sonore. Page de la rédac (notif, fiche du match), onglet Trophées › Badges avec pastilles et partage WhatsApp, rattrapage des 4 premiers matchs."],
     ["v56","9 nov. 2026","🏆","Soirée de fin de saison : la Team of the Season part toute seule à la date réglée (ou « Lancer maintenant »), notif pour tout le groupe, cérémonie à l\'ouverture, onglet dans Trophées et Palmarès. Thèmes de saison : « Lancer maintenant ». Image de la Team of the Season = le terrain de la cérémonie avec le bilan de la saison. Stats de gardien seulement pour les matchs joués avec la pastille 🧤 (à partir du 4 novembre). Les 10 de la Team of the Season gagnent la carte marbre et or (au choix dans « Changer le visuel », jusqu'à la reprise de septembre) et un bloc sur leur accueil ; le Joueur de la saison porte la médaille N°1."],
@@ -6823,7 +6970,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         "<li>Gagnant : le plus de voix. Égalité : buts + passes du match, puis victoire (ou nul), puis tirage au sort.</li>"+
         "<li>Aucun vote : les orgas sont prévenus et désignent le MVP.</li></ul>"+
         "<p>Le nom reste secret partout (images, textes, notifs) jusqu'à l'animation façon walkout FIFA à l'ouverture du match.</p>"+
-        '<p class="cn-f">Note du MVP /10 = 6 + 1/but + 0,5/passe + 0,5 victoire (0,25 nul) − 1/CSC</p><p>Bornée entre 5 et 10.</p><p>Le MVP garde son bloc festif sur l\'accueil jusqu\'à ce que le MVP du match suivant soit désigné, et 21 jours au maximum : le premier des deux qui arrive.</p><p>Sa carte passe en noir partout (Statistiques, compos, fiches, images) jusqu\'au match suivant, 21 jours au maximum. Il peut remettre sa carte or depuis son accueil (« Changer le visuel de ma carte »). Rien n\'apparaît avant la révélation sur le téléphone de chacun.</p>'],
+        '<p><b>Les 3 suggestions de la fenêtre de vote</b> : l\'appli classe les joueurs du match par points, et propose les 3 premiers (toi exclu, puisqu\'on ne vote pas pour soi). Tout le monde reste votable avec « Un autre joueur ».</p>'+
+        '<p class="cn-f">Points = 3 par but + 2 par passe décisive + 2 pour le but de la victoire + 2 équipe gagnante (1 si nul) + 2 par but évité au goal (15 min ou plus) − 2 par CSC</p>'+
+        '<p>À égalité de points : le plus de buts, puis de passes, puis la meilleure carte. Sous chaque suggestion, l\'appli écrit pourquoi (buts, passes, buts évités, victoire) et le total de points.</p>'+
+        '<p><b>Pas de note pour le MVP le soir même</b> : la rédac rapporte le dépouillement (unanimité, élu d\'une voix devant tel joueur, égalité départagée…). La seule note, c\'est celle de la rédac du lendemain.</p><p>Le MVP garde son bloc festif sur l\'accueil jusqu\'à ce que le MVP du match suivant soit désigné, et 21 jours au maximum : le premier des deux qui arrive.</p><p>Sa carte passe en noir partout (Statistiques, compos, fiches, images) jusqu\'au match suivant, 21 jours au maximum. Il peut remettre sa carte or depuis son accueil (« Changer le visuel de ma carte »). Rien n\'apparaît avant la révélation sur le téléphone de chacun.</p>'],
       ["hof","🏛️","Le Hall of Fame","Qui est sacré, et quand",
         live+'<div class="cn-k"><span>📅 Prochaine cérémonie : <b>'+nhTxt+"</b></span></div>"+
         table(["Titre","Critère","Minimum","Départage"],[
@@ -6869,8 +7019,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       ["redac","📰","La rédac du match","Notes sur 10, badges, vannes",
         '<p class="cn-rd">« Elle vous a vus jouer. Elle va tout balancer. » La rédac</p>'+
         "<p>Le lendemain du match (Réglages › Événements, <b>8 h</b> par défaut), après la clôture du vote MVP, l'appli écrit la rédac : une <b>note sur 10</b>, des <b>badges</b> et une <b>vanne</b> pour chaque joueur. Notif perso pour les 10, générale pour les autres (interrupteur à part « 📰 La rédac du match » dans Réglages › Notifications). Tout le monde lit tout : la notif, le bouton de la fiche du match (historique) et Trophées › Badges.</p>"+
-        '<p class="cn-f">Note = 5,5 + 0,8 × (buts − moyenne du match) + 0,4 × (passes − moyenne du match) ± 0,5 victoire / défaite + 1 MVP − 1 par CSC + 0,5 par but évité au goal + 0,5 Verrou + 0,5 Basculeur</p>'+
-        "<p>Au demi-point, de 2 à 9,5. Le <b>10</b> seulement si le calcul atteint 10,5 : il donne le badge 🐐 Le GOAT. Vert à partir de 7, orange de 5 à 6,5, rouge en dessous. Une note sous 5 garde une phrase « pour l'honneur ».</p>"+
+        '<p class="cn-f">Note = 5,5 + 0,8 × (buts − moyenne du match) + 0,4 × (passes − moyenne du match) ± victoire / défaite selon l\'écart (1–2 buts : 0,5 ; 3–5 : 1 ; 6 et plus : 1,5) + 1 MVP − 1 par CSC + 0,5 par but évité au goal (bonus à partir de 15 min dans les cages, malus dès 5 min) + 0,5 Verrou + 0,5 Basculeur</p>'+
+        "<p>Au demi-point, de 2 à 9,5. Le <b>10</b> seulement si le calcul atteint 10,5 : il donne le badge 🐐 Le GOAT. Vert à partir de 7, orange de 5 à 6,5, rouge en dessous. Une note sous 5 garde une phrase « pour l'honneur ». <b>C'est le collectif qui gagne</b> : un joueur de l'équipe gagnante ne descend jamais sous 5 (sauf but contre son camp) ; s'il n'a ni but ni passe, la rédac le chambre quand même (« juste là pour croquer la victoire »).</p>"+
         "<p><b>"+RD_KEYS.length+" badges, cumulables</b> dans un même match. <b>Le titre et la notif vont au badge le plus fort</b> : celui qui dépasse le plus son seuil. À égalité, l'ordre de la liste ci-dessous. Bonne note : l'éloge d'abord, la pique à la fin ; note sous 5 : l'inverse.</p>"+
         "<p><b>Vannes combo</b> : quand deux badges sont au coude-à-coude (à 20 % près), la rédac écrit une seule vanne pour les deux. 🔒 Verrou + un badge offensif = <b>Le Box-to-box</b> ; 🎢 Basculeur + Festival, Rafale, Horloge, Marathonien ou Clé = <b>Le Héros du soir</b> ; 🔒 Verrou + 🤥 Fraude au tir = <b>Le Paradoxe</b>.</p>"+
         ["leg","up","dn"].map(f=>"<p><b>"+RD_FAM[f]+"</b></p><ul>"+RD_KEYS.filter(k=>RD_B[k][2]===f).map(k=>"<li>"+RD_B[k][0]+" <b>"+RD_B[k][1]+"</b> : "+RD_B[k][3]+"."+(RD_INFO[k]?" <small>"+RD_INFO[k]+"</small>":"")+"</li>").join("")+"</ul>").join("")+
@@ -7133,7 +7283,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 58 · 12 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 59 · 13 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
@@ -7199,6 +7349,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   document.addEventListener("click",e=>{
     const b=e.target.closest("[data-go]"); if(!b)return;
     const r=b.dataset.go;
+    if(r==="match"&&b.classList.contains("main")&&isAdmin()){ openMatchChoice(); return; }
     if(r==="home"){ if(location.hash)history.back(); else show("home"); }
     /* retour du carnet du coach : on revient sur l'entrée « Réglages » de l'historique au lieu d'en empiler une nouvelle
        (sinon le retour des Réglages renvoie au carnet, et ainsi de suite en boucle) */
