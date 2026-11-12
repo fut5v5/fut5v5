@@ -1277,6 +1277,29 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .adj-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 12px;padding:4px;border-radius:12px;background:rgba(255,255,255,.06)}
 .adj-tabs button{border:0;border-radius:9px;padding:10px 6px;background:transparent;color:var(--muted);font:700 .9rem 'Barlow',sans-serif;cursor:pointer}
 .adj-tabs button.on{background:var(--gold);color:#0c1a3d}
+.nm-win{display:grid;gap:4px}
+.nm-chs{display:grid;gap:8px;margin-bottom:6px}
+.nm-ch{display:flex;align-items:center;gap:8px;background:var(--tile);border:1px solid var(--tile-line);border-radius:12px;padding:8px 12px;font-size:1rem}
+.nm-ch b{min-width:42px}.nm-ch span{color:var(--muted)}.nm-ch strong{min-width:34px;text-align:center;font:800 1.25rem 'Barlow Condensed',sans-serif}.nm-ch strong.up{color:#3fd27a}.nm-ch strong.dn{color:#ff7b63}
+.nm-ch button{width:36px;height:36px;border-radius:10px;border:1px solid var(--gold);background:rgba(233,199,106,.12);color:var(--gold);font:800 1.2rem 'Barlow',sans-serif;cursor:pointer}
+.nm-lab{margin:8px 0 4px;font:700 .72rem 'Barlow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.nm-args{display:grid;gap:6px}
+.nm-arg{display:flex;gap:9px;align-items:flex-start;text-align:left;width:100%;background:var(--tile);border:1px solid var(--tile-line);border-radius:10px;padding:8px 10px;color:inherit;font:500 .86rem/1.35 'Barlow',sans-serif;cursor:pointer}
+.nm-arg.on{border-color:var(--gold);background:rgba(233,199,106,.1)}
+.nm-bx{width:18px;height:18px;flex:none;border-radius:5px;border:2px solid var(--muted);display:grid;place-items:center;font-size:.72rem;margin-top:1px}.nm-arg.on .nm-bx{background:var(--gold);border-color:var(--gold);color:#0c1a3d}
+.nm-txt{width:100%;border-radius:10px;border:1px solid var(--gold);background:rgba(0,0,0,.2);color:inherit;font:500 .9rem/1.4 'Barlow',sans-serif;padding:8px 10px;resize:vertical}
+.nm-refresh{margin-top:4px;border:0;background:transparent;color:var(--gold);font:700 .84rem 'Barlow',sans-serif;text-align:left;cursor:pointer;padding:4px 0}
+.nm-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.nm-btns button{padding:13px;border-radius:12px;font:800 1rem 'Barlow',sans-serif;cursor:pointer;border:1px solid var(--tile-line);background:var(--tile);color:inherit}
+.nm-btns .nm-go{background:var(--gold);color:#0c1a3d;border-color:var(--gold)}
+#meNoteMsg{margin:0 0 14px}
+.nm-card{border-radius:16px;border:1.5px solid var(--gold);padding:12px 14px;background:linear-gradient(135deg,rgba(233,199,106,.18) 0 18%,transparent 18%),var(--tile)}
+.nm-card .nm-k{display:flex;justify-content:space-between;font:800 .7rem 'Barlow',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.nm-card .nm-big{margin:6px 0 2px;font:900 italic 1.5rem 'Barlow Condensed',sans-serif}.nm-card .nm-big b.up,.nm-mini b.up{color:#3fd27a}.nm-card .nm-big b.dn,.nm-mini b.dn{color:#ff7b63}
+.nm-card .nm-q{margin:6px 0 2px;font-style:italic;font-size:.92rem;line-height:1.4}.nm-card .nm-sig{margin:0 0 10px;font-size:.78rem;color:var(--muted)}
+.nm-card .nm-ok{width:100%;padding:11px;border-radius:12px;border:0;background:var(--gold);color:#0c1a3d;font:800 1rem 'Barlow',sans-serif;cursor:pointer}
+.nm-mini{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border-radius:12px;border:1px solid rgba(233,199,106,.5);padding:10px 12px;background:var(--tile);color:inherit;font:600 .88rem 'Barlow',sans-serif;cursor:pointer}
+.nm-mini span:last-child{color:var(--gold);font-weight:800;white-space:nowrap}
 .adj-cmp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .adj-cmp-chips button{padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:transparent;color:inherit;font:700 .84rem 'Barlow',sans-serif;cursor:pointer}
 .adj-cmp-chips button.on{background:var(--gold);color:#0c1a3d;border-color:var(--gold)}
@@ -1454,6 +1477,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       <button type="button" class="me-chg" id="meChg" hidden aria-label="Changer le visuel de ma carte">🎴 Changer le visuel</button>
       <button type="button" class="votebar" id="meVote" hidden></button>
       <div class="fete redachome" id="meRedac" hidden></div>
+      <div id="meNoteMsg" hidden></div>
       <div class="fete totshome" id="meTots" hidden></div>
       <div class="fete" id="meFete" hidden></div>
       <div class="fete hofhome" id="meHof" hidden></div>
@@ -2704,6 +2728,14 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     t.textContent=m; t.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{t.hidden=true},3200);
   }
   $("#saveBtn").addEventListener("click",()=>{
+    /* v59 : une carte existante dont les notes changent → fenêtre « Prévenir X ? » avant d'enregistrer */
+    if(mode==="edit"&&orig&&!sameStats(draft,orig)&&byId(draft.id)){
+      const ch=STATS.filter(s=>draft.stats[s[0]]!==orig.stats[s[0]]).map(s=>({key:s[0],old:orig.stats[s[0]],nv:draft.stats[s[0]]}));
+      openNoteMsg(draft.id,ch,(C,msg)=>{ ch.forEach(c=>{ const x=C.find(y=>y.key===c.key); draft.stats[c.key]=x?x.nv:c.old; }); closeSheet(); saveCard(msg); render(); });
+      return; }
+    saveCard("");
+  });
+  function saveCard(msg){
     const name=draft.name.trim();
     if(!name){toast("Indiquez le nom du joueur."); $("#nameIn").focus(); return;}
     if(roster.some(x=>x.id!==draft.id&&x.name.trim().toLowerCase()===name.toLowerCase())){toast("Un joueur porte déjà ce nom. Ajoutez une initiale pour les distinguer.");return;}
@@ -2712,7 +2744,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const photoParam=(draft.photo||null)===((orig&&orig.photo)||null)?null:(draft.photo?draft.photo:"__remove__");
     const wasNew=mode==="new";
     if(wasNew&&!draft.id)draft.id="n"+Date.now().toString(36);
-    const payload={id:draft.id,name,stats:Object.assign({},draft.stats),fond:"or",zoom:draft.zoom,ox:draft.ox,oy:draft.oy};
+    const payload={id:draft.id,name,stats:Object.assign({},draft.stats),fond:"or",zoom:draft.zoom,ox:draft.ox,oy:draft.oy}; if(msg)payload.msg=msg;
     $("#saveBtn").disabled=true;
     api("savePlayer",ADMIN.code,payload,photoParam).then(r=>{
       const p=roster.find(x=>x.id===r.id);
@@ -2727,11 +2759,11 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     }
     const changed=!sameStats(draft,orig), f=formeOf();
     draft.forme=f;
-    if(changed)draft.hist=(orig.hist||[]).concat([{date:new Date().toISOString(),stats:Object.assign({},draft.stats)}]);
+    if(changed)draft.hist=(orig.hist||[]).concat([Object.assign({date:new Date().toISOString(),stats:Object.assign({},draft.stats)},msg?{msg,by:"toi"}:{})]);
     const i=roster.findIndex(x=>x.id===draft.id); roster[i]=copy(draft); orig=copy(draft); fillPicker(draft.id);
-    toast(changed?(f>0?"Notes enregistrées : forme en hausse.":f<0?"Notes enregistrées : forme en baisse.":"Notes enregistrées : moyenne inchangée, pas d'indicateur."):"Carte enregistrée.");
+    toast(changed?(msg?"Notes enregistrées, "+name+" est prévenu avec ton message.":f>0?"Notes enregistrées : forme en hausse.":f<0?"Notes enregistrées : forme en baisse.":"Notes enregistrées : moyenne inchangée, pas d'indicateur."):"Carte enregistrée.");
     syncForm();
-  });
+  }
 
   bindUndo(cardUndo,"cUndo","cRedo");
   if(document.fonts)document.fonts.ready.then(render);
@@ -6311,6 +6343,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     '<li><b>90 et plus</b> : jamais de hausse automatique. <b>±3 points</b> au maximum. PHY, TEC, CAR, DEF ne sont jamais proposées.</li>'+
     '<li><b>Accepter</b> change la carte (trace dans l\'onglet Notes, le joueur est prévenu comme d\'habitude). <b>Ajuster</b> : vous choisissez le chiffre. <b>Refuser</b> : ne revient pas tant que ses stats n\'ont pas changé. Après un changement, 3 nouveaux matchs avant de reproposer la même stat.</li></ul>'+
     '<p><b>🔍 Comparatif saison</b> : pour chaque stat, le classement de tous les joueurs avec au moins 3 matchs dans la saison (ratio, note actuelle, note « attendue » d\'après la grille du groupe, écart). À 3 points d\'écart ou plus, une proposition argumentée avec 2 comparaisons ; TIR, PAS, GAR et DEF (indicateur d\'équipe) ; TEC et Global à titre indicatif. Rien ne change tout seul : vous modifiez la carte à la main.</p>'+
+    '<p><b>💬 Accepter, Ajuster ou « Ajuster et prévenir »</b> ouvrent la fenêtre « Prévenir X ? » : chiffre modifiable (− / +), arguments à cocher, message modifiable envoyé au joueur avec la notif et affiché sur son accueil.</p>'+
     '<p>Tout le détail : carnet du coach › ⚖️ L\'ajustement des notes.</p>';
   function openAdjust(){
     if(!isAdmin())return;
@@ -6331,10 +6364,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
           c.querySelector(".adj-nm").textContent=x.name; c.querySelector("small").textContent=x.why;
           const acts=c.querySelector(".adj-acts");
           const busy=on=>acts.querySelectorAll("button").forEach(b=>b.disabled=on);
-          const apply=async v=>{ busy(true);
+          const apply=async(v,msg)=>{ busy(true);
             try{ const p=byId(x.pid); const stats=Object.assign({},p.stats,{[ADJ_KEY[x.stat]]:v});
-              const r=await api("savePlayer",ADMIN.code,{id:p.id,name:p.name,stats,fond:p.fond,zoom:p.zoom,ox:p.ox,oy:p.oy});
-              p.stats=stats; if(r&&r.forme!=null)p.forme=r.forme;
+              const r=await api("savePlayer",ADMIN.code,Object.assign({id:p.id,name:p.name,stats,fond:p.fond,zoom:p.zoom,ox:p.ox,oy:p.oy},msg?{msg}:{}));
+              p.stats=stats; if(r&&r.forme!=null)p.forme=r.forme; p.hist=(p.hist||[]).concat([Object.assign({date:new Date().toISOString(),stats:Object.assign({},stats)},msg?{msg,by:"toi"}:{})]);
               const a=await api("setAdjust",ADMIN.code,x.key,"change",{n:x.n,old:x.old,new:v}); SETTINGS=Object.assign({},SETTINGS,{adjust:a.adjust});
               toast("✅ "+x.name+" : "+x.stat+" "+x.old+" → "+v); redrawSoon(); draw(); }
             catch(e){ toast("Pas enregistré : "+errMsg(e)); busy(false); } };
@@ -6342,8 +6375,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
             try{ const a=await api("setAdjust",ADMIN.code,x.key,"refuse",{sig:x.sig}); SETTINGS=Object.assign({},SETTINGS,{adjust:a.adjust}); toast("✖️ Proposition refusée pour "+x.name+"."); draw(); }
             catch(e){ toast("Pas enregistré : "+errMsg(e)); busy(false); } };
           acts.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return; const a=b.dataset.a;
-            if(a==="ok")apply(x.nv); else if(a==="no")refuse();
-            else if(a==="adj"){ let v=x.nv; acts.innerHTML='<button type="button" data-m="-1">−</button><b class="adj-v">'+v+'</b><button type="button" data-m="1">+</button><button type="button" class="ok" data-v>Valider</button>';
+            if(a==="ok"||a==="adj"){ const k=ADJ_KEY[x.stat];   /* v59 : même fenêtre partout, chiffre modifiable */
+              openNoteMsg(x.pid,[{key:k,old:x.old,nv:x.nv,min:Math.max(1,x.old-3),max:Math.min(99,x.old+3)}],async(C,msg)=>{ const c=C[0]; if(!c){ closeSheet(); openAdjust(); return; } await apply(c.nv,msg); closeSheet(); openAdjust(); }); return; }
+            else if(a==="no")refuse();
+            else if(a==="adj_old"){ let v=x.nv; acts.innerHTML='<button type="button" data-m="-1">−</button><b class="adj-v">'+v+'</b><button type="button" data-m="1">+</button><button type="button" class="ok" data-v>Valider</button>';
               acts.classList.add("adj-edit");
               acts.onclick=ev=>{ const bb=ev.target.closest("button"); if(!bb)return; ev.stopPropagation();
                 if(bb.dataset.m){ v=Math.max(x.old-3,Math.min(x.old+3,Math.min(99,v+ +bb.dataset.m))); acts.querySelector(".adj-v").textContent=v; }
@@ -6431,9 +6466,74 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       el.innerHTML='<div class="adj-cmp-top"><span class="adj-cmp-ar">'+(x.under?"▲":"▼")+'</span><b>'+rdEsc(r.p.name)+'</b><span class="adj-cmp-pr">'+S.k+' '+r.card+' → <b>'+x.nv+'</b></span></div>'+
         '<p>'+cmpNum(r.raw)+' '+(Math.abs(r.raw)>=2?S.u[1]:S.u[0])+' par match sur '+r.n+' matchs : '+r.rk+(r.rk>1?"e":"er")+' du groupe. Sa carte le place '+r.ck+(r.ck>1?"e":"er")+'.'+(S.team?" Indicateur d'équipe, à lire avec du recul.":"")+'</p>'+
         (x.cmp.length?'<ul>'+x.cmp.map(c=>'<li>'+c+'</li>').join("")+'</ul>':'')+
-        '<div class="adj-cmp-ft"><span>Confiance : '+x.conf+' · '+r.n+' matchs</span><button type="button" data-p="'+r.p.id+'">✏️ Ouvrir sa carte</button></div>';
-      el.querySelector("[data-p]").addEventListener("click",()=>{ closeSheet(); editPlayer(r.p.id); });
+        '<div class="adj-cmp-ft"><span>Confiance : '+x.conf+' · '+r.n+' matchs</span><button type="button" data-p="'+r.p.id+'">✏️ Ajuster et prévenir</button></div>';
+      el.querySelector("[data-p]").addEventListener("click",()=>{ const p=r.p;
+        openNoteMsg(p.id,[{key:S.key,old:r.card,nv:x.nv}],async(C,msg)=>{ const c=C[0]; if(!c){ closeSheet(); return; }
+          try{ const stats=Object.assign({},p.stats,{[S.key]:c.nv}); const rr=await api("savePlayer",ADMIN.code,Object.assign({id:p.id,name:p.name,stats,fond:p.fond,zoom:p.zoom,ox:p.ox,oy:p.oy},msg?{msg}:{}));
+            p.stats=stats; if(rr&&rr.forme!=null)p.forme=rr.forme; p.hist=(p.hist||[]).concat([Object.assign({date:new Date().toISOString(),stats:Object.assign({},stats)},msg?{msg,by:"toi"}:{})]);
+            toast("✅ "+p.name+" : "+S.k+" "+r.card+" → "+c.nv+(msg?" · message envoyé":"")); redrawSoon(); closeSheet(); }
+          catch(e){ toast("Pas enregistré : "+errMsg(e)); } }); });
       list.appendChild(el); });
+  }
+  /* ---- v59 : le mot des orgas quand une note change ----
+     Une seule fenêtre (carte modifiée à la main, ajustements 3 derniers matchs, comparatif saison) :
+     chaque note a un sélecteur −/+ (la proposition n'est qu'une valeur par défaut), arguments à cocher tirés des stats,
+     message rédigé tout seul et modifiable ; « Valider et envoyer » ou « Sans message ». */
+  const NM_LAB={vit:"PHY",tir:"TIR",pas:"PAS",dri:"TEC",car:"CAR",phy:"DEF",gar:"GAR"};
+  function noteArgs(pid,key,old,nv){
+    const out=[], up=nv>old;
+    try{ const S=CMP_STATS.find(s=>s.key===key);
+      if(S){ const R=cmpRows(S), r=R.rows.find(x=>x.p.id===pid);
+        if(r){ out.push("Tu tournes à "+cmpNum(r.raw)+" "+(Math.abs(r.raw)>=2?S.u[1]:S.u[0])+" par match cette saison ("+r.n+" matchs), "+r.rk+(r.rk>1?"e":"er")+" du groupe.");
+          const eq=o=>Math.abs(o.raw-r.raw)<.05;
+          const o=R.rows.filter(z=>z!==r&&(up?(z.raw<=r.raw+.05&&z.card>=nv):(z.raw>=r.raw-.05&&z.card<=nv))).sort((a,b)=>up?b.card-a.card:a.card-b.card)[0];
+          if(o) out.push(o.p.name+" en fait "+(eq(o)?"autant":up?"moins":"plus")+" ("+cmpNum(o.raw)+") avec "+NM_LAB[key]+" "+o.card+".");
+          if(!R.flat&&r.e) out.push("D'après la grille du groupe, ton ratio vaut environ "+r.e+" en "+NM_LAB[key]+"."); } } }catch(e){}
+    try{ const a=adjList().find(x=>x.pid===pid&&ADJ_KEY[x.stat]===key); if(a) out.push("Sur tes 3 derniers matchs : "+a.why+"."); }catch(e){}
+    return out;
+  }
+  function openNoteMsg(pid,changes,onSend){
+    const p=byId(pid); if(!p)return;
+    const C=changes.map(c=>Object.assign({lab:NM_LAB[c.key]||c.key,min:Math.max(1,c.old-10),max:Math.min(99,c.old+10)},c));
+    const gen=["La carte doit coller à ce que tu montres sur le terrain.","Décision des orgas après discussion."];
+    let args=[]; C.forEach((c,i)=>noteArgs(pid,c.key,c.old,c.nv).forEach((t,j)=>args.push({t,on:j===0||(j===1&&i===0)})));
+    args=args.concat(gen.map(t=>({t,on:false}))); if(!args.some(a=>a.on))args[args.length-1].on=true;
+    let dirty=false;
+    openSheet("Prévenir "+p.name+" ?","Le message part avec la notif « Mes notes » et s'affiche sur son accueil pendant une semaine (ou jusqu'au match suivant).",body=>{
+      const w=document.createElement("div"); w.className="nm-win"; body.appendChild(w);
+      w.innerHTML='<div class="nm-chs"></div><p class="nm-lab">Arguments proposés (à cocher)</p><div class="nm-args"></div><p class="nm-lab">Message (modifiable)</p><textarea class="nm-txt" rows="5"></textarea><button type="button" class="nm-refresh" hidden>↻ Mettre le texte à jour avec les nouveaux chiffres</button>'+
+        '<div class="nm-btns"><button type="button" class="nm-none">Sans message</button><button type="button" class="nm-go">Valider et envoyer</button></div>';
+      const chs=w.querySelector(".nm-chs"), ag=w.querySelector(".nm-args"), tx=w.querySelector(".nm-txt"), rf=w.querySelector(".nm-refresh");
+      const head=()=>C.map(c=>c.lab+" "+c.old+" → "+c.nv).join(", ");
+      const compose=()=>{ const t=args.filter(a=>a.on).map(a=>a.t).join(" "); return head()+" : "+t.charAt(0).toLowerCase()+t.slice(1); };
+      const drawCh=()=>{ chs.innerHTML=C.map((c,i)=>'<div class="nm-ch"><b>'+c.lab+'</b><span>'+c.old+' →</span><button type="button" data-i="'+i+'" data-m="-1">−</button><strong class="'+(c.nv>c.old?"up":c.nv<c.old?"dn":"")+'">'+c.nv+'</strong><button type="button" data-i="'+i+'" data-m="1">+</button></div>').join(""); };
+      const drawArgs=()=>{ ag.innerHTML=args.map((a,i)=>'<button type="button" class="nm-arg'+(a.on?" on":"")+'" data-a="'+i+'"><span class="nm-bx">'+(a.on?"✓":"")+'</span><span></span></button>').join(""); ag.querySelectorAll(".nm-arg").forEach((b,i)=>b.lastChild.textContent=args[i].t); };
+      drawCh(); drawArgs(); tx.value=compose();
+      chs.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return; const c=C[+b.dataset.i]; c.nv=Math.max(c.min,Math.min(c.max,c.nv+ +b.dataset.m)); drawCh(); if(dirty)rf.hidden=false; else tx.value=compose(); });
+      ag.addEventListener("click",e=>{ const b=e.target.closest(".nm-arg"); if(!b)return; const a=args[+b.dataset.a]; a.on=!a.on; drawArgs(); if(dirty)rf.hidden=false; else tx.value=compose(); });
+      tx.addEventListener("input",()=>{ dirty=true; });
+      rf.addEventListener("click",()=>{ tx.value=compose(); dirty=false; rf.hidden=true; });
+      const send=msg=>{ const bs=w.querySelectorAll(".nm-btns button"); bs.forEach(b=>b.disabled=true); Promise.resolve(onSend(C.filter(c=>c.nv!==c.old),msg)).catch(()=>{}).finally(()=>bs.forEach(b=>b.disabled=false)); };
+      w.querySelector(".nm-none").addEventListener("click",()=>send(""));
+      w.querySelector(".nm-go").addEventListener("click",()=>send(tx.value.trim()));
+    });
+  }
+  /* accueil du joueur : « 📈 Ta carte a bougé » avec le mot des orgas, une semaine ou jusqu'au match suivant (le premier des deux) */
+  const NM_SEEN="fut5v5:mot-orgas-vus";
+  function renderNoteMsg(id){
+    const box=$("#meNoteMsg"); if(!box)return; const p=id&&byId(id); box.hidden=true; box.innerHTML=""; if(!p||!p.hist)return;
+    let i=-1; for(let k=p.hist.length-1;k>=0;k--) if(p.hist[k].msg){ i=k; break; } if(i<0)return;
+    const h=p.hist[i], at=new Date(h.date); if(Date.now()-at>7*86400000||matches.some(m=>m.date>at))return;
+    const prev=i>0?p.hist[i-1].stats:null, ch=prev?STATS.filter(s=>prev[s[0]]!==h.stats[s[0]]).map(s=>({lab:s[1],a:prev[s[0]],b:h.stats[s[0]]})):[];
+    const seen=rdLs(NM_SEEN).indexOf(h.date)>=0, up=ch.some(c=>c.b>c.a), dn=ch.some(c=>c.b<c.a), ic=up&&!dn?"📈":dn&&!up?"📉":"🔄";
+    const chT=ch.map(c=>c.lab+" "+c.a+' → <b class="'+(c.b>c.a?"up":"dn")+'">'+c.b+'</b>').join(" · ");
+    if(seen){ box.innerHTML='<button type="button" class="nm-mini"><span>'+ic+' '+(chT||"Ta carte a bougé")+' · le mot des orgas</span><span>Revoir ›</span></button>';
+      box.querySelector("button").addEventListener("click",()=>{ rdSet(NM_SEEN,rdLs(NM_SEEN).filter(z=>z!==h.date)); renderNoteMsg(id); }); box.hidden=false; return; }
+    box.innerHTML='<div class="nm-card"><div class="nm-k"><span>'+ic+' Ta carte a bougé</span><span>'+at.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})+'</span></div>'+
+      (chT?'<div class="nm-big">'+chT+'</div>':'')+'<p class="nm-q"></p><p class="nm-sig"></p><button type="button" class="nm-ok">👍 J\'ai vu</button></div>';
+    box.querySelector(".nm-q").textContent="« "+h.msg+" »"; box.querySelector(".nm-sig").textContent="— "+(!h.by||h.by==="toi"?"Les orgas":/orga/i.test(h.by)?h.by:h.by+", organisateur");
+    box.querySelector(".nm-ok").addEventListener("click",()=>{ const s=rdLs(NM_SEEN); s.push(h.date); rdSet(NM_SEEN,s); renderNoteMsg(id); });
+    box.hidden=false;
   }
   /* après un match (téléphone d'un orga) : notif aux seuls orgas s'il y a des propositions pour les joueurs du match (une fois par match, côté script) */
   function adjNotify(rec){ try{ if(!isAdmin()||!rec)return; renderAdjBtn();
@@ -6621,7 +6721,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     const p=byId(id), s=pstats(id,inSeason(CUR_SEASON));
     drawCard($("#meCv"),p,.34); $("#meName").textContent=p.name;
     try{ $("#meChg").hidden=!(SETTINGS&&SETTINGS.cards)||!rewardOpts(id).length; }catch(e){ $("#meChg").hidden=true; }
-    try{ renderRedacHome(id); }catch(e){} try{ rdDots(); }catch(e){} try{ renderTotsHome(id); }catch(e){} renderFete(id); try{ renderHofHome(id); }catch(e){} try{ renderVoteBar(); }catch(e){}
+    try{ renderRedacHome(id); }catch(e){} try{ renderNoteMsg(id); }catch(e){} try{ rdDots(); }catch(e){} try{ renderTotsHome(id); }catch(e){} renderFete(id); try{ renderHofHome(id); }catch(e){} try{ renderVoteBar(); }catch(e){}
     /* compteur MVP : seulement les MVP déjà révélés sur ce téléphone (pas de spoil avant l'animation) */
     const mvpShown=s.mvp-matches.filter(m=>m.mvp===id&&inSeason(CUR_SEASON)(m)&&!mvpRevealed(m.id)).length;
     $("#meStats").innerHTML='<span><b>'+s.mp+'</b>match'+(s.mp>1?"s":"")+'</span><span>'+IC_BALL+'<b>'+s.g+'</b></span><span>'+IC_BOOT+'<b>'+s.a+'</b></span><span>'+IC_STAR+'<b>'+mvpShown+'</b></span>';
@@ -6919,7 +7019,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
-    ["v59","13 nov. 2026","🗳️","Plusieurs matchs prévus en même temps (« Organiser un match » : reprendre ou ➕ nouveau). MVP : plus de note le soir, la rédac rapporte le dépouillement (unanimité, élu d'une voix…) ; suggestions du vote avec le gardien (+2 pts par but évité) et toujours 3 propositions. L'animation du MVP ne se relance plus toute seule. Rédac : la victoire compte selon l'écart, plancher à 5 pour l'équipe gagnante, le « croqueur » chambré ; bandeau de la rédac en haut de la fiche du match. Ajustements : comparatif saison (classement de tous les joueurs par stat, note attendue, propositions argumentées). Réglages épurés. Au goal, un passage raté compte dans la note de la rédac dès 5 minutes."],
+    ["v59","13 nov. 2026","🗳️","Plusieurs matchs prévus en même temps (« Organiser un match » : reprendre ou ➕ nouveau). MVP : plus de note le soir, la rédac rapporte le dépouillement (unanimité, élu d'une voix…) ; suggestions du vote avec le gardien (+2 pts par but évité) et toujours 3 propositions. L'animation du MVP ne se relance plus toute seule. Rédac : la victoire compte selon l'écart, plancher à 5 pour l'équipe gagnante, le « croqueur » chambré ; bandeau de la rédac en haut de la fiche du match. Ajustements : comparatif saison (classement de tous les joueurs par stat, note attendue, propositions argumentées). Quand une note change, les orgas peuvent prévenir le joueur avec un message argumenté : il le voit sur son accueil. Réglages épurés. Au goal, un passage raté compte dans la note de la rédac dès 5 minutes."],
     ["v58","12 nov. 2026","🎢","La rédac passe à 23 badges : le Verrou, le Marathonien, le Basculeur, la Clé du match, le Château de sable et le Perso. Le Gardien en carton devient la Passoire. Le titre va au badge le plus fort du soir, et deux badges proches donnent une vanne combo (Box-to-box, Héros du soir, Paradoxe). Nouvelle notif à part : « 📰 La rédac du match » Chaque badge a son « Bon à savoir » (fiche du badge et carnet)."],
     ["v57","10 nov. 2026","📰","La rédac du match : le lendemain à 8 h, une note sur 10, des badges cumulables et une vanne pour chaque joueur, avec un dévoilement animé et sonore. Page de la rédac (notif, fiche du match), onglet Trophées › Badges avec pastilles et partage WhatsApp, rattrapage des 4 premiers matchs."],
     ["v56","9 nov. 2026","🏆","Soirée de fin de saison : la Team of the Season part toute seule à la date réglée (ou « Lancer maintenant »), notif pour tout le groupe, cérémonie à l\'ouverture, onglet dans Trophées et Palmarès. Thèmes de saison : « Lancer maintenant ». Image de la Team of the Season = le terrain de la cérémonie avec le bilan de la saison. Stats de gardien seulement pour les matchs joués avec la pastille 🧤 (à partir du 4 novembre). Les 10 de la Team of the Season gagnent la carte marbre et or (au choix dans « Changer le visuel », jusqu'à la reprise de septembre) et un bloc sur leur accueil ; le Joueur de la saison porte la médaille N°1."],
@@ -7062,7 +7162,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         "<li><b>Quelles stats</b> : TIR (buts / match), PAS (passes déc. / match), GAR (buts évités / match, 10 min au goal ou plus), DEF (buts encaissés par son équipe comparés à la moyenne du match : indicateur d'équipe, à lire avec du recul). À titre indicatif, sans proposition : TEC (buts sans passeur / match) et Global (+/− de son équipe / match comparé à la note générale). PHY et CAR : pas de mesure possible.</li>"+
         "<li><b>Note attendue</b> : la note que donnerait le ratio du joueur d'après la grille du groupe (droite note ↔ ratio). Les ratios sont lissés vers la moyenne du groupe quand il y a peu de matchs, pour qu'un gros soir isolé ne fausse pas tout.</li>"+
         "<li><b>Surligné</b> à 3 points d'écart ou plus (5 pour DEF), vert = sous-noté, rouge = sur-noté, avec une <b>proposition argumentée</b> : vers la note attendue (±4 au maximum, ±2 pour DEF), 2 joueurs comparables cités, et une confiance (à confirmer : 3 matchs ; moyenne : 4 ; solide : 5 et plus).</li>"+
-        "<li><b>Pas de lien clair</b> entre une note et son ratio dans le groupe (les meilleurs ratios n'ont pas les meilleures notes) : pas de note attendue, l'appli ne propose rien sur cette stat.</li><li><b>Rien ne change tout seul</b> : « Ouvrir sa carte » et vous modifiez à la main.</li></ul>"],
+        "<li><b>Pas de lien clair</b> entre une note et son ratio dans le groupe (les meilleurs ratios n'ont pas les meilleures notes) : pas de note attendue, l'appli ne propose rien sur cette stat.</li><li><b>Rien ne change tout seul</b> : « Ajuster et prévenir » ouvre la fenêtre ci-dessous.</li></ul>"+
+        "<p><b>💬 Le mot des orgas</b> : dès qu'une note change (carte modifiée à la main, « Accepter » / « Ajuster » des 3 derniers matchs, « Ajuster et prévenir » du comparatif), une fenêtre « Prévenir X ? » s'ouvre :</p><ul>"+
+        "<li>chaque note changée a un sélecteur <b>− / +</b> : la proposition de l'appli n'est qu'une valeur par défaut ;</li>"+
+        "<li>des <b>arguments tirés de ses stats</b> (ratio, rang dans le groupe, joueur comparable, note attendue, 3 derniers matchs) et deux phrases neutres, à cocher ;</li>"+
+        "<li>le <b>message se rédige tout seul</b> et suit les chiffres ; vous pouvez le réécrire (si vous l'avez retouché, l'appli propose de le mettre à jour sans l'écraser) ;</li>"+
+        "<li><b>Valider et envoyer</b> : la carte change, le joueur reçoit la notif « Mes notes » avec le message, et un encart « Ta carte a bougé » sur son accueil (« J'ai vu » le replie, un toucher le rouvre) pendant une semaine ou jusqu'au match suivant, le premier des deux. <b>Sans message</b> : comme avant.</li></ul>"],
       ["redac","📰","La rédac du match","Notes sur 10, badges, vannes",
         '<p class="cn-rd">« Elle vous a vus jouer. Elle va tout balancer. » La rédac</p>'+
         "<p>Le lendemain du match (Réglages › Événements, <b>8 h</b> par défaut), après la clôture du vote MVP, l'appli écrit la rédac : une <b>note sur 10</b>, des <b>badges</b> et une <b>vanne</b> pour chaque joueur. Notif perso pour les 10, générale pour les autres (interrupteur à part « 📰 La rédac du match » dans Réglages › Notifications). Tout le monde lit tout : la notif, le bouton de la fiche du match (historique) et Trophées › Badges.</p>"+
