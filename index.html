@@ -1017,8 +1017,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .adj-nm{font-size:1.02rem}
 .adj-st{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap} .adj-st strong{font-size:1.15rem}
 .adj-card small{color:var(--muted);font-size:.8rem;line-height:1.25}
-.adj-acts{display:flex;gap:10px;margin-top:6px}
-.adj-acts button{flex:1;border-radius:10px;padding:10px 6px;font-weight:700;font-size:.86rem;border:1px solid var(--tile-line);background:rgba(255,255,255,.05);color:var(--ink);cursor:pointer}
+.adj-acts{display:flex;gap:6px}
+.adj-acts button{flex:1;border-radius:10px;padding:8px 4px;font-weight:700;font-size:.86rem;border:1px solid var(--tile-line);background:rgba(255,255,255,.05);color:var(--ink);cursor:pointer}
 .adj-acts button.ok{background:#3fd18a;color:#06281a;border-color:#3fd18a}
 .adj-acts.adj-edit{align-items:center} .adj-acts.adj-edit button[data-m]{flex:0 0 42px} .adj-acts .adj-v{min-width:34px;text-align:center;font-size:1.25rem}
 .adj-none{color:var(--muted);text-align:center;margin:10px 0}
@@ -1290,8 +1290,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
 .nm-bx{width:18px;height:18px;flex:none;border-radius:5px;border:2px solid var(--muted);display:grid;place-items:center;font-size:.72rem;margin-top:1px}.nm-arg.on .nm-bx{background:var(--gold);border-color:var(--gold);color:#0c1a3d}
 .nm-txt{width:100%;border-radius:10px;border:1px solid var(--gold);background:rgba(0,0,0,.2);color:inherit;font:500 .9rem/1.4 'Barlow',sans-serif;padding:8px 10px;resize:vertical}
 .nm-refresh{margin-top:4px;border:0;background:transparent;color:var(--gold);font:700 .84rem 'Barlow',sans-serif;text-align:left;cursor:pointer;padding:4px 0}
-.nm-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.nm-btns button{padding:13px;border-radius:12px;font:800 1rem 'Barlow',sans-serif;cursor:pointer;border:1px solid var(--tile-line);background:var(--tile);color:inherit}
+.nm-btns{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 22px}
+.nm-btns button{min-height:52px;padding:13px 10px;border-radius:12px;font:800 1rem 'Barlow',sans-serif;cursor:pointer;border:1px solid var(--tile-line);background:var(--tile);color:inherit}
 .nm-btns .nm-go{background:var(--gold);color:#0c1a3d;border-color:var(--gold)}
 #meNoteMsg{margin:0 0 14px}
 .nm-card{border-radius:16px;border:1.5px solid var(--gold);padding:12px 14px;background:linear-gradient(135deg,rgba(233,199,106,.18) 0 18%,transparent 18%),var(--tile)}
@@ -3249,9 +3249,22 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   }
 
   /* --- feuille de choix --- */
-  function openSheet(title,sub,fill){ $("#sheetTitle").textContent=title; $("#sheetSub").textContent=sub; const b=$("#sheetBody"); b.innerHTML=""; fill(b); $("#sheet").hidden=false; }
-  function closeSheet(){ $("#sheet").hidden=true; }
-  $("#sheetCancel").addEventListener("click",closeSheet);
+  /* v60 : fenêtres navigables (ajustements, « Prévenir », choix du joueur) : chaque niveau = une entrée d'historique.
+     Le retour du téléphone remonte d'un niveau ; « Annuler » ferme tout ; une sortie vers un autre écran (adjGo) laisse
+     les entrées en place, si bien que le retour de cet écran rouvre la fenêtre là où on l'avait laissée. */
+  const SHN={stack:[]};
+  function drawSheet(s){ $("#sheetTitle").textContent=s.title; $("#sheetSub").textContent=s.sub; const b=$("#sheetBody"); b.innerHTML=""; s.fill(b); $("#sheet").hidden=false; try{ $("#sheet .sheet-card").scrollTop=0; }catch(e){} }
+  function openSheet(title,sub,fill,o){ const s={title,sub,fill};
+    if(o&&o.nav){ SHN.stack.push(s); try{ history.pushState({fsh:SHN.stack.length},"",location.href); }catch(e){} }
+    else if(SHN.stack.length&&!$("#sheet").hidden){ closeSheet(); }   /* une fenêtre simple ferme d'abord les fenêtres navigables */
+    drawSheet(s); }
+  function closeSheet(keep){ $("#sheet").hidden=true;
+    if(!keep&&SHN.stack.length){ const n=SHN.stack.length; SHN.stack.length=0; try{ history.go(-n); }catch(e){} } }
+  function sheetBack(){ if(SHN.stack.length>1){ try{ history.back(); }catch(e){} } else closeSheet(); }   /* revient à la fenêtre d'avant (et la redessine) */
+  window.addEventListener("popstate",e=>{ const st=e.state;
+    if(st&&st.fsh){ const s=SHN.stack[st.fsh-1]; if(s){ SHN.stack.length=st.fsh; if(SHN.after){ const f=SHN.after; SHN.after=null; $("#sheet").hidden=true; setTimeout(f,0); return; } drawSheet(s); } else if(!$("#sheet").hidden&&SHN.stack.length){ SHN.stack.length=0; $("#sheet").hidden=true; } }
+    else if(SHN.stack.length&&!$("#sheet").hidden){ SHN.stack.length=0; $("#sheet").hidden=true; } });   /* un changement d'écran (location.hash) déclenche aussi popstate : on garde la pile */
+  $("#sheetCancel").addEventListener("click",()=>closeSheet());
   $("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
   function sheetOpt(p,onPick){ const b=document.createElement("button"); b.type="button"; b.className="sopt";
     const cv=document.createElement("canvas"); drawCard(cv,p,.3); b.appendChild(cv); const t=document.createElement("span"); t.textContent=p.name; b.appendChild(t);
@@ -6355,12 +6368,13 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     '<p>Tout le détail : carnet du coach › ⚖️ L\'ajustement des notes.</p>';
   /* v60 : depuis les ajustements, toute sortie (carte, statistiques, fiche joueur) revient aux ajustements, au même onglet et à la même stat */
   let ADJ_TAB="last", ADJ_RET=null;
-  function adjGo(fn){ ADJ_RET={hash:location.hash||"",tab:ADJ_TAB,stat:CMP_TAB}; closeSheet(); fn(); }
-  function adjBackCheck(){ if(!ADJ_RET||(location.hash||"")!==ADJ_RET.hash)return; const r=ADJ_RET; ADJ_RET=null; setTimeout(()=>openAdjust(r.tab,r.stat),250); }
+  /* sortie vers un autre écran : on redescend d'abord sur la fenêtre des ajustements (l'entrée d'historique reste), puis on part ;
+     « retour » depuis la carte ou la fiche rouvre donc les ajustements, au même onglet et à la même stat */
+  function adjGo(fn){ if(SHN.stack.length>1){ SHN.after=fn; try{ history.go(-(SHN.stack.length-1)); }catch(e){ SHN.after=null; $("#sheet").hidden=true; fn(); } return; } $("#sheet").hidden=true; fn(); }
   function openAdjPlayer(pid){ const p=byId(pid); if(!p)return;
     openSheet(p.name,"Que veux-tu voir ?",body=>{ const w=document.createElement("div"); w.className="om-list"; body.appendChild(w);
-      [["✏️","Modifier sa carte","Notes, photo : le retour te ramène ici.",()=>adjGo(()=>editPlayer(pid))],["📊","Voir sa fiche et ses statistiques","Buts, passes, gardien, rédac…",()=>adjGo(()=>{ location.hash="p-"+pid; })],["↩️","Revenir aux ajustements","",()=>openAdjust(ADJ_TAB,CMP_TAB)]].forEach(o=>{
-        const b=document.createElement("button"); b.type="button"; b.className="om-row"; b.innerHTML='<span class="om-ic">'+o[0]+'</span><span><b></b><small></small></span>'; b.querySelector("b").textContent=o[1]; b.querySelector("small").textContent=o[2]; b.addEventListener("click",o[3]); w.appendChild(b); }); }); }
+      [["✏️","Modifier sa carte","Notes, photo : le retour te ramène ici.",()=>adjGo(()=>editPlayer(pid))],["📊","Voir sa fiche et ses statistiques","Buts, passes, gardien, rédac…",()=>adjGo(()=>{ location.hash="p-"+pid; })],["↩️","Revenir aux ajustements","",()=>sheetBack()]].forEach(o=>{
+        const b=document.createElement("button"); b.type="button"; b.className="om-row"; b.innerHTML='<span class="om-ic">'+o[0]+'</span><span><b></b><small></small></span>'; b.querySelector("b").textContent=o[1]; b.querySelector("small").textContent=o[2]; b.addEventListener("click",o[3]); w.appendChild(b); }); },{nav:true}); }
   function openAdjust(tab0,stat0){
     if(tab0)ADJ_TAB=tab0; if(stat0)CMP_TAB=stat0;
     if(!isAdmin())return;
@@ -6378,7 +6392,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         L.forEach(x=>{ const c=document.createElement("div"), up=x.d>0; c.className="adj-card "+(up?"up":"down");
           c.innerHTML='<div class="adj-top"><span class="adj-ar">'+(up?"▲":"▼")+'</span><b class="adj-nm"></b><span class="adj-st">'+x.stat+" "+x.old+' → <strong>'+x.nv+'</strong></span></div><small></small>'+
             '<div class="adj-acts"><button type="button" class="ok" data-a="ok">✅ Accepter</button><button type="button" data-a="adj">✏️ Ajuster</button><button type="button" data-a="no">✖️ Refuser</button></div>';
-          c.querySelector(".adj-nm").textContent=x.name; c.querySelector("small").textContent=x.why;
+          c.querySelector(".adj-nm").textContent=x.name; c.querySelector(".adj-nm").classList.add("adj-pl"); c.querySelector(".adj-nm").addEventListener("click",()=>openAdjPlayer(x.pid)); c.querySelector("small").textContent=x.why;
           const acts=c.querySelector(".adj-acts");
           const busy=on=>acts.querySelectorAll("button").forEach(b=>b.disabled=on);
           const apply=async(v,msg)=>{ busy(true);
@@ -6393,7 +6407,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
             catch(e){ toast("Pas enregistré : "+errMsg(e)); busy(false); } };
           acts.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b)return; const a=b.dataset.a;
             if(a==="ok"||a==="adj"){ const k=ADJ_KEY[x.stat];   /* v59 : même fenêtre partout, chiffre modifiable */
-              openNoteMsg(x.pid,[{key:k,old:x.old,nv:x.nv,min:Math.max(1,x.old-3),max:Math.min(99,x.old+3)}],async(C,msg)=>{ const c=C[0]; if(!c){ closeSheet(); openAdjust(); return; } await apply(c.nv,msg); closeSheet(); openAdjust(); }); return; }
+              openNoteMsg(x.pid,[{key:k,old:x.old,nv:x.nv,min:Math.max(1,x.old-3),max:Math.min(99,x.old+3)}],async(C,msg)=>{ const c=C[0]; if(c) await apply(c.nv,msg); sheetBack(); }); return; }
             else if(a==="no")refuse();
             else if(a==="adj_old"){ let v=x.nv; acts.innerHTML='<button type="button" data-m="-1">−</button><b class="adj-v">'+v+'</b><button type="button" data-m="1">+</button><button type="button" class="ok" data-v>Valider</button>';
               acts.classList.add("adj-edit");
@@ -6402,8 +6416,8 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
                 else if(bb.dataset.v!==undefined){ if(v===x.old)refuse(); else apply(v); } }; } });
           list.appendChild(c); });
         renderAdjBtn(); };
-      draw();
-    });
+      if(ADJ_TAB==="cmp"){ tabs.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.t==="cmp")); drawAdjCompare(list); } else draw();
+    },{nav:true});
   }
   /* ---- v59 : comparatif saison — classement de TOUS les joueurs admissibles, stat par stat ----
      Ratio « prudent » : (total + 2 × moyenne du groupe) / (matchs + 2). Grille du groupe = droite note ↔ ratio (moindres carrés).
@@ -6471,11 +6485,12 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
     let h='<table class="adj-cmp-t"><thead><tr><th>#</th><th class="l">Joueur</th><th>'+S.lab+'</th><th>'+cardLab+'</th><th>Attendue</th><th>Écart</th></tr></thead><tbody>';
     const fl=S.team?5:CMP_FLAG;
     R.rows.forEach(r=>{ const f=!R.flat&&Math.abs(r.d)>=fl?(r.d<0?"lo":"hi"):"ok";
-      h+='<tr class="'+f+'"><td class="rk">'+r.rk+'</td><td class="l"><b>'+rdEsc(r.p.name)+'</b><small>'+r.n+' matchs</small></td><td class="ra">'+cmpNum(r.raw)+'</td>'+
+      h+='<tr class="'+f+'"><td class="rk">'+r.rk+'</td><td class="l"><b class="adj-pl" data-pl="'+r.p.id+'">'+rdEsc(r.p.name)+'</b><small>'+r.n+' matchs</small></td><td class="ra">'+cmpNum(r.raw)+'</td>'+
         '<td><span class="rt" style="background:'+badgeCol(r.card)+'">'+r.card+'</span></td><td class="ex">'+(R.flat?"–":r.e)+'</td><td><span class="ch '+f+'">'+(R.flat?"–":r.d===0?"±0":(r.d>0?"+":"−")+Math.abs(r.d))+'</span></td></tr>'; });
     h+='</tbody></table><p class="adj-cmp-leg">« Attendue » = la note '+cardLab+' que donnerait son ratio d\'après la grille du groupe (ratios lissés vers la moyenne quand il y a peu de matchs). Surligné à '+fl+' points d\'écart ou plus : vert = sous-noté, rouge = sur-noté.</p>'+
-      (R.flat?'<p class="adj-cmp-leg"><b>Pas de note attendue pour l\'instant</b> : dans le groupe, les meilleurs ratios n\'ont pas les meilleures notes '+cardLab+' (aucun lien clair). Le classement reste lisible, mais l\'appli ne propose rien.</p>':'');
+      (R.flat?'<p class="adj-cmp-leg"><b>Pas de note attendue pour l\'instant</b> : dans le groupe, les meilleurs ratios n\'ont pas les meilleures '+(S.key?'notes '+cardLab:'notes générales')+' (aucun lien clair). Le classement reste lisible, mais l\'appli ne propose rien.</p>':'');
     const tb=document.createElement("div"); tb.innerHTML=h; list.appendChild(tb);
+    tb.querySelectorAll("[data-pl]").forEach(b=>b.addEventListener("click",()=>openAdjPlayer(b.dataset.pl)));
     if(!S.prop||R.flat)return;
     const P=cmpProps(S,R.rows), t=document.createElement("h4"); t.className="adj-cmp-h"; t.innerHTML='Propositions <small>· '+(P.length?P.length+" joueur"+(P.length>1?"s":""):"aucune")+'</small>'; list.appendChild(t);
     if(!P.length){ const p=document.createElement("p"); p.className="adj-none"; p.textContent="✅ Pas d'écart de 3 points ou plus sur cette stat."; list.appendChild(p); return; }
@@ -6485,10 +6500,10 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
         (x.cmp.length?'<ul>'+x.cmp.map(c=>'<li>'+c+'</li>').join("")+'</ul>':'')+
         '<div class="adj-cmp-ft"><span>Confiance : '+x.conf+' · '+r.n+' matchs</span><button type="button" data-p="'+r.p.id+'">✏️ Ajuster et prévenir</button></div>';
       el.querySelector("[data-p]").addEventListener("click",()=>{ const p=r.p;
-        openNoteMsg(p.id,[{key:S.key,old:r.card,nv:x.nv}],async(C,msg)=>{ const c=C[0]; if(!c){ closeSheet(); return; }
+        openNoteMsg(p.id,[{key:S.key,old:r.card,nv:x.nv}],async(C,msg)=>{ const c=C[0]; if(!c){ sheetBack(); return; }
           try{ const stats=Object.assign({},p.stats,{[S.key]:c.nv}); const rr=await api("savePlayer",ADMIN.code,Object.assign({id:p.id,name:p.name,stats,fond:p.fond,zoom:p.zoom,ox:p.ox,oy:p.oy},msg?{msg}:{}));
             p.stats=stats; if(rr&&rr.forme!=null)p.forme=rr.forme; p.hist=(p.hist||[]).concat([Object.assign({date:new Date().toISOString(),stats:Object.assign({},stats)},msg?{msg,by:"toi"}:{})]);
-            toast("✅ "+p.name+" : "+S.k+" "+r.card+" → "+c.nv+(msg?" · message envoyé":"")); redrawSoon(); closeSheet(); }
+            toast("✅ "+p.name+" : "+S.k+" "+r.card+" → "+c.nv+(msg?" · message envoyé":"")); redrawSoon(); sheetBack(); }
           catch(e){ toast("Pas enregistré : "+errMsg(e)); } }); });
       list.appendChild(el); });
   }
@@ -6533,7 +6548,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
       const send=msg=>{ const bs=w.querySelectorAll(".nm-btns button"); bs.forEach(b=>b.disabled=true); Promise.resolve(onSend(C.filter(c=>c.nv!==c.old),msg)).catch(()=>{}).finally(()=>bs.forEach(b=>b.disabled=false)); };
       w.querySelector(".nm-none").addEventListener("click",()=>send(""));
       w.querySelector(".nm-go").addEventListener("click",()=>send(tx.value.trim()));
-    });
+    },{nav:true});
   }
   /* accueil du joueur : « 📈 Ta carte a bougé » avec le mot des orgas, une semaine ou jusqu'au match suivant (le premier des deux) */
   const NM_SEEN="fut5v5:mot-orgas-vus";
@@ -7036,6 +7051,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   /* ===== Le carnet du coach (organisateurs) : règles et calculs de l'appli, avec les réglages en cours.
      À METTRE À JOUR À CHAQUE VERSION : CARNET_NEWS (en tête = la plus récente) et le tiroir concerné si une règle change. ===== */
   const CARNET_NEWS=[
+    ["v60.1","13 nov. 2026","↩️","Ajustements : le retour du téléphone remonte d'un cran (Prévenir → ajustements, fiche ou carte du joueur → ajustements au même onglet), toucher un nom ouvre « Modifier sa carte / Voir sa fiche », boutons de la fenêtre « Prévenir » plus aérés."],
     ["v60","13 nov. 2026","🧊","La rédac part à l'heure pile, et sa page se charge bien depuis la notif. Badges : 🧊 Sang-froid et 🧗 Comeback (+0,5), la Clé du match devient 🎢 le Basculeur, 🫁 Marathonien revu (une contribution toutes les 15 min), Fraude à partir de 3 matchs. Gardien (vote des orgas) : bonus dès 15 min, malus dès 5 min ; moyennes et meilleur gardien à 15 min. Ajustements : retour au même endroit, joueur cliquable, boutons espacés. Rédacs de la saison recalculées avec les nouvelles règles."],
     ["v59","13 nov. 2026","🗳️","Plusieurs matchs prévus en même temps (« Organiser un match » : reprendre ou ➕ nouveau). MVP : plus de note le soir, la rédac rapporte le dépouillement (unanimité, élu d'une voix…) ; suggestions du vote avec le gardien (+2 pts par but évité) et toujours 3 propositions. L'animation du MVP ne se relance plus toute seule. Rédac : la victoire compte selon l'écart, plancher à 5 pour l'équipe gagnante, le « croqueur » chambré ; bandeau de la rédac en haut de la fiche du match. Ajustements : comparatif saison (classement de tous les joueurs par stat, note attendue, propositions argumentées). Quand une note change, les orgas peuvent prévenir le joueur avec un message argumenté : il le voit sur son accueil. Réglages épurés. Au goal, un passage raté compte dans la note de la rédac dès 5 minutes."],
     ["v58","12 nov. 2026","🎢","La rédac passe à 23 badges : le Verrou, le Marathonien, le Basculeur, la Clé du match, le Château de sable et le Perso. Le Gardien en carton devient la Passoire. Le titre va au badge le plus fort du soir, et deux badges proches donnent une vanne combo (Box-to-box, Héros du soir, Paradoxe). Nouvelle notif à part : « 📰 La rédac du match » Chaque badge a son « Bon à savoir » (fiche du badge et carnet)."],
@@ -7453,7 +7469,7 @@ body.viewer .act[data-go=historique]{grid-column:1/-1;min-height:0;flex-directio
   if("serviceWorker" in navigator){
     let reloaded=false;
     navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(reloaded)return; reloaded=true; location.reload(); });
-    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 60 · 13 nov. 2026"; }catch(e){}
+    try{ const av=document.getElementById("appVer"); if(av)av.textContent="FUT 5V5 · version 60.1 · 13 nov. 2026"; }catch(e){}
     window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").then(reg=>{ setInterval(()=>reg.update().catch(()=>{}),30*60*1000); }).catch(()=>{}); });
   }
 
